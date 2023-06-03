@@ -1,0 +1,12 @@
+ROLE_DELIVERY_AUTO:
+  name: 'Delivery Vehicle'
+  desc: 'Order delivery vehicle fleet'
+
+ROLE_DELIVERY_AUTO_NEW:
+  name: 'Add'
+
+ROLE_DELIVERY_AUTO_EDIT:
+  name: 'Edit'
+
+ROLE_DELIVERY_AUTO_DELETE:
+  name: 'Delete'

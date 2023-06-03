@@ -1,0 +1,22 @@
+{% trans_default_domain 'admin.delivery.auto' %}
+
+{# ---- ШАБЛОН ------------------------------------------------------------ #}
+{% extends Template('/admin/base.html.twig') %}
+
+{% block title %}
+	{# Добавить продукция #}
+	{{ 'admin.page.new'|trans }}
+{% endblock %}
+
+{# ---- КОНТЕНТ-БЛОК ------------------------------------------------------------ #}
+{% block content %}
+	
+	{{ include(_self|replace({ "template.html.twig": baks_settings.device~"/content.html.twig" })) }}
+{% endblock %}
+
+
+{% block javascript %}
+	<script nonce='{{ csp_nonce() }}' async class='lazy' data-src="https://api-maps.yandex.ru/2.1/?apikey={{ MAPS_YANDEX_API }}&lang={{ app.request.locale|lower }}" ></script>
+	<script async data-src="/assets/js/radio.input.min.js" class="lazy"></script>
+	<script async data-src="/assets/field_address/script{{ app.environment != 'dev'?'.min' }}.js" class='lazy'></script>
+{% endblock %}

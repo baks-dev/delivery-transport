@@ -1,0 +1,17 @@
+# Роль
+ROLE_DELIVERY_AUTO:
+  name: 'Транспорт доставки'
+  desc: 'Парк транспорта доставки заказов'
+
+# Правила
+
+ROLE_DELIVERY_AUTO_NEW:
+  name: 'Добавить'
+
+ROLE_DELIVERY_AUTO_EDIT:
+  name: 'Редактировать'
+
+ROLE_DELIVERY_AUTO_DELETE:
+  name: 'Удалить'
+
+

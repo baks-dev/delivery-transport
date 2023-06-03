@@ -1,0 +1,53 @@
+{% trans_default_domain 'admin.delivery.auto' %}
+
+{% if form.translate.count > 1 %}
+	
+	<ul class="nav nav-pills gap-3 mb-3" id="nav-{{ form.translate.vars.id }}" role="tablist">
+		
+		{% for translate in form.translate %}
+			<li class="nav-item" role="presentation">
+				
+				<button class="btn fw-bolder nav-link{{ app.request.locale == translate.vars.value.local? ' active' : '' }}"
+						data-bs-toggle="tab"
+						type="button"
+						role="tab"
+						aria-selected="true"
+						
+						id="nav-{{ form.translate.vars.id }}-{{ translate.vars.value.local }}-tab"
+						data-bs-target="#nav-{{ form.translate.vars.id }}-{{ translate.vars.value.local }}"
+						aria-controls="nav-{{ form.translate.vars.id }}-{{ translate.vars.value.local }}"
+				>
+					<small class="text-uppercase px-3">{{ translate.vars.value.local.value|trans({}, 'core') }}</small>
+				</button>
+				
+				
+				{# <button class="btn nav-link fw-bolder active" id="pills-home-tab" data-bs-toggle="pill"
+									data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home"
+									aria-selected="true"><span class="text-uppercase px-3">Альтернатива</span></button> #}
+			</li>
+		
+		{% endfor %}
+	</ul>
+
+{% endif %}
+
+<div class="tab-content" id="nav-{{ form.translate.vars.id }}Content">
+	
+	{% for translate in form.translate %}
+		
+		<div class="tab-pane fade{{ app.request.locale == translate.vars.value.local? ' show active' : '' }}"
+				role="tabpanel"
+				id="nav-{{ form.translate.vars.id }}-{{ translate.vars.value.local }}"
+				aria-labelledby="nav-{{ form.translate.vars.id }}-{{ translate.vars.value.local }}-tab"
+		>
+			
+			{{ form_row(translate.local) }}
+			
+			{# Название транспортного средства  #}
+			{{ form_row(translate.name, { label : 'admin.form.label.trans.name'|trans, attr: { 'data-lang' : translate.vars.id ~ "_"~translate.vars.value.local  }  }) }}
+
+		</div>
+	{% endfor %}
+
+
+</div>
