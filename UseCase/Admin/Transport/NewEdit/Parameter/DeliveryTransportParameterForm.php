@@ -25,8 +25,11 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Parameter;
 
+use BaksDev\DeliveryTransport\Type\ProductParameter\Weight\Kilogram\Kilogram;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -37,22 +40,60 @@ final class DeliveryTransportParameterForm extends AbstractType
         /*
          * Грузоподъемность, кг
          */
-        $builder->add('carrying', IntegerType::class);
+        $builder->add('carrying', NumberType::class, [
+            'attr' => [
+                'min' => 1
+            ]
+        ]);
+
+        $builder->get('carrying')->addModelTransformer(
+            new CallbackTransformer(
+                function ($carrying) {
+                    return $carrying instanceof Kilogram ? $carrying->getValue() : $carrying;
+                },
+                function ($carrying) {
+                    return $carrying ? new Kilogram($carrying) : null;
+                }
+            )
+        );
+
+
 
         /*
          * Длина (Глубина), см.
          */
-        $builder->add('length', IntegerType::class);
+        $builder->add('length', IntegerType::class,
+            [
+                'attr' => [
+                    'min' => 1,
+                    'max' => 300
+                ]
+            ]
+        );
 
         /*
          *  Ширина, см.
          */
-        $builder->add('width', IntegerType::class);
+        $builder->add('width', IntegerType::class,
+            [
+                'attr' => [
+                    'min' => 1,
+                    'max' => 300
+                ]
+            ]
+        );
 
         /*
          * Высота, см.
          */
-        $builder->add('height', IntegerType::class);
+        $builder->add('height', IntegerType::class,
+            [
+                'attr' => [
+                    'min' => 1,
+                    'max' => 300
+                ]
+            ]
+        );
     }
 
     public function configureOptions(OptionsResolver $resolver): void

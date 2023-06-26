@@ -25,8 +25,11 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit;
 
+use BaksDev\Contacts\Region\Repository\WarehouseChoice\WarehouseChoiceInterface;
+use BaksDev\Contacts\Region\Type\Call\Const\ContactsRegionCallConst;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -35,6 +38,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class DeliveryTransportForm extends AbstractType
 {
+    private WarehouseChoiceInterface $warehouseChoice;
+
+    public function __construct(
+        WarehouseChoiceInterface $warehouseChoice,
+    ) {
+        $this->warehouseChoice = $warehouseChoice;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /*
@@ -46,6 +57,23 @@ final class DeliveryTransportForm extends AbstractType
          * Флаг активности.
          */
         $builder->add('active', CheckboxType::class, ['required' => false]);
+
+        /*
+         * Идентификатор склада, за которым закреплен транспорт (Константа склада).
+         */
+        $builder
+            ->add('warehouse', ChoiceType::class, [
+                'choices' => $this->warehouseChoice->fetchAllWarehouse(),
+                'choice_value' => function (?ContactsRegionCallConst $warehouse) {
+                    return $warehouse?->getValue();
+                },
+                'choice_label' => function (ContactsRegionCallConst $warehouse) {
+                    return $warehouse->getAttr();
+                },
+
+                'label' => false,
+                'required' => true,
+            ]);
 
         /*
         * Настройки локали
@@ -72,7 +100,7 @@ final class DeliveryTransportForm extends AbstractType
 
         /* Сохранить */
         $builder->add(
-            'delivery_auto',
+            'delivery_transport',
             SubmitType::class,
             ['label' => 'Save', 'label_html' => true, 'attr' => ['class' => 'btn-primary']]
         );

@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\Entity\Transport\Event;
 
+use BaksDev\Contacts\Region\Type\Call\Const\ContactsRegionCallConst;
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\DeliveryTransport\Entity\Transport\DeliveryTransport;
@@ -71,6 +72,12 @@ class DeliveryTransportEvent extends EntityEvent
     /** Флаг активности */
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
     private bool $active = true;
+
+    /** Идентификатор склада, за которым закреплен транспорт (Константа склада) */
+    #[Assert\NotBlank]
+    #[Assert\Uuid]
+    #[ORM\Column(type: ContactsRegionCallConst::TYPE)]
+    private ?ContactsRegionCallConst $warehouse = null;
 
     /** Модификатор */
     #[ORM\OneToOne(mappedBy: 'event', targetEntity: DeliveryTransportModify::class, cascade: ['all'])]

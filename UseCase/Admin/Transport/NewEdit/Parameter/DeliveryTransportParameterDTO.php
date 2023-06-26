@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Parameter;
 
 use BaksDev\DeliveryTransport\Entity\Transport\Parameter\DeliveryTransportParameterInterface;
+use BaksDev\DeliveryTransport\Type\ProductParameter\Weight\Kilogram\Kilogram;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /** @see DeliveryTransportParameter */
@@ -35,8 +36,7 @@ final class DeliveryTransportParameterDTO implements DeliveryTransportParameterI
      * Грузоподъемность, кг.
      */
     #[Assert\NotBlank]
-    #[Assert\Range(min: 1)]
-    private int $carrying;
+    private Kilogram $carrying;
 
     /**
      * Длина (Глубина), см
@@ -62,12 +62,12 @@ final class DeliveryTransportParameterDTO implements DeliveryTransportParameterI
     /**
      * Грузоподъемность, кг
      */
-    public function getCarrying(): int
+    public function getCarrying(): Kilogram
     {
         return $this->carrying;
     }
 
-    public function setCarrying(int $carrying): void
+    public function setCarrying(Kilogram $carrying): void
     {
         $this->carrying = $carrying;
     }

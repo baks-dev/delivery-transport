@@ -26,9 +26,59 @@ declare(strict_types=1);
 namespace BaksDev\DeliveryTransport\Type\Transport\Id;
 
 use BaksDev\Core\Type\UidType\Uid;
-
+use Symfony\Component\Uid\AbstractUid;
 
 final class DeliveryTransportUid extends Uid
 {
+    public const TEST = '0188a997-f5a5-7c49-bc0d-ab94fbe0f83d';
+    
     public const TYPE = 'delivery_auto_uid';
+
+    private mixed $attr;
+
+    private mixed $option;
+
+    private mixed $carrying;
+
+    private mixed $size;
+
+    public function __construct(
+        AbstractUid|string|null $value = null,
+        mixed $attr = null,
+        mixed $option = null,
+        mixed $size = null,
+        mixed $carrying = null,
+    ) {
+        parent::__construct($value);
+        $this->attr = $attr;
+        $this->option = $option;
+        $this->carrying = $carrying;
+        $this->size = $size;
+    }
+
+    public function getAttr(): mixed
+    {
+        return $this->attr;
+    }
+
+    public function getOption(): mixed
+    {
+        return $this->option;
+    }
+
+    /**
+     * Грузоподъемность
+     */
+    public function getCarrying(): mixed
+    {
+        return $this->carrying;
+    }
+
+    /**
+     * Объем кузова
+     */
+    public function getSize(): mixed
+    {
+        return $this->size;
+    }
 }

@@ -23,6 +23,8 @@
 
 namespace BaksDev\DeliveryTransport\Entity\Package\Event;
 
+use BaksDev\DeliveryTransport\Type\Package\Event\DeliveryPackageEventUid;
+
 interface DeliveryPackageEventInterface
 {
     public function getEvent(): ?DeliveryPackageEventUid;

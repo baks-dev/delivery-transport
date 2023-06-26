@@ -25,5 +25,21 @@ namespace BaksDev\DeliveryTransport\Entity\Transport\Parameter;
 
 interface DeliveryTransportParameterInterface
 {
+    /**
+     * Длина (Глубина), см.
+     */
+    public function getLength(): int;
+
+    /**
+     *  Ширина, см.
+     */
+    public function getWidth(): int;
+
+
+    /**
+     * Высота, см.
+     */
+    public function getHeight(): int;
+
 
 }

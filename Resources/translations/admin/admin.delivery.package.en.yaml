@@ -1,40 +1,18 @@
 admin:
   page:
-    index: 'Транспорт доставки'
-    new: 'Добавить транспорт доставки'
-    edit: 'Редактировать транспорт доставки'
-    delete: 'Удалить транспорт доставки'
+    index: 'Directions'
 
   breadcrumb:
-    index: 'Транспорт доставки заказов клиенту'
-    new: 'Добавить транспорт доставки заказов'
-    edit: 'Редактировать транспорт доставки заказов'
-    delete: 'Удалить транспорт доставки заказов'
+    index: 'Customer order delivery directions'
 
   success:
-    new: 'Транспорт доставки успешно добавлен'
-    update: 'Транспорт доставки успешно обновлен'
-    delete: 'Транспорт доставки успешно удален в корзину'
-    restore: 'Транспорт доставки успешно восстановлен'
+    divide: 'Order split successfully'
+    delivery: 'Order successfully shipped'
+    completed: 'Order successfully issued to customer'
 
   danger:
-    new: '%s: Ошибка при добавлении транспорта доставки'
-    update: '%s: Ошибка при обновлении транспорта доставки'
-    delete: '%s: Ошибка при удалении транспорта доставки'
-    restore: '%s: Ошибка при восстановлении транспорта доставки'
-  form:
-    label:
-      trans:
-        name: 'Название транспортного средства'
-      number: 'Регистрационный номер'
-      carrying: 'Грузоподъемность, кг.'
-      active: 'Транспорт активный'
-      length: 'Длина (Глубина), см'
-      width: 'Ширина, см'
-      height: 'Высота, см'
-      address: 'Название региона'
-      latitude: 'GPS широта'
-      longitude: 'GPS долгота'
-      delete: 'Вы уверены, что желаете удалить транспорт'
-    header:
-      delete: 'Удалить транспорт доставки'
+    divide: '%s: Error splitting order'
+    delivery: '%s: Error loading order'
+    completed: '%s: Error issuing order to customer'
+    size: 'To add a product to the delivery, you must specify the parameters of the products packaging'
+    limit: 'Unable to add order to shipment either by size or weight'

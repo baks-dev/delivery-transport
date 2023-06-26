@@ -1,0 +1,230 @@
+{% trans_default_domain 'admin.product.stock' %}
+
+{#{{ dump(orders) }}#}
+
+
+<tr>
+
+
+	{% if package_status != 'completed' %}
+		{# Порядок погрузки #}
+		<td class="ps-5 align-top text-center nowrap">
+
+
+			{% if package_status != 'delivery' %}
+
+				<span class="badge text-bg-danger"
+					  data-bs-toggle="tooltip"
+					  data-bs-placement="bottom"
+					  title="Порядок погрузки заказов в тарнспорт"
+				>{{ sort + 1 }}</span>
+
+			{% else %}
+
+				<span class="badge text-bg-success"
+					  data-bs-toggle="tooltip"
+					  data-bs-placement="bottom"
+					  title="Порядок выдачи заказов"
+				>{{ sort + 1 }}</span>
+
+			{% endif %}
+
+
+
+		</td>
+	{% endif %}
+
+
+
+	<td class="ps-5">
+
+		{# Комментарий  #}
+		{% if orders.stocks_comment %}
+			<div class="text-danger fs-7 fw-bolder">
+				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path opacity="0.3" d="M20 3H4C2.89543 3 2 3.89543 2 5V16C2 17.1046 2.89543 18 4 18H4.5C5.05228 18 5.5 18.4477 5.5 19V21.5052C5.5 22.1441 6.21212 22.5253 6.74376 22.1708L11.4885 19.0077C12.4741 18.3506 13.6321 18 14.8167 18H20C21.1046 18 22 17.1046 22 16V5C22 3.89543 21.1046 3 20 3Z" fill="currentColor"></path>
+					<rect x="6" y="12" width="7" height="2" rx="1" fill="currentColor"></rect>
+					<rect x="6" y="7" width="12" height="2" rx="1" fill="currentColor"></rect>
+				</svg>
+
+				{{ orders.stocks_comment }}
+			</div>
+		{% endif %}
+
+		{# Номер заказа  #}
+		<strong># {{ orders.order_number }}</strong> &nbsp;
+
+		{# Пункт назанчания #}
+		{% if orders.destination %}
+			{{ orders.destination|call_twig_func('contacts_region_type') }}
+		{% else %}
+			{{ orders.package_order_fields.order_field_value|call_twig_func(orders.package_order_fields.order_field_type) }}
+		{% endif %}
+
+	</td>
+
+
+		<td class="ps-5">
+			<div class="ms-3">
+
+				{% if orders.destination %}
+					<span class="ms-3 badge text-bg-warning">Перемещение</span>
+				{% else %}
+					{# Клиент #}
+					{{ user_profile(orders.order_client) }}
+				{% endif %}
+
+			</div>
+		</td>
+
+	<td class="">
+
+
+		{#{{ dump(orders.stocks_status) }}#}
+
+
+			{# Погрузка заказа #}
+			{% if orders.stocks_status == 'extradition' %}
+
+				<a href="{{ path('DeliveryTransport:admin.package.delivery', { id : orders.stock_id }) }}"
+				   class="btn btn-warning modal-link text-nowrap"
+				   data-bs-toggle="modal"
+				   data-bs-target="#modal"
+				   title="Погрузка заказа"
+				>
+					Погрузить
+				</a>
+
+
+			{% elseif orders.stocks_status == 'delivery' %}
+
+				{% if package_status != 'delivery' %}
+
+					<button
+							class="btn btn-success modal-link text-nowrap opacity-25"
+							data-bs-toggle="tooltip"
+							data-bs-placement="bottom"
+							title="Заказ ожидает полной погрузки транспорта"
+					>
+						Ожидается доставка
+					</button>
+				{% else %}
+					<a href="{{ path('DeliveryTransport:admin.package.completed', { id : orders.stock_id }) }}"
+					   class="btn btn-success modal-link text-nowrap"
+					   data-bs-toggle="modal"
+					   data-bs-target="#modal"
+					   title="Выдать заказ"
+					>
+						Выдать заказ
+					</a>
+				{% endif %}
+
+
+
+
+				{# Погрузка заявки перемещение  #}{#
+			{% elseif orders.order_move_status == 'extradition' %}
+
+				<a href="{{ path('DeliveryTransport:admin.package.delivery', { id : orders.order_move_id }) }}"
+				   class="btn btn-warning modal-link text-nowrap"
+				   data-bs-toggle="modal"
+				   data-bs-target="#modal"
+				   title="Погрузка заявки перемещение"
+				>
+					Погрузить
+				</a>
+
+
+
+
+			#}
+
+
+			{% elseif orders.stocks_status == 'warehouse' %}
+
+				<button
+						class="btn btn-light text-nowrap opacity-25"
+						data-bs-toggle="tooltip"
+						data-bs-placement="bottom"
+						title="Заказ выдан на приемку склада"
+				>
+					Принимается на склад
+				</button>
+
+
+			{% elseif orders.stocks_status == 'completed' or orders.stocks_status == 'incoming' %}
+
+				<button
+						class="btn btn-light text-nowrap opacity-25"
+						data-bs-toggle="tooltip"
+						data-bs-placement="bottom"
+						title="Заказ выдан клиенту"
+				>
+					Выполнен
+				</button>
+
+
+			{% else %}
+
+				<button
+						class="btn btn-danger modal-link text-nowrap opacity-25"
+						data-bs-toggle="tooltip"
+						data-bs-placement="bottom"
+						title="Заказ ожидает упаковки на складе"
+				>
+					На упаковке
+				</button>
+
+
+			{% endif %}
+
+
+
+	</td>
+</tr>
+
+
+
+{#<tr>
+
+	<td>
+		&nbsp;
+	</td>
+
+	#}{# Чекбокс #}{#
+	#}{#<td>
+		<div class="form-check form-check-sm form-check-custom">
+			<input class="form-check-input checked-item" type="checkbox" onchange=checkedItem();
+				   value="{{ item.event }}"
+				   name="#}{##}{#{{ multi.multiple.vars.full_name }}#}{##}{#[][event]"
+			>
+
+		</div>
+	</td>#}{#
+
+
+
+	#}{#<td class="ps-5 text-nowrap">
+
+		{{ item.article_offer_name }}: {{ reference(item.article_reference, item.offer) }}<br>
+		{{ item.variation_offer_name }}: {{ reference(item.variation_reference, item.variation) }}
+	</td>#}{#
+
+	<td class="ps-5">
+11111
+	</td>
+
+	<td class="ps-5 text-center fw-bolder vertical-middle">
+2222222
+	</td>
+
+</tr>#}
+
+
+<tr>
+	<td colspan="4">
+		&nbsp;
+	</td>
+</tr>
+
+

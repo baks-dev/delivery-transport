@@ -33,7 +33,7 @@ return static function (ContainerConfigurator $configurator) {
     $namespace = 'BaksDev\DeliveryTransport';
 
     $services->load($namespace.'\\', __DIR__.'/../../')
-        ->exclude(__DIR__.'/../../{Controller,Entity,Type,Tests,*DTO.php,*Message.php}');
+        ->exclude(__DIR__.'/../../{Controller,Entity,Resources,Type,Tests,*DTO.php,*Message.php}');
 
     // Services
 
@@ -41,6 +41,24 @@ return static function (ContainerConfigurator $configurator) {
         ->tag('controller.service_arguments')
         ->exclude(__DIR__.'/../../Controller/**/*Test.php')
     ;
+
+
+    /** Статусы заказа */
+    $services->load($namespace.'\Type\OrderStatus\\', __DIR__.'/../../Type/OrderStatus');
+
+    /** Статусы складской заявки */
+    $services->load($namespace.'\Type\ProductStockStatus\\', __DIR__.'/../../Type/ProductStockStatus');
+
+    /** Статусы погрузки */
+    $services->load($namespace.'\Type\Package\Status\DeliveryPackageStatus\\', __DIR__.'/../../Type/Package/Status/DeliveryPackageStatus');
+
+
+
+
+//    $services->set(DeliveryPackageStatusCollection::class)
+//        ->args([tagged_iterator('baks.delivery.package.status')])
+//    ;
+
 
 
 

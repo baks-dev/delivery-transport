@@ -1,4 +1,4 @@
-{% trans_default_domain('admin.delivery.auto') %}
+{% trans_default_domain('admin.delivery.transport') %}
 
 <main class="main ">
 	
@@ -29,7 +29,7 @@
 			
 			{# Добавить #}
 			{% if is_granted(ROLE~'_NEW') or is_granted('ROLE_ADMIN') %}
-				<a href="{{ path('DeliveryTransport:admin.newedit.new') }}"
+				<a href="{{ path('DeliveryTransport:admin.transport.newedit.new') }}"
 						class="btn btn-primary fw-bolder"
 				   data-bs-toggle="tooltip"
 				   data-bs-placement="bottom"

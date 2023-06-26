@@ -1,4 +1,4 @@
-{% trans_default_domain 'admin.delivery.auto' %}
+{% trans_default_domain 'admin.delivery.transport' %}
 
 <nav class="small" style="--bs-breadcrumb-divider: '-';" aria-label="breadcrumb">
 	<ol class="breadcrumb small opacity-75">
@@ -34,7 +34,7 @@
 		</li>
 		
 		<li class="breadcrumb-item">
-			<a href="{{ path('DeliveryTransport:admin.index') }}"
+			<a href="{{ path('DeliveryTransport:admin.transport.index') }}"
 					class="text-decoration-none"
 					aria-label="{{ 'admin.breadcrumb.index'|trans }}"
 					title="{{ 'admin.breadcrumb.index'|trans }}">

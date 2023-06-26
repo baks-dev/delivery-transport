@@ -1,0 +1,111 @@
+<tr class="vertical-middle">
+
+
+    <td class="text-nowrap">
+        {# Пользовательское меню #}
+        {{ include(_self|replace({ "card.html.twig": "_usecase.html.twig" })) }}
+    </td>
+
+    <td class="text-center">
+        {{ item.category_name }}
+    </td>
+
+    <td class="ps-5 align-middle w-100">
+        <div class="d-flex">
+
+
+            {# Обложка  #}
+
+            {% set img_path = item.product_image_cdn == true ? cdn_host : '' %}
+            {% set product_image_ext = item.product_image_cdn == true ? 'small.'~item.product_image_ext : item.product_image_ext %}
+
+            <a href="{{ path('DeliveryTransport:admin.parameter.edit', {
+                product : item.id,
+                offer: item.product_offer_const,
+                variation: item.product_variation_const,
+                modification: item.product_modification_const
+            }) }}"
+               data-bs-toggle="modal"
+               data-bs-target="#modal"
+               class="pe-3 modal-link"
+            >
+                <div class="icon rounded-3 bg-contain lazy p-1" style="width: 50px; height: 50px;"
+                     data-bg="{{ item.product_image ? img_path ~ item.product_image ~ product_image_ext : '/assets/img/blank.svg' }}">
+                </div>
+            </a>
+
+            <div class="ms-5">
+
+                {# Название #}
+                <a href="{{ path('DeliveryTransport:admin.parameter.edit', {
+                    product : item.id,
+                    offer: item.product_offer_const,
+                    variation: item.product_variation_const,
+                    modification: item.product_modification_const
+                }) }}"
+                   class="text-decoration-none mb-1 modal-link fw-bolder text-muted"
+                   data-bs-toggle="modal"
+                   data-bs-target="#modal"
+                   title="Детали заявки">
+
+                    {{ item.product_name }}
+
+                    {# Значение торгового предложения #}
+                    {{ item.product_offer_value|call_twig_func(item.product_offer_reference) }}
+                    {# Постфикс торгового предложения #}
+                    {{ item.product_offer_postfix }}
+
+                    {# Значение множественного варианта ТП #}
+                    {{ item.product_variation_value|call_twig_func(item.product_variation_reference) }}
+                    {# Постфикс множественного варианта #}
+                    {{ item.product_variation_postfix }}
+
+
+                    {# Значение модификации множественного варианта ТП #}
+                    {{ item.product_modification_value|call_twig_func(item.product_modification_reference) }}
+                    {# Постфикс модификации #}
+                    {{ item.product_modification_postfix }}
+
+                    {# Свойства, учавствующие в названии #}
+                    {# {% for name_property in arr_property | filter(props => props.field_name == true) %}
+						{{ name_property.props.field_value|call_twig_func(name_property.field_type) }}
+					{% endfor %} #}
+
+
+                </a>
+
+
+                {# Описание #}
+                <div class="text-muted small">
+                    {{ string_width(item.product_preview, 150)|raw }}
+                </div>
+
+                {# Артикул #}
+                <div class="text-muted ">
+                    <strong>Артикул:</strong> {{ item.product_article }}
+                </div>
+            </div>
+
+        </div>
+    </td>
+
+    {% set badge = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="text-danger" viewBox="0 0 16 16">
+  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7z"/>
+</svg>' %}
+
+    <td class="text-center">
+        {{ item.product_parameter_length ?: badge|raw }}
+    </td>
+
+    <td class="text-center">
+        {{ item.product_parameter_width?: badge|raw }}
+    </td>
+
+    <td class="text-center">
+        {{ item.product_parameter_height?: badge|raw }}
+    </td>
+    <td class="text-center">
+        {{ item.product_parameter_weight ? item.product_parameter_weight / 100: badge|raw }}
+    </td>
+
+</tr>

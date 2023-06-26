@@ -1,17 +1,55 @@
 # Роль
-ROLE_DELIVERY_AUTO:
+ROLE_DELIVERY_PACKAGE:
+  name: 'Путевые листы'
+  desc: 'Путевые листы доставки заказов'
+
+
+ROLE_DELIVERY_PACKAGE_COMPLETED:
+  name: 'Выдать заказ'
+  desc: 'Выдать заказ клиенту либо ПВЗ или складу'
+
+ROLE_DELIVERY_PACKAGE_DELIVERY:
+  name: 'Погрузка'
+  desc: 'Погрузить заказ в тарнспорт'
+
+ROLE_DELIVERY_PACKAGE_NAVIGATOR:
+  name: 'Маршрут'
+  desc: 'Весь маршрут доставки заказа'
+
+
+
+ROLE_DELIVERY_PACKAGE_PARAMETER:
+  name: 'Параметры транспорта'
+  desc: 'Параметры транспорта доставки заказов'
+
+ROLE_DELIVERY_PACKAGE_PARAMETER_EDIT:
+  name: 'Редактировать'
+  desc: 'Изменить параметры транспорта доставки заказов'
+
+
+
+ROLE_PRODUCT_STOCK_DIVIDE:
+  name: 'Разделить заказ'
+  desc: 'Разделить заказ по мере погрузки транспорта'
+
+
+
+ROLE_DELIVERY_TRANSPORT:
   name: 'Транспорт доставки'
-  desc: 'Парк транспорта доставки заказов'
+  desc: 'Транспорт доставки заказов'
 
-# Правила
-
-ROLE_DELIVERY_AUTO_NEW:
+ROLE_DELIVERY_TRANSPORT_NEW:
   name: 'Добавить'
 
-ROLE_DELIVERY_AUTO_EDIT:
+ROLE_DELIVERY_TRANSPORT_EDIT:
   name: 'Редактировать'
 
-ROLE_DELIVERY_AUTO_DELETE:
+ROLE_DELIVERY_TRANSPORT_DELETE:
   name: 'Удалить'
+
+
+
+
+
 
 

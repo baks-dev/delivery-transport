@@ -25,15 +25,11 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\Entity\Package;
 
-use BaksDev\DeliveryTransport\Entity\DeliveryPackage\Event\DeliveryPackageEvent;
-use BaksDev\DeliveryTransport\Type\DeliveryAuto\Id\DeliveryTransportUid;
-use BaksDev\DeliveryTransport\Type\DeliveryPackage\Event\DeliveryPackageEventUid;
-use BaksDev\DeliveryTransport\Type\DeliveryPackage\Id\DeliveryPackageUid;
-use DateTimeImmutable;
-use Doctrine\DBAL\Types\Types;
+use BaksDev\DeliveryTransport\Entity\Package\Event\DeliveryPackageEvent;
+use BaksDev\DeliveryTransport\Type\Package\Event\DeliveryPackageEventUid;
+use BaksDev\DeliveryTransport\Type\Package\Id\DeliveryPackageUid;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-
 
 /* DeliveryPackage */
 
@@ -56,15 +52,6 @@ class DeliveryPackage
     #[ORM\Column(type: DeliveryPackageEventUid::TYPE, unique: true)]
     private DeliveryPackageEventUid $event;
 
-    /** Дата погрузки транспорта */
-    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: false)]
-    private DateTimeImmutable $package;
-
-    /** Дата погрузки транспорта */
-    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: false)]
-    private DeliveryTransportUid $transport;
-
-
 
     public function __construct()
     {
@@ -85,4 +72,5 @@ class DeliveryPackage
     {
         $this->event = $event instanceof DeliveryPackageEvent ? $event->getId() : $event;
     }
+
 }

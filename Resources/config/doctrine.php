@@ -24,6 +24,14 @@
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 
+use BaksDev\DeliveryTransport\Type\Package\Event\DeliveryPackageEventType;
+use BaksDev\DeliveryTransport\Type\Package\Event\DeliveryPackageEventUid;
+use BaksDev\DeliveryTransport\Type\Package\Id\DeliveryPackageType;
+use BaksDev\DeliveryTransport\Type\Package\Id\DeliveryPackageUid;
+use BaksDev\DeliveryTransport\Type\Package\Status\DeliveryPackageStatus;
+use BaksDev\DeliveryTransport\Type\Package\Status\DeliveryPackageStatusType;
+use BaksDev\DeliveryTransport\Type\ProductParameter\Weight\Kilogram\Kilogram;
+use BaksDev\DeliveryTransport\Type\ProductParameter\Weight\Kilogram\KilogramType;
 use BaksDev\DeliveryTransport\Type\Transport\Event\DeliveryTransportEventType;
 use BaksDev\DeliveryTransport\Type\Transport\Event\DeliveryTransportEventUid;
 use BaksDev\DeliveryTransport\Type\Transport\Id\DeliveryTransportType;
@@ -31,8 +39,25 @@ use BaksDev\DeliveryTransport\Type\Transport\Id\DeliveryTransportUid;
 use Symfony\Config\DoctrineConfig;
 
 return static function (ContainerConfigurator $container, DoctrineConfig $doctrine): void {
+
+    $services = $container->services()
+        ->defaults()
+        ->autowire()
+        ->autoconfigure()
+    ;
+
     $doctrine->dbal()->type(DeliveryTransportUid::TYPE)->class(DeliveryTransportType::class);
     $doctrine->dbal()->type(DeliveryTransportEventUid::TYPE)->class(DeliveryTransportEventType::class);
+
+    $doctrine->dbal()->type(DeliveryPackageUid::TYPE)->class(DeliveryPackageType::class);
+    $services->set(DeliveryPackageUid::class)->class(DeliveryPackageUid::class); // #[ParamConverter(['package'])] DeliveryPackageUid $package,
+
+
+    $doctrine->dbal()->type(DeliveryPackageEventUid::TYPE)->class(DeliveryPackageEventType::class);
+
+    $doctrine->dbal()->type(DeliveryPackageStatus::TYPE)->class(DeliveryPackageStatusType::class);
+    
+    $doctrine->dbal()->type(Kilogram::TYPE)->class(KilogramType::class);
 
     $emDefault = $doctrine->orm()->entityManager('default');
 

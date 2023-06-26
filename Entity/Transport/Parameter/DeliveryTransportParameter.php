@@ -28,6 +28,7 @@ namespace BaksDev\DeliveryTransport\Entity\Transport\Parameter;
 
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\DeliveryTransport\Entity\Transport\Event\DeliveryTransportEvent;
+use BaksDev\DeliveryTransport\Type\ProductParameter\Weight\Kilogram\Kilogram;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
@@ -50,9 +51,8 @@ class DeliveryTransportParameter extends EntityEvent
 
     /** Грузоподъемность, кг */
     #[Assert\NotBlank]
-    #[Assert\Range(min: 1)]
-    #[ORM\Column(type: Types::SMALLINT)]
-    private int $carrying;
+    #[ORM\Column(type: Kilogram::TYPE)]
+    private Kilogram $carrying;
 
     /** Длина (Глубина), см  */
     #[Assert\NotBlank]
@@ -72,16 +72,21 @@ class DeliveryTransportParameter extends EntityEvent
     #[ORM\Column(type: Types::SMALLINT)]
     private int $height;
 
+    /** Объем, см3 */
+    #[Assert\NotBlank]
+    #[Assert\Range(min: 1)]
+    #[ORM\Column(type: Types::INTEGER)]
+    private int $size;
+
     public function __construct(DeliveryTransportEvent $event)
     {
         $this->event = $event;
-
     }
-
 
     public function getDto($dto): mixed
     {
         if ($dto instanceof DeliveryTransportParameterInterface) {
+
             return parent::getDto($dto);
         }
 
@@ -91,6 +96,10 @@ class DeliveryTransportParameter extends EntityEvent
     public function setEntity($dto): mixed
     {
         if ($dto instanceof DeliveryTransportParameterInterface) {
+
+            /** Объем, см3 */
+            $this->size = $dto->getWidth() * $dto->getLength() * $dto->getHeight();
+
             return parent::setEntity($dto);
         }
 

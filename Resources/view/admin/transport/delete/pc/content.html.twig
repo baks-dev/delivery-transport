@@ -1,8 +1,8 @@
-{% trans_default_domain 'admin.delivery.auto' %}
+{% trans_default_domain 'admin.delivery.transport' %}
 
 <div class="modal-dialog modal-dialog-centered" style="max-width: 800px;">
 	{{ form_start(form) }}
-	<div class="modal-content">
+	<div class="modal-content p-3 border-bottom border-5 border-primary">
 		<div class="modal-header">
 			
 			<h5 class="modal-title">
@@ -38,7 +38,7 @@
 			</button>
 
 			{# Удалить #}
-			{{ form_widget(form.delivery_auto_delete, { label: '
+			{{ form_widget(form.delivery_transport_delete, { label: '
 				<span>'~ 'btn.delete'|trans({}, 'core.btn') ~'</span>
 				<span class="spinner-border spinner-border-sm vertical-middle d-none"></span>
 			'}) }}

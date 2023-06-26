@@ -25,7 +25,6 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\Security\Transport;
 
-use BaksDev\Delivery\Security\Role;
 use BaksDev\Users\Groups\Group\DataFixtures\Security\RoleFixturesInterface;
 use BaksDev\Users\Groups\Group\DataFixtures\Security\VoterFixturesInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
@@ -33,6 +32,9 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 #[AutoconfigureTag('baks.security.voter')]
 final class VoterNew implements VoterFixturesInterface
 {
+    /**
+     * Добавить
+     */
     public const VOTER = 'NEW';
 
     public static function getVoter(): string

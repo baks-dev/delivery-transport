@@ -27,6 +27,11 @@ namespace BaksDev\DeliveryTransport\Controller\Admin\Transport;
 
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
+use BaksDev\DeliveryTransport\Entity\Transport\DeliveryTransport;
+use BaksDev\DeliveryTransport\Entity\Transport\Event\DeliveryTransportEvent;
+use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\DeliveryTransportDTO;
+use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\DeliveryTransportForm;
+use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\DeliveryTransportHandler;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,28 +43,28 @@ final class EditController extends AbstractController
     #[Route('/admin/delivery/transport/edit/{id}', name: 'admin.transport.newedit.edit', methods: ['GET', 'POST'])]
     public function new(
         Request $request,
-        #[MapEntity] DeliveryAutoEvent $DeliveryAutoEvent,
-        DeliveryAutoHandler $DeliveryAutoHandler,
+        #[MapEntity] DeliveryTransportEvent $DeliveryTransportEvent,
+        DeliveryTransportHandler $DeliveryTransportHandler,
     ): Response {
-        $DeliveryAutoDTO = new DeliveryAutoDTO();
-        $DeliveryAutoEvent->getDto($DeliveryAutoDTO);
+        $DeliveryTransportDTO = new DeliveryTransportDTO();
+        $DeliveryTransportEvent->getDto($DeliveryTransportDTO);
 
         // Форма
-        $form = $this->createForm(DeliveryAutoForm::class, $DeliveryAutoDTO);
+        $form = $this->createForm(DeliveryTransportForm::class, $DeliveryTransportDTO);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid() && $form->has('delivery_transport'))
         {
-            $DeliveryAuto = $DeliveryAutoHandler->handle($DeliveryAutoDTO);
+            $DeliveryTransport = $DeliveryTransportHandler->handle($DeliveryTransportDTO);
 
-            if ($DeliveryAuto instanceof DeliveryAuto)
+            if ($DeliveryTransport instanceof DeliveryTransport)
             {
                 $this->addFlash('success', 'admin.success.new', 'admin.delivery.transport');
 
                 return $this->redirectToRoute('DeliveryTransport:admin.transport.index');
             }
 
-            $this->addFlash('danger', 'admin.danger.new', 'admin.delivery.transport', $DeliveryAuto);
+            $this->addFlash('danger', 'admin.danger.new', 'admin.delivery.transport', $DeliveryTransport);
 
             return $this->redirectToReferer();
         }

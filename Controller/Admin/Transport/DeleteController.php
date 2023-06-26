@@ -27,6 +27,11 @@ namespace BaksDev\DeliveryTransport\Controller\Admin\Transport;
 
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
+use BaksDev\DeliveryTransport\Entity\Transport\DeliveryTransport;
+use BaksDev\DeliveryTransport\Entity\Transport\Event\DeliveryTransportEvent;
+use BaksDev\DeliveryTransport\UseCase\Admin\Transport\Delete\DeliveryTransportDeleteDTO;
+use BaksDev\DeliveryTransport\UseCase\Admin\Transport\Delete\DeliveryTransportDeleteForm;
+use BaksDev\DeliveryTransport\UseCase\Admin\Transport\Delete\DeliveryTransportDeleteHandler;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,22 +43,22 @@ final class DeleteController extends AbstractController
     #[Route('/admin/delivery/transport/delete/{id}', name: 'admin.transport.delete', methods: ['GET', 'POST'])]
     public function delete(
         Request $request,
-        #[MapEntity] DeliveryAutoEvent $DeliveryAutoEvent,
-        DeliveryAutoDeleteHandler $DeliveryAutoDeleteHandler,
+        #[MapEntity] DeliveryTransportEvent $DeliveryTransportEvent,
+        DeliveryTransportDeleteHandler $DeliveryTransportDeleteHandler,
     ): Response {
         
-        $DeliveryAutoDeleteDTO = new DeliveryAutoDeleteDTO();
-        $DeliveryAutoEvent->getDto($DeliveryAutoDeleteDTO);
-        $form = $this->createForm(DeliveryAutoDeleteForm::class, $DeliveryAutoDeleteDTO, [
-            'action' => $this->generateUrl('DeliveryTransport:admin.transport.delete', ['id' => $DeliveryAutoDeleteDTO->getEvent()]),
+        $DeliveryTransportDeleteDTO = new DeliveryTransportDeleteDTO();
+        $DeliveryTransportEvent->getDto($DeliveryTransportDeleteDTO);
+        $form = $this->createForm(DeliveryTransportDeleteForm::class, $DeliveryTransportDeleteDTO, [
+            'action' => $this->generateUrl('DeliveryTransport:admin.transport.delete', ['id' => $DeliveryTransportDeleteDTO->getEvent()]),
         ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid() && $form->has('delivery_transport_delete'))
         {
-            $DeliveryAuto = $DeliveryAutoDeleteHandler->handle($DeliveryAutoDeleteDTO);
+            $DeliveryTransport = $DeliveryTransportDeleteHandler->handle($DeliveryTransportDeleteDTO);
 
-            if ($DeliveryAuto instanceof DeliveryAuto)
+            if ($DeliveryTransport instanceof DeliveryTransport)
             {
                 $this->addFlash('admin.form.header.delete', 'admin.success.delete', 'admin.delivery.transport');
 
@@ -64,7 +69,7 @@ final class DeleteController extends AbstractController
                 'admin.form.header.delete',
                 'admin.danger.delete',
                 'admin.contacts.region',
-                $DeliveryAuto
+                $DeliveryTransport
             );
 
             return $this->redirectToRoute('DeliveryTransport:admin.transport.index', status: 400);
@@ -72,7 +77,7 @@ final class DeleteController extends AbstractController
 
         return $this->render([
             'form' => $form->createView(),
-            'name' => $DeliveryAutoEvent->getNameByLocale($this->getLocale()), // название согласно локали
+            'name' => $DeliveryTransportEvent->getNameByLocale($this->getLocale()), // название согласно локали
         ]);
     }
 }

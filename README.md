@@ -18,7 +18,7 @@ $ composer require baks-dev/delivery-transport
 $ php bin/console baks:assets:install
 ```
 
-Роли администартора с помощью Fixtures
+Роли администратора с помощью Fixtures
 
 ``` bash
 $ php bin/console doctrine:fixtures:load --append

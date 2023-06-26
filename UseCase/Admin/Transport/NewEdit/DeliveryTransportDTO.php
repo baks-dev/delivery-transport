@@ -25,14 +25,15 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit;
 
+use BaksDev\Contacts\Region\Type\Call\Const\ContactsRegionCallConst;
 use BaksDev\Core\Type\Locale\Locale;
-use BaksDev\DeliveryTransport\Entity\DeliveryAuto\Event\DeliveryAutoEventInterface;
-use BaksDev\DeliveryTransport\Type\DeliveryAuto\Event\DeliveryTransportEventUid;
+use BaksDev\DeliveryTransport\Entity\Transport\Event\DeliveryTransportEventInterface;
+use BaksDev\DeliveryTransport\Type\Transport\Event\DeliveryTransportEventUid;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /** @see DeliveryTransportEvent */
-final class DeliveryTransportDTO implements DeliveryAutoEventInterface
+final class DeliveryTransportDTO implements DeliveryTransportEventInterface
 {
     /**
      * Идентификатор события.
@@ -46,6 +47,13 @@ final class DeliveryTransportDTO implements DeliveryAutoEventInterface
     #[Assert\NotBlank]
     #[Assert\Length(min: 1, max: 10)]
     private string $number;
+
+    /**
+     * Идентификатор склада, за которым закреплен транспорт (Константа склада)
+     */
+    #[Assert\Uuid]
+    #[Assert\NotBlank]
+    private ?ContactsRegionCallConst $warehouse = null;
 
     /**
      * Флаг активности транспорта.
@@ -121,9 +129,9 @@ final class DeliveryTransportDTO implements DeliveryAutoEventInterface
         /* Вычисляем расхождение и добавляем неопределенные локали */
         foreach (Locale::diffLocale($this->translate) as $locale)
         {
-            $DeliveryAutoTransDTO = new Trans\DeliveryTransportTransDTO;
-            $DeliveryAutoTransDTO->setLocal($locale);
-            $this->addTranslate($DeliveryAutoTransDTO);
+            $DeliveryTransportTransDTO = new Trans\DeliveryTransportTransDTO;
+            $DeliveryTransportTransDTO->setLocal($locale);
+            $this->addTranslate($DeliveryTransportTransDTO);
         }
 
         return $this->translate;
@@ -167,4 +175,19 @@ final class DeliveryTransportDTO implements DeliveryAutoEventInterface
     {
         $this->region = $region;
     }
+
+    /**
+     * Идентификатор склада, за которым закреплен транспорт (Константа склада)
+     */
+    public function getWarehouse(): ?ContactsRegionCallConst
+    {
+        return $this->warehouse;
+    }
+
+    public function setWarehouse(?ContactsRegionCallConst $warehouse):void
+    {
+        $this->warehouse = $warehouse;
+    }
+
+
 }

@@ -26,10 +26,16 @@ declare(strict_types=1);
 namespace BaksDev\DeliveryTransport\Entity\Package\Event;
 
 use BaksDev\Core\Entity\EntityEvent;
+use BaksDev\DeliveryTransport\Entity\Package\DeliveryPackage;
+use BaksDev\DeliveryTransport\Entity\Package\Modify\DeliveryPackageModify;
+use BaksDev\DeliveryTransport\Entity\Package\Stocks\DeliveryPackageStocks;
+use BaksDev\DeliveryTransport\Type\Package\Event\DeliveryPackageEventUid;
+use BaksDev\DeliveryTransport\Type\Package\Id\DeliveryPackageUid;
+use BaksDev\DeliveryTransport\Type\Package\Status\DeliveryPackageStatus;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
 use Symfony\Component\Validator\Constraints as Assert;
-
 
 /* DeliveryPackageEvent */
 
@@ -52,24 +58,34 @@ class DeliveryPackageEvent extends EntityEvent
     #[ORM\Column(type: DeliveryPackageUid::TYPE, nullable: false)]
     private ?DeliveryPackageUid $main = null;
 
-    /** One To One */
-    //#[ORM\OneToOne(mappedBy: 'event', targetEntity: DeliveryPackageLogo::class, cascade: ['all'])]
-    //private ?DeliveryPackageOne $one = null;
-
     /** Модификатор */
     #[ORM\OneToOne(mappedBy: 'event', targetEntity: DeliveryPackageModify::class, cascade: ['all'])]
     private DeliveryPackageModify $modify;
 
-    /** Перевод */
-    //#[ORM\OneToMany(mappedBy: 'event', targetEntity: DeliveryPackageTrans::class, cascade: ['all'])]
-    //private Collection $translate;
 
+
+//    /** Заказы в поставке */
+//    #[ORM\OneToMany(mappedBy: 'event', targetEntity: DeliveryPackageOrder::class, cascade: ['all'])]
+//    private Collection $ord;
+    
+//    /** Заявки для перемещения */
+//    #[ORM\OneToMany(mappedBy: 'event', targetEntity: DeliveryPackageMove::class, cascade: ['all'])]
+//    private Collection $move;
+
+    /** Заявки для перемещения */
+    #[ORM\OneToMany(mappedBy: 'event', targetEntity: DeliveryPackageStocks::class, cascade: ['all'])]
+    private Collection $stock;
+
+
+    /** Статус поставки */
+    #[Assert\NotBlank]
+    #[ORM\Column(type: DeliveryPackageStatus::TYPE)]
+    private DeliveryPackageStatus $status;
 
     public function __construct()
     {
         $this->id = new DeliveryPackageEventUid();
         $this->modify = new DeliveryPackageModify($this);
-
     }
 
     public function __clone()
@@ -79,7 +95,7 @@ class DeliveryPackageEvent extends EntityEvent
 
     public function __toString(): string
     {
-        return (string)$this->id;
+        return (string) $this->id;
     }
 
     public function getId(): DeliveryPackageEventUid
@@ -92,7 +108,6 @@ class DeliveryPackageEvent extends EntityEvent
         $this->main = $main instanceof DeliveryPackage ? $main->getId() : $main;
     }
 
-
     public function getMain(): ?DeliveryPackageUid
     {
         return $this->main;
@@ -100,7 +115,8 @@ class DeliveryPackageEvent extends EntityEvent
 
     public function getDto($dto): mixed
     {
-        if ($dto instanceof DeliveryPackageEventInterface) {
+        if ($dto instanceof DeliveryPackageEventInterface)
+        {
             return parent::getDto($dto);
         }
 
@@ -109,13 +125,13 @@ class DeliveryPackageEvent extends EntityEvent
 
     public function setEntity($dto): mixed
     {
-        if ($dto instanceof DeliveryPackageEventInterface) {
+        if ($dto instanceof DeliveryPackageEventInterface)
+        {
             return parent::setEntity($dto);
         }
 
         throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
     }
-
 
 //	public function isModifyActionEquals(ModifyActionEnum $action) : bool
 //	{
@@ -130,7 +146,7 @@ class DeliveryPackageEvent extends EntityEvent
 //	public function getNameByLocale(Locale $locale) : ?string
 //	{
 //		$name = null;
-//		
+//
 //		/** @var DeliveryPackageTrans $trans */
 //		foreach($this->translate as $trans)
 //		{
@@ -139,7 +155,7 @@ class DeliveryPackageEvent extends EntityEvent
 //				break;
 //			}
 //		}
-//		
+//
 //		return $name;
 //	}
 }

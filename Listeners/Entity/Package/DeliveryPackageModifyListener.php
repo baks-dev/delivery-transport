@@ -21,10 +21,10 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Stocks\Listeners\Entity\DeliveryPackage;
+namespace BaksDev\DeliveryTransport\Listeners\Entity\Package;
 
 use BaksDev\Core\Type\Ip\IpAddress;
-use BaksDev\DeliveryTransport\Entity\DeliveryPackage\Modify\DeliveryPackageModify;
+use BaksDev\DeliveryTransport\Entity\Package\Modify\DeliveryPackageModify;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;

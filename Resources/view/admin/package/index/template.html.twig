@@ -1,0 +1,42 @@
+{% trans_default_domain('admin.delivery.package') %}
+
+{% set ROLE = 'ROLE_PRODUCT_STOCK_PARAMETER' %}
+
+{# ---- CSS ------------------------------------------------------------ #}
+{% block title %}
+    {{ 'admin.page.index'|trans }}
+{% endblock %}
+
+{# ---- ШАБЛОН ------------------------------------------------------------ #}
+{% extends Template('/admin/base.html.twig') %}
+
+{# ---- CSS ------------------------------------------------------------ #}
+{% block stylesheets %}
+    {# <link href="/assets/plugins/nice-select2/nice-select2.min.css" rel="stylesheet" type="text/css"> #}
+    <link href="/assets/plugins/datepicker/datepicker.min.css" rel="stylesheet">
+{% endblock %}
+
+{# ---- КОНТЕНТ-БЛОК ------------------------------------------------------------ #}
+{% block content %}
+    {{ include(_self|replace({ "template.html.twig": baks_settings.device~"/content.html.twig" })) }}
+{% endblock %}
+
+
+{% block javascript %}
+<script nonce="{{ csp_nonce() }}" data-src="/assets/plugins/datepicker/datepicker.min.js?v={{ version }}" defer class="lazy"></script>
+
+<script nonce="{{ csp_nonce() }}">
+
+filterDate = document.getElementById('delivery_package_filter_form_date');
+
+    function changeDatapicker(input) {
+        let forms = input.closest('form');
+        forms.submit();
+    }
+
+</script>
+
+
+
+
+{% endblock %}

@@ -1,12 +1,47 @@
-ROLE_DELIVERY_AUTO:
-  name: 'Delivery Vehicle'
-  desc: 'Order delivery vehicle fleet'
+# Role
+ROLE_DELIVERY_PACKAGE:
+  name: 'Directions'
+  desc: 'Order delivery directions'
 
-ROLE_DELIVERY_AUTO_NEW:
+
+ROLE_DELIVERY_PACKAGE_COMPLETED:
+  name: 'Issue order'
+  desc: 'Issue order to customer or pickup point or warehouse'
+
+ROLE_DELIVERY_PACKAGE_DELIVERY:
+  name: 'Loading'
+  desc: 'Upload order to tarnsport'
+
+ROLE_DELIVERY_PACKAGE_NAVIGATOR:
+  name: 'Route'
+  desc: 'The entire shipping route for the order'
+
+
+ROLE_DELIVERY_PACKAGE_PARAMETER:
+  name: 'Transport settings'
+  desc: 'Order Delivery Transport Options'
+
+ROLE_DELIVERY_PACKAGE_PARAMETER_EDIT:
+  name: 'Edit'
+  desc: 'Change order delivery transport settings'
+
+
+
+ROLE_PRODUCT_STOCK_DIVIDE:
+  name: 'Split order'
+  desc: 'Split the order as the vehicle is loaded'
+
+
+
+ROLE_DELIVERY_TRANSPORT:
+  name: 'Delivery Vehicle'
+  desc: 'Order delivery vehicle'
+
+ROLE_DELIVERY_TRANSPORT_NEW:
   name: 'Add'
 
-ROLE_DELIVERY_AUTO_EDIT:
+ROLE_DELIVERY_TRANSPORT_EDIT:
   name: 'Edit'
 
-ROLE_DELIVERY_AUTO_DELETE:
+ROLE_DELIVERY_TRANSPORT_DELETE:
   name: 'Delete'

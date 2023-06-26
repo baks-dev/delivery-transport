@@ -30,7 +30,7 @@ use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Core\Type\Ip\IpAddress;
 use BaksDev\Core\Type\Modify\ModifyAction;
 use BaksDev\Core\Type\Modify\ModifyActionEnum;
-use BaksDev\DeliveryTransport\Entity\DeliveryPackage\Event\DeliveryPackageEvent;
+use BaksDev\DeliveryTransport\Entity\Package\Event\DeliveryPackageEvent;
 use BaksDev\Users\User\Entity\User;
 use BaksDev\Users\User\Type\Id\UserUid;
 use DateTimeImmutable;
