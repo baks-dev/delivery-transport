@@ -25,14 +25,15 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\Security\Transport;
 
-use BaksDev\Menu\Admin\DataFixtures\Menu\MenuAdminFixturesInterface;
-use BaksDev\Menu\Admin\Type\SectionGroup\MenuAdminSectionGroupEnum;
+use BaksDev\Delivery\Security\MenuGroupDelivery;
+use BaksDev\Menu\Admin\Command\Upgrade\MenuAdminInterface;
+use BaksDev\Menu\Admin\Type\SectionGroup\Group\Collection\MenuAdminSectionGroupCollectionInterface;
 use BaksDev\Users\Groups\Group\DataFixtures\Security\RoleFixturesInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag('baks.security.role')]
 #[AutoconfigureTag('baks.menu.admin')]
-final class Role implements RoleFixturesInterface, MenuAdminFixturesInterface
+final class Role implements RoleFixturesInterface, MenuAdminInterface
 {
     /** Транспорт доставки заказов */
     public const ROLE = 'ROLE_DELIVERY_TRANSPORT';
@@ -55,14 +56,9 @@ final class Role implements RoleFixturesInterface, MenuAdminFixturesInterface
     /**
      * Метод возвращает секцию, в которую помещается ссылка на раздел.
      */
-    public function getGroupMenu(): MenuAdminSectionGroupEnum|bool
+    public function getGroupMenu(): MenuAdminSectionGroupCollectionInterface|bool
     {
-        if (enum_exists(MenuAdminSectionGroupEnum::class))
-        {
-            return MenuAdminSectionGroupEnum::DELIVERY;
-        }
-
-        return false;
+        return new MenuGroupDelivery();
     }
 
     /**

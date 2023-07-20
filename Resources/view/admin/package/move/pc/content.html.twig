@@ -34,7 +34,7 @@
 
 					<div class="w-100 d-flex align-items-center gap-3">
 						{# ФОТО ПРОДУКТА  #}
-						{% set img_path = product.product_image_cdn == true ? cdn_host : '' %}
+						{% set img_path = product.product_image_cdn == true ? CDN_HOST : '' %}
 						{% set product_image_ext = product.product_image_cdn == true ? 'small.'~product.product_image_ext : product.product_image_ext %}
 
 						<div class="rounded-circle bg-contain lazy p-1" style="width: 50px; height: 50px;"
@@ -105,7 +105,7 @@
 					{% set card = product.vars.data.card %}
 
 
-					{% set img_path = card.product_image_cdn == true ? cdn_host : '' %}
+					{% set img_path = card.product_image_cdn == true ? CDN_HOST : '' %}
 					{% set product_image_ext = card.product_image_cdn == true ? 'small.'~card.product_image_ext : card.product_image_ext %}
 
 

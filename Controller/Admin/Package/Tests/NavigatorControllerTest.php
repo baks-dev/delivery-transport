@@ -15,6 +15,7 @@
  *   limitations under the License.
  *
  */
+
 namespace BaksDev\DeliveryTransport\Controller\Admin\Package\Tests;
 
 use BaksDev\DeliveryTransport\Entity\Package\DeliveryPackage;
@@ -41,7 +42,6 @@ final class NavigatorControllerTest extends WebTestCase
         self::$identifier = $em->getRepository(DeliveryPackage::class)->findOneBy([], ['id' => 'DESC'])?->getId();
     }
 
-
     /** Доступ по роли */
     public function testRoleSuccessful(): void
     {
@@ -64,7 +64,8 @@ final class NavigatorControllerTest extends WebTestCase
 
                 self::assertResponseRedirects();
             }
-        } else
+        }
+        else
         {
             self::assertTrue(true);
         }
@@ -91,8 +92,10 @@ final class NavigatorControllerTest extends WebTestCase
                 $client->request('GET', sprintf(self::URL, $identifier->getValue()));
 
                 self::assertResponseRedirects();
+
             }
-        } else
+        }
+        else
         {
             self::assertTrue(true);
         }
@@ -119,7 +122,8 @@ final class NavigatorControllerTest extends WebTestCase
 
                 self::assertResponseStatusCodeSame(403);
             }
-        } else
+        }
+        else
         {
             self::assertTrue(true);
         }
@@ -145,7 +149,8 @@ final class NavigatorControllerTest extends WebTestCase
                 // Full authentication is required to access this resource
                 self::assertResponseStatusCodeSame(401);
             }
-        } else
+        }
+        else
         {
             self::assertTrue(true);
         }

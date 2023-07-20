@@ -16,7 +16,7 @@
 
             {# Обложка  #}
 
-            {% set img_path = item.product_image_cdn == true ? cdn_host : '' %}
+            {% set img_path = item.product_image_cdn == true ? CDN_HOST : '' %}
             {% set product_image_ext = item.product_image_cdn == true ? 'small.'~item.product_image_ext : item.product_image_ext %}
 
             <a href="{{ path('DeliveryTransport:admin.parameter.edit', {

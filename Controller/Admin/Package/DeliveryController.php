@@ -56,7 +56,8 @@ final class DeliveryController extends AbstractController
         ExistPackageProductStocksInterface $existPackageProductStocks,
         ProductsByProductStocksInterface $productDetail,
         DeliveryPackageHandler $deliveryPackageHandler,
-    ): Response {
+    ): Response
+    {
         /**
          * @var DeliveryProductStockDTO $DeliveryProductStockDTO
          */
@@ -69,11 +70,11 @@ final class DeliveryController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid() && $form->has('delivery_package'))
+        if($form->isSubmitted() && $form->isValid() && $form->has('delivery_package'))
         {
             $ProductStock = $DeliveryProductStockHandler->handle($DeliveryProductStockDTO);
 
-            if ($ProductStock instanceof ProductStock)
+            if($ProductStock instanceof ProductStock)
             {
                 $this->addFlash('success', 'admin.success.delivery', 'admin.delivery.package');
 
@@ -84,34 +85,34 @@ final class DeliveryController extends AbstractController
                 /** Получаем упаковку с данным заказом */
                 $DeliveryPackage = $packageByProductStocks->getDeliveryPackageByProductStock($ProductStock->getId());
 
-                if ($DeliveryPackage)
+                if($DeliveryPackage)
                 {
                     /* Проверяем, имеются ли еще заказы на погрузку */
-                    if (!$existPackageProductStocks->isExistStocksNotDeliveryPackage($DeliveryPackage?->getId()))
+                    if(!$existPackageProductStocks->isExistStocksNotDeliveryPackage($DeliveryPackage?->getId()))
                     {
                         /** Если все погружено - меняем статус путевого листа на "ДОСТАВКА"   */
                         $DeliveryPackageDTO = new DeliveryPackageDTO($DeliveryPackage->getEvent());
                         $DeliveryPackageHandlerResult = $deliveryPackageHandler->handle($DeliveryPackageDTO);
 
-                        if (!$DeliveryPackageHandlerResult instanceof DeliveryPackage)
+                        if(!$DeliveryPackageHandlerResult instanceof DeliveryPackage)
                         {
                             $this->addFlash('danger', 'admin.danger.delivery', 'admin.delivery.package', $DeliveryPackageHandlerResult);
                         }
                     }
                 }
 
-                return $this->redirectToRoute('DeliveryTransport:admin.package.index', ['package' => (string) $DeliveryPackage?->getId()], 200);
+                return $this->redirectToRoute('DeliveryTransport:admin.package.index', ['package' => (string)$DeliveryPackage?->getId()], 200);
             }
 
             $this->addFlash('danger', 'admin.danger.delivery', 'admin.delivery.package', $ProductStock);
 
             return $this->redirectToReferer();
         }
-
-        return $this->render(
-            [
-            'form' => $form->createView(),
-            'products' => $productDetail->fetchAllProductsByProductStocksAssociative($Stock->getId())]
+        
+        return $this->render([
+                'form' => $form->createView(),
+                'products' => $productDetail->fetchAllProductsByProductStocksAssociative($Stock->getId())
+            ]
         );
     }
 }

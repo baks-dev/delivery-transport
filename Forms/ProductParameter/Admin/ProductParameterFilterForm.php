@@ -50,7 +50,7 @@ final class ProductParameterFilterForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('category', ChoiceType::class, [
-            'choices' => $this->categoryChoice->get(),
+            'choices' => $this->categoryChoice->getCategoryCollection(),
             'choice_value' => function (?ProductCategoryUid $category) {
                 return $category?->getValue();
             },
@@ -58,7 +58,7 @@ final class ProductParameterFilterForm extends AbstractType
                 return $category->getOptions();
             },
             'label' => false,
-            'attr' => ['onchange' => 'this.form.submit()'],
+            /*'attr' => ['onchange' => 'this.form.submit()'],*/
         ]);
 
         $builder->addEventListener(

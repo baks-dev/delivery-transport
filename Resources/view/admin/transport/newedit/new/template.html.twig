@@ -24,7 +24,7 @@
     <script async nonce='{{ csp_nonce() }}' class='lazy' data-src="https://api-maps.yandex.ru/2.1/?apikey={{ MAPS_YANDEX_API }}&lang={{ app.request.locale|lower }}" ></script>
 	<script async data-src='/assets/plugins/nice-select2/nice-select2.min.js?v={{ version }}' class='lazy'></script>
 	<script async data-src="/assets/js/radio.input.min.js?v={{ version }}" class="lazy"></script>
-	<script async data-src="/assets/field_address/script{{ app.environment != 'dev'?'.min' }}.js?v={{ version }}" class='lazy'></script>
+	<script async data-src="/assets/field_address/script.min.js?v={{ version }}" class='lazy'></script>
 {% endblock %}
 
 

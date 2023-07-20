@@ -19,12 +19,12 @@ ROLE_DELIVERY_PACKAGE_NAVIGATOR:
 
 
 ROLE_DELIVERY_PACKAGE_PARAMETER:
-  name: 'Параметры транспорта'
-  desc: 'Параметры транспорта доставки заказов'
+  name: 'Параметры упаковки'
+  desc: 'Параметры упаковки для погрузки заказов'
 
 ROLE_DELIVERY_PACKAGE_PARAMETER_EDIT:
   name: 'Редактировать'
-  desc: 'Изменить параметры транспорта доставки заказов'
+  desc: 'Изменить параметры упаковки заказов'
 
 
 

@@ -17,13 +17,14 @@ ROLE_DELIVERY_PACKAGE_NAVIGATOR:
   desc: 'The entire shipping route for the order'
 
 
+
 ROLE_DELIVERY_PACKAGE_PARAMETER:
-  name: 'Transport settings'
-  desc: 'Order Delivery Transport Options'
+  name: 'Packing Options'
+  desc: 'Package parameters for loading orders'
 
 ROLE_DELIVERY_PACKAGE_PARAMETER_EDIT:
   name: 'Edit'
-  desc: 'Change order delivery transport settings'
+  desc: 'Change order packing options'
 
 
 

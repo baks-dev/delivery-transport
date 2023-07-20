@@ -44,10 +44,17 @@ final class NavigatorController extends AbstractController
         PackageWarehouseGeocodeInterface $warehouseGeocode,
         PackageOrderGeocodeInterface $orderGeocode,
     ): Response {
+
         /**
          * Определяем геолокацию склада погрузки (начальную точку).
          */
         $geoWarehouse = $warehouseGeocode->fetchPackageWarehouseGeocodeAssociative($DeliveryPackage->getId());
+
+        if (!$geoWarehouse)
+        {
+            $this->addFlash('danger', 'Невозможно определить геолокацию склада погрузки');
+            return $this->redirectToRoute('DeliveryTransport:admin.package.index');
+        }
 
         $goeData[] = $geoWarehouse['latitude'].','.$geoWarehouse['longitude'];
 
