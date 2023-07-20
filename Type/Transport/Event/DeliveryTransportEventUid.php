@@ -32,5 +32,5 @@ final class DeliveryTransportEventUid extends Uid
 {
     public const TEST = '0188a997-9840-7c59-8e13-17073fc955fb';
     
-    public const TYPE = 'delivery_auto_event_uid';
+    public const TYPE = 'delivery_auto_event';
 }

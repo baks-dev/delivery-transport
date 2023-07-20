@@ -32,5 +32,5 @@ final class DeliveryPackageEventUid extends Uid
 {
     public const TEST = '0188a997-3228-7c12-911f-384c9aa401bd';
     
-    public const TYPE = 'delivery_package_event_uid';
+    public const TYPE = 'delivery_package_event';
 }

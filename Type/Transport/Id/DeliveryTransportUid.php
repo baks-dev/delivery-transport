@@ -32,7 +32,7 @@ final class DeliveryTransportUid extends Uid
 {
     public const TEST = '0188a997-f5a5-7c49-bc0d-ab94fbe0f83d';
     
-    public const TYPE = 'delivery_auto_uid';
+    public const TYPE = 'delivery_auto';
 
     private mixed $attr;
 
