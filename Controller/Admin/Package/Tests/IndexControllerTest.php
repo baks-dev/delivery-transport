@@ -20,11 +20,10 @@ namespace BaksDev\DeliveryTransport\Controller\Admin\Package\Tests;
 
 use BaksDev\Users\User\Tests\TestUserAccount;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DependencyInjection\Attribute\When;
 
-/**
- * @group delivery-transport
- *
- */
+/** @group delivery-transport */
+#[When(env: 'test')]
 final class IndexControllerTest extends WebTestCase
 {
     private const URL = '/admin/delivery/packages';

@@ -59,12 +59,13 @@ return static function (ContainerConfigurator $container, DoctrineConfig $doctri
     
     $doctrine->dbal()->type(Kilogram::TYPE)->class(KilogramType::class);
 
-    $emDefault = $doctrine->orm()->entityManager('default');
+    $emDefault = $doctrine->orm()->entityManager('default')->autoMapping(true);
 
-    $emDefault->autoMapping(true);
+    $MODULE = substr(__DIR__, 0, strpos(__DIR__, "Resources"));
+
     $emDefault->mapping('DeliveryTransport')
         ->type('attribute')
-        ->dir(__DIR__.'/../../Entity')
+        ->dir($MODULE.'Entity')
         ->isBundle(false)
         ->prefix('BaksDev\DeliveryTransport\Entity')
         ->alias('DeliveryTransport');

@@ -153,14 +153,13 @@ final class DeliveryTransportHandler
             return $uniqid;
         }
 
-//        dump($command);
-//        dump($Event);
-//        dd($Main);
-
         $this->entityManager->flush();
 
         /* Отправляем сообщение в шину */
-        $this->messageDispatch->dispatch(message: new DeliveryTransportMessage($Main->getId(), $Main->getEvent(), $command->getEvent()), transport: 'delivery_transport');
+        $this->messageDispatch->dispatch(
+            message: new DeliveryTransportMessage($Main->getId(), $Main->getEvent(), $command->getEvent()),
+            transport: 'delivery-transport'
+        );
 
         return $Main;
     }

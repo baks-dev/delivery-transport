@@ -25,48 +25,37 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\Repository\ProductParameter\AllProductParameter;
 
+use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Services\Paginator\PaginatorInterface;
-use BaksDev\Core\Services\Switcher\SwitcherInterface;
-use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\DeliveryTransport\Entity\ProductParameter\DeliveryPackageProductParameter;
 use BaksDev\DeliveryTransport\Forms\ProductParameter\ProductParameterFilterInterface;
 use BaksDev\Products\Category\Entity as CategoryEntity;
 use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
 use BaksDev\Products\Product\Entity;
-use Doctrine\DBAL\Connection;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class AllProductParameter implements AllProductParameterInterface
 {
-    private Connection $connection;
 
     private PaginatorInterface $paginator;
 
-    private SwitcherInterface $switcher;
-
-    private TranslatorInterface $translator;
+    private DBALQueryBuilder $DBALQueryBuilder;
 
     public function __construct(
-        Connection $connection,
+        DBALQueryBuilder $DBALQueryBuilder,
         PaginatorInterface $paginator,
-        SwitcherInterface $switcher,
-        TranslatorInterface $translator,
     ) {
-        $this->connection = $connection;
+
         $this->paginator = $paginator;
-        $this->switcher = $switcher;
-        $this->translator = $translator;
+        $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
 
-    /** Метод возвращает пагинатор ProductParameter c параметрами упаковки */
+    /**
+     * Метод возвращает пагинатор ProductParameter c параметрами упаковки
+     */
     public function fetchAllProductParameterAssociative(SearchDTO $search, ProductParameterFilterInterface $filter): PaginatorInterface
     {
-        $qb = $this->connection->createQueryBuilder();
-
-        /** ЛОКАЛЬ */
-        $locale = new Locale($this->translator->getLocale());
-        $qb->setParameter('local', $locale, Locale::TYPE);
+        $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
         $qb->select('product.id');
         $qb->addSelect('product.event');
@@ -82,13 +71,8 @@ final class AllProductParameter implements AllProductParameterInterface
             Entity\Trans\ProductTrans::TABLE,
             'product_trans',
             'product_trans.event = product_event.id AND product_trans.local = :local'
-        );
-
-//        if ($filter->getProfile())
-//        {
-//            $qb->andWhere('product_info.profile = :profile');
-//            $qb->setParameter('profile', $filter->getProfile(), UserProfileUid::TYPE);
-//        }
+        )
+            ->bindLocal();
 
         /* ProductInfo */
 
@@ -101,15 +85,6 @@ final class AllProductParameter implements AllProductParameterInterface
             'product_info.product = product.id'
         );
 
-        /* ProductModify */
-
-        //		$qb->addSelect('product_modify.mod_date');
-        //		$qb->leftJoin(
-        //			'product_event',
-        //			Entity\Modify\ProductModify::TABLE,
-        //			'product_modify',
-        //			'product_modify.event = product_event.id'
-        //		);
 
         /* Торговое предложение */
 
@@ -123,7 +98,7 @@ final class AllProductParameter implements AllProductParameterInterface
             'product_offer.event = product_event.id'
         );
 
-        /* Цена торгового предожения */
+        /* Цена торгового предложения */
         $qb->leftJoin(
             'product_offer',
             Entity\Offers\Price\ProductOfferPrice::TABLE,
@@ -148,12 +123,12 @@ final class AllProductParameter implements AllProductParameterInterface
 
         $qb->leftJoin(
             'product_offer',
-            Entity\Offers\Variation\ProductOfferVariation::TABLE,
+            Entity\Offers\Variation\ProductVariation::TABLE,
             'product_offer_variation',
             'product_offer_variation.offer = product_offer.id'
         );
 
-        /* Цена множественного врианта */
+        /* Цена множественного варианта */
         $qb->leftJoin(
             'category_offer_variation',
             Entity\Offers\Variation\Price\ProductOfferVariationPrice::TABLE,
@@ -161,11 +136,11 @@ final class AllProductParameter implements AllProductParameterInterface
             'product_variation_price.variation = product_offer_variation.id'
         );
 
-        /* Тип множественного враианта торгового предложения */
+        /* Тип множественного варианта торгового предложения */
         $qb->addSelect('category_offer_variation.reference as product_variation_reference');
         $qb->leftJoin(
             'product_offer_variation',
-            CategoryEntity\Offers\Variation\ProductCategoryOffersVariation::TABLE,
+            CategoryEntity\Offers\Variation\ProductCategoryVariation::TABLE,
             'category_offer_variation',
             'category_offer_variation.id = product_offer_variation.category_variation'
         );
@@ -177,7 +152,7 @@ final class AllProductParameter implements AllProductParameterInterface
 
         $qb->leftJoin(
             'product_offer_variation',
-            Entity\Offers\Variation\Modification\ProductOfferVariationModification::TABLE,
+            Entity\Offers\Variation\Modification\ProductModification::TABLE,
             'product_offer_modification',
             'product_offer_modification.variation = product_offer_variation.id '
         );
@@ -186,7 +161,7 @@ final class AllProductParameter implements AllProductParameterInterface
         $qb->addSelect('category_offer_modification.reference as product_modification_reference');
         $qb->leftJoin(
             'product_offer_modification',
-            CategoryEntity\Offers\Variation\Modification\ProductCategoryOffersVariationModification::TABLE,
+            CategoryEntity\Offers\Variation\Modification\ProductCategoryModification::TABLE,
             'category_offer_modification',
             'category_offer_modification.id = product_offer_modification.category_modification'
         );
@@ -218,7 +193,7 @@ final class AllProductParameter implements AllProductParameterInterface
 
         $qb->leftJoin(
             'product_offer',
-            Entity\Offers\Variation\Image\ProductOfferVariationImage::TABLE,
+            Entity\Offers\Variation\Image\ProductVariationImage::TABLE,
             'product_offer_variation_image',
             'product_offer_variation_image.variation = product_offer_variation.id AND product_offer_variation_image.root = true'
         );
@@ -234,7 +209,7 @@ final class AllProductParameter implements AllProductParameterInterface
             "
 			CASE
 			   WHEN product_offer_variation_image.name IS NOT NULL THEN
-					CONCAT ( '/upload/".Entity\Offers\Variation\Image\ProductOfferVariationImage::TABLE."' , '/', product_offer_variation_image.dir, '/', product_offer_variation_image.name, '.')
+					CONCAT ( '/upload/".Entity\Offers\Variation\Image\ProductVariationImage::TABLE."' , '/', product_offer_variation_image.dir, '/', product_offer_variation_image.name, '.')
 			   WHEN product_offer_images.name IS NOT NULL THEN
 					CONCAT ( '/upload/".Entity\Offers\Image\ProductOfferImage::TABLE."' , '/', product_offer_images.dir, '/', product_offer_images.name, '.')
 			   WHEN product_photo.name IS NOT NULL THEN
@@ -323,49 +298,24 @@ final class AllProductParameter implements AllProductParameterInterface
         ');
 
 
-        if ($search->query)
+        if ($search->getQuery())
         {
-            $search->query = mb_strtolower(trim($search->query));
-
-            $searcher = $this->connection->createQueryBuilder();
-
-            /* name */
-            $searcher->orWhere('LOWER(product_trans.name) LIKE :query');
-            $searcher->orWhere('LOWER(product_trans.name) LIKE :switcher');
-
-            /* preview */
-            $searcher->orWhere('LOWER(product_trans.preview) LIKE :query');
-            $searcher->orWhere('LOWER(product_trans.preview) LIKE :switcher');
-
-            /* article */
-            $searcher->orWhere('LOWER(product_info.article) LIKE :query');
-            $searcher->orWhere('LOWER(product_info.article) LIKE :switcher');
-
-            /* offer article */
-            $searcher->orWhere('LOWER(product_offer.article) LIKE :query');
-            $searcher->orWhere('LOWER(product_offer.article) LIKE :switcher');
-
-            $searcher->orWhere('LOWER(product_offer_modification.article) LIKE :query');
-            $searcher->orWhere('LOWER(product_offer_modification.article) LIKE :switcher');
-
-            $searcher->orWhere('LOWER(product_offer_variation.article) LIKE :query');
-            $searcher->orWhere('LOWER(product_offer_variation.article) LIKE :switcher');
-
-            $qb->andWhere('('.$searcher->getQueryPart('where').')');
-            $qb->setParameter('query', '%'.$this->switcher->toRus($search->query).'%');
-            $qb->setParameter('switcher', '%'.$this->switcher->toEng($search->query).'%');
-
-            //dump($this->switcher->toEng($search->query));
+            $qb
+                ->createSearchQueryBuilder($search)
+                ->addSearchEqualUid('account.id')
+                ->addSearchEqualUid('account.event')
+                ->addSearchLike('product_trans.name')
+                ->addSearchLike('product_trans.preview')
+                ->addSearchLike('product_info.article')
+                ->addSearchLike('product_offer.article')
+                ->addSearchLike('product_offer_modification.article')
+                ->addSearchLike('product_offer_variation.article')
+            ;
         }
 
         $qb->orderBy('product.event', 'DESC');
 
-        //dd($this->connection->prepare('EXPLAIN (ANALYZE)  '.$qb->getSQL())->executeQuery($qb->getParameters())->fetchAllAssociativeIndexed());
-
-        //dd(current($qb->fetchAllAssociative()));
-
-        //$qb->select('*');
-
         return $this->paginator->fetchAllAssociative($qb);
+
     }
 }

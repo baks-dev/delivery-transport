@@ -30,8 +30,8 @@ use BaksDev\Orders\Order\Entity as EntityOrder;
 use BaksDev\Orders\Order\Type\Id\OrderUid;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
-use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductOfferVariationModification;
-use BaksDev\Products\Product\Entity\Offers\Variation\ProductOfferVariation;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
+use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
@@ -164,7 +164,7 @@ final class PackageOrderProducts implements PackageOrderProductsInterface
         //$qb->addSelect('product_variation.const AS product_variation_const');
         $qb->leftJoin(
             'product',
-            ProductOfferVariation::TABLE,
+            ProductVariation::TABLE,
             'product_variation',
             'product_variation.id = product.variation'
         );
@@ -172,7 +172,7 @@ final class PackageOrderProducts implements PackageOrderProductsInterface
         //$qb->addSelect('product_modification.const AS product_modification_const');
         $qb->leftJoin(
             'product',
-            ProductOfferVariationModification::TABLE,
+            ProductModification::TABLE,
             'product_modification',
             'product_modification.id = product.modification'
         );

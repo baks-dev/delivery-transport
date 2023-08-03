@@ -19,10 +19,10 @@ namespace BaksDev\DeliveryTransport\Controller\Admin\Transport\Tests;
 
 use BaksDev\Users\User\Tests\TestUserAccount;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DependencyInjection\Attribute\When;
 
-/**
- * @group products-product
- */
+/** @group products-product */
+#[When(env: 'test')]
 final class NewControllerTest extends WebTestCase
 {
     private const URL = '/admin/delivery/auto/new';

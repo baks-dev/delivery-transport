@@ -35,8 +35,10 @@ use BaksDev\DeliveryTransport\UseCase\Admin\Transport\Delete\DeliveryTransportDe
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[AsController]
 #[RoleSecurity('ROLE_DELIVERY_TRANSPORT_DELETE')]
 final class DeleteController extends AbstractController
 {
@@ -60,15 +62,15 @@ final class DeleteController extends AbstractController
 
             if ($DeliveryTransport instanceof DeliveryTransport)
             {
-                $this->addFlash('admin.form.header.delete', 'admin.success.delete', 'admin.delivery.transport');
+                $this->addFlash('admin.page.delete', 'admin.success.delete', 'admin.delivery.transport');
 
                 return $this->redirectToRoute('DeliveryTransport:admin.transport.index');
             }
 
             $this->addFlash(
-                'admin.form.header.delete',
+                'admin.page.delete',
                 'admin.danger.delete',
-                'admin.contacts.region',
+                'admin.delivery.transport',
                 $DeliveryTransport
             );
 

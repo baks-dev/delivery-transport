@@ -30,53 +30,22 @@ return static function (ContainerConfigurator $configurator) {
         ->autoconfigure()
     ;
 
-    $namespace = 'BaksDev\DeliveryTransport';
+    $NAMESPACE = 'BaksDev\DeliveryTransport\\';
 
-    $services->load($namespace.'\\', __DIR__.'/../../')
-        ->exclude(__DIR__.'/../../{Controller,Entity,Resources,Type,Tests,*DTO.php,*Message.php}');
+    $MODULE = substr(__DIR__, 0, strpos(__DIR__, "Resources"));
 
-    // Services
-
-    $services->load($namespace.'\Controller\\', __DIR__.'/../../Controller')
-        ->tag('controller.service_arguments')
-        ->exclude(__DIR__.'/../../Controller/**/*Test.php')
-    ;
+    $services->load($NAMESPACE, $MODULE)
+        ->exclude($MODULE.'{Entity,Resources,Type,*DTO.php,*Message.php}');
 
 
     /** Статусы заказа */
-    $services->load($namespace.'\Type\OrderStatus\\', __DIR__.'/../../Type/OrderStatus');
+    $services->load($NAMESPACE.'Type\OrderStatus\\', $MODULE.'Type/OrderStatus');
 
     /** Статусы складской заявки */
-    $services->load($namespace.'\Type\ProductStockStatus\\', __DIR__.'/../../Type/ProductStockStatus');
+    $services->load($NAMESPACE.'Type\ProductStockStatus\\', $MODULE.'Type/ProductStockStatus');
 
     /** Статусы погрузки */
-    $services->load($namespace.'\Type\Package\Status\DeliveryPackageStatus\\', __DIR__.'/../../Type/Package/Status/DeliveryPackageStatus');
+    $services->load($NAMESPACE.'Type\Package\Status\DeliveryPackageStatus\\', $MODULE.'Type/Package/Status/DeliveryPackageStatus');
 
 
-
-
-//    $services->set(DeliveryPackageStatusCollection::class)
-//        ->args([tagged_iterator('baks.delivery.package.status')])
-//    ;
-
-
-
-
-//    $services->load($namespace.'\Repository\\', __DIR__.'/../../Repository')
-//        ->exclude(__DIR__.'/../../Repository/**/*DTO.php')
-//    ;
-//
-//    $services->load($namespace.'\Listeners\\', __DIR__.'/../../Listeners');
-
-
-//
-//    $services->load($namespace.'\Forms\\', __DIR__.'/../../Forms')
-//        ->exclude(__DIR__.'/../../Forms/**/*DTO.php')
-//    ;
-//
-//    $services->load($namespace.'\UseCase\\', __DIR__.'/../../UseCase')
-//        ->exclude(__DIR__.'/../../UseCase/**/{*DTO.php,*Test.php}')
-//    ;
-//
-//    $services->load($namespace.'\Security\\', __DIR__.'/../../Security');
 };

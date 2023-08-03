@@ -142,7 +142,9 @@ final class DeliveryTransportDeleteHandler
         $this->entityManager->flush();
 
         /* Отправляем сообщение в шину */
-        $this->messageDispatch->dispatch(message: new DeliveryTransportMessage($Main->getId(), $Main->getEvent(), $command->getEvent()), transport: 'delivery_transport');
+        $this->messageDispatch->dispatch(
+            message: new DeliveryTransportMessage($Main->getId(), $Main->getEvent(), $command->getEvent()),
+            transport: 'delivery-transport');
 
         return $Main;
     }

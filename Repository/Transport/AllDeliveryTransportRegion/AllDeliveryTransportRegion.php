@@ -26,26 +26,28 @@ declare(strict_types=1);
 namespace BaksDev\DeliveryTransport\Repository\Transport\AllDeliveryTransportRegion;
 
 use BaksDev\Contacts\Region\Type\Call\Const\ContactsRegionCallConst;
+use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\DeliveryTransport\Entity\Transport as DeliveryTransportEntity;
 use BaksDev\DeliveryTransport\Type\Transport\Id\DeliveryTransportUid;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Cache\Adapter\ApcuAdapter;
 
 final class AllDeliveryTransportRegion implements AllDeliveryTransportRegionInterface
 {
-    private EntityManagerInterface $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager)
+
+    private ORMQueryBuilder $ORMQueryBuilder;
+
+    public function __construct(ORMQueryBuilder $ORMQueryBuilder,)
     {
-        $this->entityManager = $entityManager;
+
+        $this->ORMQueryBuilder = $ORMQueryBuilder;
     }
 
     /**
      * Метод получает массив идентификаторов транспорта с геоданными региона обслуживания
      */
-    public function getDeliveryTransportRegionGps(ContactsRegionCallConst $warehouse) : ?array
+    public function getDeliveryTransportRegionGps(ContactsRegionCallConst $warehouse): ?array
     {
-        $qb = $this->entityManager->createQueryBuilder();
+        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
         $select = sprintf('new %s(transport.id, region.latitude, region.longitude, parameter.size, parameter.carrying)', DeliveryTransportUid::class);
 
@@ -77,17 +79,8 @@ final class AllDeliveryTransportRegion implements AllDeliveryTransportRegionInte
         $qb->setParameter('warehouse', $warehouse, ContactsRegionCallConst::TYPE);
 
 
-        // Кешируем результат ORM
-        $cacheQueries = new ApcuAdapter('DeliveryTransport');
+        /* Кешируем результат ORM */
+        return $qb->enableCache('DeliveryTransport', 86400)->getResult();
 
-        $query = $this->entityManager->createQuery($qb->getDQL());
-        $query->setQueryCache($cacheQueries);
-        $query->setResultCache($cacheQueries);
-        $query->enableResultCache();
-        $query->setLifetime(60);
-        $query->setParameters($qb->getParameters());
-
-        return $query->getResult();
-        //return $qb->getQuery()->getResult();
     }
 }

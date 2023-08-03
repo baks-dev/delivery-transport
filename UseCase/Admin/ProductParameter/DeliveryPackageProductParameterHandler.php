@@ -107,7 +107,7 @@ final class DeliveryPackageProductParameterHandler
         /* Отправляем сообщение в шину */
         $this->messageDispatch->dispatch(
             message: new DeliveryTransportMessage(new DeliveryTransportUid(), new  DeliveryTransportEventUid()),
-            transport: 'delivery_transport'
+            transport: 'delivery-transport'
         );
 
         return $ProductStockParameter;

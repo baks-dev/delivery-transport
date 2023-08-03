@@ -49,8 +49,8 @@ use BaksDev\Orders\Order\UseCase\Admin\NewEdit\OrderHandler;
 use BaksDev\Orders\Order\UseCase\User\Basket\Add\OrderProductDTO;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
-use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductOfferVariationModification;
-use BaksDev\Products\Product\Entity\Offers\Variation\ProductOfferVariation;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
+use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Stocks\Entity\Event\ProductStockEvent;
 use BaksDev\Products\Stocks\Entity\ProductStock;
 use BaksDev\Users\Address\Services\GeocodeDistance;
@@ -62,8 +62,10 @@ use DomainException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[AsController]
 #[RoleSecurity('ROLE_PRODUCT_STOCKS_DIVIDE')]
 final class DivideController extends AbstractController
 {
@@ -82,13 +84,14 @@ final class DivideController extends AbstractController
         DivideProductStockHandler $divideProductStockHandler,
         CurrentOrderEventInterface $currentOrderEvent,
         OrderHandler $OrderHandler,
-    ): Response {
+    ): Response
+    {
         /**
          * Получаем заказ.
          */
         $Order = $currentOrderEvent->getCurrentOrderEventOrNull($ProductStockEvent->getOrder());
 
-        if ($Order === null)
+        if($Order === null)
         {
             throw new DomainException(sprintf('Заказ ID: %s не найден', $ProductStockEvent->getOrder()));
         }
@@ -106,7 +109,7 @@ final class DivideController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid() && $form->has('divide'))
+        if($form->isSubmitted() && $form->isValid() && $form->has('divide'))
         {
             /** Получаем геоданные пункта назначения складской заявки */
             $OrderGps = $orderDelivery->fetchProductStocksGps($ProductStockEvent->getId());
@@ -115,7 +118,7 @@ final class DivideController extends AbstractController
             $date = (new DateTimeImmutable())->setTime(0, 0);
             $deliveryDay = 1;
 
-            while (true)
+            while(true)
             {
                 /** Каждый цикл добавляем сутки */
                 $interval = new DateInterval('P1D');
@@ -123,7 +126,7 @@ final class DivideController extends AbstractController
 
                 $deliveryDay++;
 
-                if ($deliveryDay > 30)
+                if($deliveryDay > 30)
                 {
                     /* Невозможно добавить заказ в поставку либо по размеру, либо по весу */
                     $this->addFlash('danger', 'admin.danger.limit', 'admin.delivery.package');
@@ -133,16 +136,16 @@ final class DivideController extends AbstractController
                 /** Получаем транспорт, закрепленный за складом */
                 $DeliveryTransportRegion = $allDeliveryTransportRegion->getDeliveryTransportRegionGps($ProductStockEvent->getWarehouse());
 
-                if (!$DeliveryTransportRegion)
+                if(!$DeliveryTransportRegion)
                 {
                     throw new DomainException(sprintf('За складом ID: %s не закреплено ни одного транспорта', $ProductStockEvent->getWarehouse()));
                 }
 
                 /* Перебираем транспорт и добавляем в поставку */
-                while (true)
+                while(true)
                 {
                     /* Если транспорта больше нет в массиве - обрываем цикл, и пробуем добавить на следующий день поставку  */
-                    if (empty($DeliveryTransportRegion))
+                    if(empty($DeliveryTransportRegion))
                     {
                         break;
                     }
@@ -152,7 +155,7 @@ final class DivideController extends AbstractController
                     $current = null;
 
                     /* Поиск транспорта, ближайшего к точке доставки (по региону обслуживания) */
-                    foreach ($DeliveryTransportRegion as $key => $transport)
+                    foreach($DeliveryTransportRegion as $key => $transport)
                     {
                         $geocodeDistance = $geocodeDistanceService
                             ->fromLatitude((float) $OrderGps['latitude'])
@@ -161,7 +164,7 @@ final class DivideController extends AbstractController
                             ->toLongitude((float) $transport->getOption()->getValue())
                             ->getDistance();
 
-                        if ($distance === null || $distance > $geocodeDistance)
+                        if($distance === null || $distance > $geocodeDistance)
                         {
                             $distance = $geocodeDistance;
                             $DeliveryTransportUid = $transport;
@@ -180,11 +183,11 @@ final class DivideController extends AbstractController
                     $DeliveryPackageDTO = new DeliveryPackageDTO();
 
                     /* Создаем новую поставку на указанную дату, если поставки на данный транспорт не найдено */
-                    if ($DeliveryPackageTransport === null)
+                    if($DeliveryPackageTransport === null)
                     {
                         $DeliveryPackage = $deliveryPackageHandler->handle($DeliveryPackageDTO);
 
-                        if ($DeliveryPackage instanceof DeliveryPackage)
+                        if($DeliveryPackage instanceof DeliveryPackage)
                         {
                             $DeliveryPackageTransportDTO->setPackage($DeliveryPackage);
                             $DeliveryPackageTransportDTO->setTransport($DeliveryTransportUid);
@@ -192,7 +195,7 @@ final class DivideController extends AbstractController
 
                             $DeliveryPackageTransport = $packageTransportHandler->handle($DeliveryPackageTransportDTO);
 
-                            if (!$DeliveryPackageTransport instanceof DeliveryPackageTransport)
+                            if(!$DeliveryPackageTransport instanceof DeliveryPackageTransport)
                             {
                                 $DeliveryPackage = $entityManager->getRepository(DeliveryPackage::class)->find($DeliveryPackage->getId());
                                 $entityManager->remove($DeliveryPackage);
@@ -226,14 +229,14 @@ final class DivideController extends AbstractController
                      */
                     $break = true;
 
-                    if ($DivideProductStockDTO->getProduct()->isEmpty())
+                    if($DivideProductStockDTO->getProduct()->isEmpty())
                     {
                         break 2;
                     }
 
-                    foreach ($DivideProductStockDTO->getProduct() as $product)
+                    foreach($DivideProductStockDTO->getProduct() as $product)
                     {
-                        if (empty($product->getTotal()))
+                        if(empty($product->getTotal()))
                         {
                             $DivideProductStockDTO->removeProduct($product);
                             continue;
@@ -247,9 +250,9 @@ final class DivideController extends AbstractController
                         );
 
                         /* Добавляем по одной пизиции в поставку */
-                        for ($i = 0; $i <= $product->getTotal(); $i++)
+                        for($i = 0; $i <= $product->getTotal(); $i++)
                         {
-                            if (empty($parameter['size']) || empty($parameter['weight']))
+                            if(empty($parameter['size']) || empty($parameter['weight']))
                             {
                                 // Для добавления товара в поставку необходимо указать параметры упаковки товара
                                 $this->addFlash('danger', 'admin.danger.size', 'admin.delivery.package');
@@ -260,7 +263,7 @@ final class DivideController extends AbstractController
                             $DeliveryPackageTransportDTO->addCarrying($parameter['weight']);
 
                             /* Если продукт больше не помещается в транспорт - сохраняем новую заявку и создаем следующую и продуем добавить в другой транспорт */
-                            if ($DeliveryPackageTransportDTO->getSize() > $maxSize || $DeliveryPackageTransportDTO->getCarrying() > $maxCarrying)
+                            if($DeliveryPackageTransportDTO->getSize() > $maxSize || $DeliveryPackageTransportDTO->getCarrying() > $maxCarrying)
                             {
                                 //dump('Заказ не входит в поставку транспорта. Ищем другой транспорт');
 
@@ -273,7 +276,7 @@ final class DivideController extends AbstractController
                             //dump('Добавили вес '.$parameter['weight'].' поставке '.$DeliveryPackageTransportDTO->getCarrying().' max '.$maxCarrying);
 
                             /* Создаем  */
-                            if (!isset($PackageProducts[(string) $DeliveryPackage->getId()]))
+                            if(!isset($PackageProducts[(string) $DeliveryPackage->getId()]))
                             {
                                 $PackageProducts[(string) $DeliveryPackage->getId()] = new ArrayCollection();
                             }
@@ -287,7 +290,7 @@ final class DivideController extends AbstractController
                         }
                     }
 
-                    if ($break)
+                    if($break)
                     {
                         break;
                     }
@@ -295,15 +298,12 @@ final class DivideController extends AbstractController
             }
 
 
-
             $collectionOrders = new ArrayCollection();
             $collectionPackage = new ArrayCollection();
 
 
-
-
             /* Сохраняем новые заявки */
-            foreach ($PackageProducts as $packageProduct)
+            foreach($PackageProducts as $packageProduct)
             {
                 /** Создаем новый заказ */
                 $newOrder = new OrderDTO();
@@ -312,7 +312,7 @@ final class DivideController extends AbstractController
                 $newOrder->setStatus(new OrderStatus(new OrderStatus\OrderStatusPackage()));
 
                 /** @var OrderProductDTO $orderProduct */
-                foreach ($newOrder->getProduct() as $orderProduct)
+                foreach($newOrder->getProduct() as $orderProduct)
                 {
                     /** Обнуляем количество в заказе */
                     $orderPrice = $orderProduct->getPrice();
@@ -320,44 +320,44 @@ final class DivideController extends AbstractController
 
                     /* Перебираем товары в заявке */
                     /** @var DivideProductStockProductDTO $product */
-                    foreach ($packageProduct as $product)
+                    foreach($packageProduct as $product)
                     {
                         $ProductEvent = $entityManager->getRepository(ProductEvent::class)
                             ->count(['id' => $orderProduct->getProduct(), 'product' => $product->getProduct()]);
 
-                        if (!$ProductEvent)
+                        if(!$ProductEvent)
                         {
                             continue;
                         }
 
-                        if ($product->getOffer())
+                        if($product->getOffer())
                         {
                             $ProductOffer = $entityManager->getRepository(ProductOffer::class)
                                 ->count(['id' => $orderProduct->getOffer(), 'const' => $product->getOffer()]);
 
-                            if (!$ProductOffer)
+                            if(!$ProductOffer)
                             {
                                 continue;
                             }
                         }
 
-                        if ($product->getVariation())
+                        if($product->getVariation())
                         {
-                            $ProductVariation = $entityManager->getRepository(ProductOfferVariation::class)
+                            $ProductVariation = $entityManager->getRepository(ProductVariation::class)
                                 ->count(['id' => $orderProduct->getVariation(), 'const' => $product->getVariation()]);
 
-                            if (!$ProductVariation)
+                            if(!$ProductVariation)
                             {
                                 continue;
                             }
                         }
 
-                        if ($product->getModification())
+                        if($product->getModification())
                         {
-                            $ProductOffer = $entityManager->getRepository(ProductOfferVariationModification::class)
+                            $ProductOffer = $entityManager->getRepository(ProductModification::class)
                                 ->count(['id' => $orderProduct->getModification(), 'const' => $product->getModification()]);
 
-                            if (!$ProductOffer)
+                            if(!$ProductOffer)
                             {
                                 continue;
                             }
@@ -370,10 +370,10 @@ final class DivideController extends AbstractController
 
 
                 /** Удаляем продукцию в заказе с нулевым остатком */
-                foreach ($newOrder->getProduct() as $orderProduct)
+                foreach($newOrder->getProduct() as $orderProduct)
                 {
                     $orderPrice = $orderProduct->getPrice();
-                    if (empty($orderPrice->getTotal()))
+                    if(empty($orderPrice->getTotal()))
                     {
                         $newOrder->getProduct()->removeElement($orderProduct);
                     }
@@ -381,10 +381,10 @@ final class DivideController extends AbstractController
 
                 $OrderResult = $OrderHandler->handle($newOrder);
 
-                if (!$OrderResult instanceof Order)
+                if(!$OrderResult instanceof Order)
                 {
                     /* Удаляем предыдущие заказы */
-                    foreach ($collectionOrders as $remove)
+                    foreach($collectionOrders as $remove)
                     {
                         $RemoveOrder = $entityManager->getRepository(Order::class)->find($remove->getId());
                         $entityManager->remove($RemoveOrder);
@@ -411,9 +411,11 @@ final class DivideController extends AbstractController
                 $NewPackageProductStockDTO->setNumber($OrderResult->getNumber());
                 $NewPackageProductStockDTO->getOrd()->setOrd($OrderResult->getId());
 
-                foreach ($packageProduct as $product)
+                foreach($packageProduct as $product)
                 {
-                    $containsProducts = $NewPackageProductStockDTO->getProduct()->filter(function (DivideProductStockProductDTO $element) use ($product) {
+                    $containsProducts = $NewPackageProductStockDTO->getProduct()->filter(function(
+                        DivideProductStockProductDTO $element
+                    ) use ($product) {
                         return
                             $element->getProduct()->equals($product->getProduct()) &&
                             $element->getOffer()?->equals($product->getOffer()) &&
@@ -422,7 +424,7 @@ final class DivideController extends AbstractController
                     });
 
                     /* Если товар уже имеется в заявке - добавляем к нему количество */
-                    if (!$containsProducts->isEmpty())
+                    if(!$containsProducts->isEmpty())
                     {
                         $containsProducts->current()->addTotal(1);
                         continue;
@@ -436,10 +438,10 @@ final class DivideController extends AbstractController
                 $NewPackageProduct = $divideProductStockHandler->handle($NewPackageProductStockDTO);
                 $collectionPackage->add($NewPackageProduct);
 
-                if (!$NewPackageProduct instanceof ProductStock)
+                if(!$NewPackageProduct instanceof ProductStock)
                 {
                     /* Удаляем предыдущие заявки */
-                    foreach ($collectionPackage as $remove)
+                    foreach($collectionPackage as $remove)
                     {
                         $RemoveProductStock = $entityManager->getRepository(ProductStock::class)->find($remove->getId());
                         $entityManager->remove($RemoveProductStock);
@@ -455,7 +457,7 @@ final class DivideController extends AbstractController
 
             $Order = $entityManager->getRepository(Order::class)->find($ProductStockEvent->getOrder());
             $entityManager->remove($Order);
-            
+
             /* Удаляем основную заявку */
 
             $ProductStock = $entityManager->getRepository(ProductStock::class)->find($ProductStockEvent->getMain());

@@ -32,5 +32,8 @@ interface AllDeliveryPackageInterface
     /**
      * Метод возвращает пагинатор DeliveryPackage.
      */
-    public function fetchAllDeliveryPackageAssociative(SearchDTO $search, DeliveryPackageFilterInterface $filter): PaginatorInterface;
+    public function fetchAllDeliveryPackageAssociative(
+        SearchDTO $search,
+        DeliveryPackageFilterInterface $filter
+    ): PaginatorInterface;
 }

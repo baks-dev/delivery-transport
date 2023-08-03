@@ -25,25 +25,27 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\Controller\Admin\Package;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use BaksDev\Core\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
-use BaksDev\Products\Stocks\Entity\ProductStock;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
 use BaksDev\DeliveryTransport\Entity\Package\DeliveryPackage;
+use BaksDev\DeliveryTransport\Repository\Package\ExistPackageProductStocks\ExistPackageProductStocksInterface;
+use BaksDev\DeliveryTransport\Repository\Package\PackageByProductStocks\PackageByProductStocksInterface;
 use BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed\CompletedPackageDTO;
-use BaksDev\DeliveryTransport\UseCase\Admin\Package\Delivery\DeliveryProductStockDTO;
 use BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed\CompletedPackageHandler;
 use BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed\CompletedProductStockDTO;
 use BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed\CompletedProductStockForm;
 use BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed\CompletedProductStockHandler;
+use BaksDev\DeliveryTransport\UseCase\Admin\Package\Delivery\DeliveryProductStockDTO;
+use BaksDev\Products\Stocks\Entity\ProductStock;
 use BaksDev\Products\Stocks\Repository\ProductsByProductStocks\ProductsByProductStocksInterface;
-use BaksDev\DeliveryTransport\Repository\Package\PackageByProductStocks\PackageByProductStocksInterface;
-use BaksDev\DeliveryTransport\Repository\Package\ExistPackageProductStocks\ExistPackageProductStocksInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\Routing\Annotation\Route;
 
+#[AsController]
 #[RoleSecurity('ROLE_DELIVERY_PACKAGE_COMPLETED')]
 final class CompletedController extends AbstractController
 {

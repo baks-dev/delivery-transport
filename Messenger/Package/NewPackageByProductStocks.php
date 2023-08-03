@@ -197,7 +197,7 @@ final class NewPackageByProductStocks
                     /* Отправляем сообщение в шину */
                     $this->messageDispatch->dispatch(
                         message: new ProductStockMessage($NewProductStocks->getMain(), $NewProductStocks->getId()),
-                        transport: 'products_stocks'
+                        transport: 'products-stocks'
                     );
                 }
             }

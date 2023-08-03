@@ -167,7 +167,7 @@ final class DeliveryProductStockHandler
         /* Отправляем событие в шину  */
         $this->messageDispatch->dispatch(
             message: new ProductStockMessage($Main->getId(), $Main->getEvent(), $command->getEvent()),
-            transport: 'products_stocks'
+            transport: 'products-stocks'
         );
 
         return $Main;

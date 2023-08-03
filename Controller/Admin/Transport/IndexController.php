@@ -32,8 +32,10 @@ use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
 use BaksDev\DeliveryTransport\Repository\Transport\AllDeliveryTransport\AllDeliveryTransportInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[AsController]
 #[RoleSecurity('ROLE_DELIVERY_TRANSPORT')]
 final class IndexController extends AbstractController
 {

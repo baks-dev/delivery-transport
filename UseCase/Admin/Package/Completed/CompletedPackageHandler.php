@@ -166,7 +166,7 @@ final class CompletedPackageHandler
         /* Отправляем сообщение в шину */
         $this->messageDispatch->dispatch(
             message: new DeliveryPackageMessage($Main->getId(), $Main->getEvent(), $command->getEvent()),
-            transport: 'delivery_transport'
+            transport: 'delivery-transport'
         );
 
         // 'delivery_package_high'

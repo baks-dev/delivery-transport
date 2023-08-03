@@ -35,8 +35,10 @@ use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\DeliveryTransportH
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[AsController]
 #[RoleSecurity('ROLE_DELIVERY_TRANSPORT_EDIT')]
 final class EditController extends AbstractController
 {

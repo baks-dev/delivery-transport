@@ -28,6 +28,7 @@ namespace BaksDev\DeliveryTransport\Repository\Package\AllDeliveryPackage;
 use BaksDev\Contacts\Region\Entity\Call\ContactsRegionCall;
 use BaksDev\Contacts\Region\Entity\Call\Trans\ContactsRegionCallTrans;
 use BaksDev\Contacts\Region\Entity\ContactsRegion;
+use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Services\Paginator\PaginatorInterface;
 use BaksDev\Core\Services\Switcher\SwitcherInterface;
@@ -53,40 +54,43 @@ use BaksDev\Products\Stocks\Entity\Event\ProductStockEvent;
 use BaksDev\Products\Stocks\Entity\Move\ProductStockMove;
 use BaksDev\Products\Stocks\Entity\Orders\ProductStockOrder;
 use BaksDev\Products\Stocks\Entity\ProductStock;
-use Doctrine\DBAL\Connection;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class AllDeliveryPackage implements AllDeliveryPackageInterface
 {
-    private Connection $connection;
 
     private PaginatorInterface $paginator;
 
     private SwitcherInterface $switcher;
 
     private TranslatorInterface $translator;
+    private DBALQueryBuilder $DBALQueryBuilder;
 
     public function __construct(
-        Connection $connection,
+        DBALQueryBuilder $DBALQueryBuilder,
         PaginatorInterface $paginator,
         SwitcherInterface $switcher,
         TranslatorInterface $translator,
-    ) {
-        $this->connection = $connection;
+    )
+    {
+
         $this->paginator = $paginator;
         $this->switcher = $switcher;
         $this->translator = $translator;
+        $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
 
     /** Метод возвращает пагинатор DeliveryPackage */
-    public function fetchAllDeliveryPackageAssociative(SearchDTO $search, DeliveryPackageFilterInterface $filter): PaginatorInterface
+    public function fetchAllDeliveryPackageAssociative(
+        SearchDTO $search,
+        DeliveryPackageFilterInterface $filter
+    ): PaginatorInterface
     {
-        $qb = $this->connection->createQueryBuilder();
+        $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
         $qb->addSelect('package.id AS package_id')->addGroupBy('package.id');
         $qb->addSelect('package.event AS package_event')->addGroupBy('package.event');
         $qb->from(DeliveryPackage::TABLE, 'package');
-
 
 
         $qb->addSelect('package_event.status AS package_status')->addGroupBy('package_event.status');
@@ -115,14 +119,13 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
         );
 
 
-
         /* Путевой лист */
         $qb->addSelect('package_transport.date_package AS package_date')->addGroupBy('package_transport.date_package');
         $qb->addSelect('package_transport.interval AS package_interval')->addGroupBy('package_transport.interval');
 
         $date = null;
 
-        if ($filter->getDate())
+        if($filter->getDate())
         {
             $date = $filter->getDate()->getTimestamp();
             $qb->setParameter('date', $date);
@@ -153,7 +156,6 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
         );
 
 
-
         $qb->leftJoin(
             'product_stocks_event',
             ProductStockOrder::TABLE,
@@ -162,16 +164,12 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
         );
 
 
-
-
         $qb->leftJoin(
             'product_stocks_event',
             ProductStockMove::TABLE,
             'product_stocks_move',
             'product_stocks_move.event = product_stocks_event.id'
         );
-
-
 
 
         /** Пункт назначения при перемещении */
@@ -190,9 +188,6 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
             'destination_trans',
             'destination_trans.call = destination.id AND destination_trans.local = :local'
         );
-
-
-
 
 
         /* Данные заказа */
@@ -254,13 +249,7 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
         $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
 
 
-
-
-
-
         //$qb->addSelect('order_move_event.status AS order_move_status')->addGroupBy('order_move_event.status');
-
-
 
 
         /*$qb->leftJoin(
@@ -319,7 +308,6 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
         );
 
 
-
         $qb->addSelect(
             "JSON_AGG
             ( DISTINCT
@@ -355,62 +343,10 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
 			AS package_orders"
         );
 
-
-//        dd($qb->fetchAllAssociative());
-//
-//        $qb->addSelect(
-//            "JSON_AGG
-//            ( DISTINCT
-//
-//                    JSONB_BUILD_OBJECT
-//                    (
-//
-//                       /* Информация о доставке  */
-//
-//                        'package_order_fields', JSONB_BUILD_OBJECT
-//                        (
-//                            'order_field_name', delivery_field_trans.name,
-//                            'order_field_type', delivery_field.type,
-//                            'order_field_value', order_delivery_fields.value
-//                        ),
-//
-//                        'package_order_sort', package_order.sort,
-//
-//                        'package_order_id', package_order.ord,
-//
-//                        'package_order_number', orders.number,
-//                        'package_order_status', orders_event.status,
-//                        'package_order_client', order_user.profile,
-//
-//
-//                        'destination', destination.id,
-//                        'order_move_status', order_move_event.status,
-//                        'order_move_id', order_move.ord
-//                    )
-//
-//            )
-//			AS package_orders"
-//        );
-
-        //dd($qb->executeQuery()->fetchAllAssociative());
-
         $qb->addOrderBy('package_transport.date_package');
         $qb->addOrderBy('package_transport.interval', 'DESC');
 
-        /* Поиск */
-        if ($search->query)
-        {
-//            $search->query = mb_strtolower($search->query);
 
-//            $searcher = $this->connection->createQueryBuilder();
-
-//            $searcher->orWhere('LOWER(trans.name) LIKE :query');
-//            $searcher->orWhere('LOWER(trans.name) LIKE :switcher');
-
-//            $qb->andWhere('('.$searcher->getQueryPart('where').')');
-//            $qb->setParameter('query', '%'.$this->switcher->toRus($search->query).'%');
-//            $qb->setParameter('switcher', '%'.$this->switcher->toEng($search->query).'%');
-        }
 
         return $this->paginator->fetchAllAssociative($qb);
     }

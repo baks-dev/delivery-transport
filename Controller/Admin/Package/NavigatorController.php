@@ -33,8 +33,10 @@ use BaksDev\DeliveryTransport\Repository\Package\PackageWarehouseGeocode\Package
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[AsController]
 #[RoleSecurity('ROLE_DELIVERY_PACKAGE_NAVIGATOR')]
 final class NavigatorController extends AbstractController
 {
