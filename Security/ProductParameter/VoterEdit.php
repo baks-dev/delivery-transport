@@ -25,12 +25,12 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\Security\ProductParameter;
 
-use BaksDev\Users\Groups\Group\DataFixtures\Security\RoleFixturesInterface;
-use BaksDev\Users\Groups\Group\DataFixtures\Security\VoterFixturesInterface;
+use BaksDev\Users\Profile\Group\Security\RoleInterface;
+use BaksDev\Users\Profile\Group\Security\VoterInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag('baks.security.voter')]
-final class VoterEdit implements VoterFixturesInterface
+final class VoterEdit implements VoterInterface
 {
     public const VOTER = 'EDIT';
 
@@ -39,7 +39,7 @@ final class VoterEdit implements VoterFixturesInterface
         return Role::ROLE.'_'.self::VOTER;
     }
 
-    public function equals(RoleFixturesInterface $role): bool
+    public function equals(RoleInterface $role): bool
     {
         return $role->getRole() === Role::ROLE;
     }

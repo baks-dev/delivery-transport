@@ -28,12 +28,12 @@ namespace BaksDev\DeliveryTransport\Security\ProductParameter;
 use BaksDev\Delivery\Security\MenuGroupDelivery;
 use BaksDev\Menu\Admin\Command\Upgrade\MenuAdminInterface;
 use BaksDev\Menu\Admin\Type\SectionGroup\Group\Collection\MenuAdminSectionGroupCollectionInterface;
-use BaksDev\Users\Groups\Group\DataFixtures\Security\RoleFixturesInterface;
+use BaksDev\Users\Profile\Group\Security\RoleInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag('baks.security.role')]
 #[AutoconfigureTag('baks.menu.admin')]
-final class Role implements RoleFixturesInterface, MenuAdminInterface
+final class Role implements RoleInterface, MenuAdminInterface
 {
     public const ROLE = 'ROLE_DELIVERY_PACKAGE_PARAMETER';
 

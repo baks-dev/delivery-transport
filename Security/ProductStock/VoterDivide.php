@@ -26,12 +26,12 @@ declare(strict_types=1);
 namespace BaksDev\DeliveryTransport\Security\ProductStock;
 
 use BaksDev\Products\Stocks\Security\Role;
+use BaksDev\Users\Profile\Group\Security\RoleInterface;
+use BaksDev\Users\Profile\Group\Security\VoterInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-use BaksDev\Users\Groups\Group\DataFixtures\Security\RoleFixturesInterface;
-use BaksDev\Users\Groups\Group\DataFixtures\Security\VoterFixturesInterface;
 
 #[AutoconfigureTag('baks.security.voter')]
-final class VoterDivide implements VoterFixturesInterface
+final class VoterDivide implements VoterInterface
 {
     /** Разделить заявку на несколько по мере возможности погрузки транспортом */
     public const VOTER = 'DIVIDE';
@@ -41,7 +41,7 @@ final class VoterDivide implements VoterFixturesInterface
         return Role::ROLE.'_'.self::VOTER;
     }
 
-    public function equals(RoleFixturesInterface $role): bool
+    public function equals(RoleInterface $role): bool
     {
         return $role->getRole() === Role::ROLE;
     }

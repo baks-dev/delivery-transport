@@ -120,7 +120,7 @@ final class PackageOrderGeocode implements PackageOrderGeocodeInterface
             'order_user',
             OrderDelivery::TABLE,
             'order_delivery',
-            'order_delivery.orders_user = order_user.id'
+            'order_delivery.usr = order_user.id'
         );
 
         /*

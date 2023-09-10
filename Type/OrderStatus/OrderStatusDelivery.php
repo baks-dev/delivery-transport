@@ -27,13 +27,13 @@ namespace BaksDev\DeliveryTransport\Type\OrderStatus;
 
 use BaksDev\Orders\Order\Security\RoleOrderStatus;
 use BaksDev\Orders\Order\Type\Status\OrderStatus\Collection\OrderStatusInterface;
-use BaksDev\Users\Groups\Group\DataFixtures\Security\RoleFixturesInterface;
-use BaksDev\Users\Groups\Group\DataFixtures\Security\VoterFixturesInterface;
+use BaksDev\Users\Profile\Group\Security\RoleInterface;
+use BaksDev\Users\Profile\Group\Security\VoterInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag('baks.order.status')]
 #[AutoconfigureTag('baks.security.voter')]
-class OrderStatusDelivery implements OrderStatusInterface, VoterFixturesInterface
+class OrderStatusDelivery implements OrderStatusInterface, VoterInterface
 {
     /** Статус доставки */
     public const STATUS = 'delivery';
@@ -66,7 +66,7 @@ class OrderStatusDelivery implements OrderStatusInterface, VoterFixturesInterfac
         return RoleOrderStatus::ROLE.'_'.mb_strtoupper(self::STATUS);
     }
 
-    public function equals(RoleFixturesInterface $role): bool
+    public function equals(RoleInterface $role): bool
     {
         return RoleOrderStatus::ROLE === $role->getRole();
     }
