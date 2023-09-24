@@ -148,28 +148,31 @@
         </div>
 
         <div class="modal-footer">
-            {# Отмена #}
+            <div class="flex-grow-1">
+                &nbsp;
+            </div>
+            <div class="d-flex gap-3">
+                {# Отмена #}
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+                    {{ 'btn.cancel'|trans({}, 'core.btn') }}
+                </button>
 
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-                {{ 'btn.cancel'|trans({}, 'core.btn') }}
-            </button>
+                {% if current and current.destination %}
 
-            {% if current and current.destination %}
+                    {{ form_widget(form.completed_package, { label: '
+                        <span>Выдать перемещение</span>
+                        <span class="spinner-border spinner-border-sm vertical-middle d-none"></span>
+                    ', attr: { class : 'btn-success' }}) }}
 
-                {{ form_widget(form.completed_package, { label: '
-				<span>Выдать перемещение</span>
-				<span class="spinner-border spinner-border-sm vertical-middle d-none"></span>
-			', attr: { class : 'btn-success' }}) }}
+                {% else %}
 
-            {% else %}
+                    {{ form_widget(form.completed_package, { label: '
+                        <span>Заказ выдан клиенту</span>
+                        <span class="spinner-border spinner-border-sm vertical-middle d-none"></span>
+                    ', attr: { class : current ? 'btn-success' : ' d-none' }}) }}
 
-                {{ form_widget(form.completed_package, { label: '
-				<span>Заказ выдан клиенту</span>
-				<span class="spinner-border spinner-border-sm vertical-middle d-none"></span>
-			', attr: { class : current ? 'btn-success' : ' d-none' }}) }}
-
-
-            {% endif %}
+                {% endif %}
+            </div>
 
             {{ form_end(form) }}
 

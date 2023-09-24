@@ -3,6 +3,9 @@ ROLE_DELIVERY_PACKAGE:
   name: 'Directions'
   desc: 'Order delivery directions'
 
+ROLE_DELIVERY_PACKAGE_INDEX:
+  name: 'View'
+  desc: ''
 
 ROLE_DELIVERY_PACKAGE_COMPLETED:
   name: 'Issue order'
@@ -18,15 +21,18 @@ ROLE_DELIVERY_PACKAGE_NAVIGATOR:
 
 
 
+
 ROLE_DELIVERY_PACKAGE_PARAMETER:
   name: 'Packing Options'
   desc: 'Package parameters for loading orders'
 
+ROLE_DELIVERY_PACKAGE_PARAMETER_INDEX:
+  name: 'View'
+  desc: ''
+
 ROLE_DELIVERY_PACKAGE_PARAMETER_EDIT:
   name: 'Edit'
   desc: 'Change order packing options'
-
-
 
 ROLE_PRODUCT_STOCK_DIVIDE:
   name: 'Split order'
@@ -38,11 +44,18 @@ ROLE_DELIVERY_TRANSPORT:
   name: 'Delivery Vehicle'
   desc: 'Order delivery vehicle'
 
+ROLE_DELIVERY_TRANSPORT_INDEX:
+  name: 'View'
+  desc: ''
+
 ROLE_DELIVERY_TRANSPORT_NEW:
   name: 'Add'
+  desc: ''
 
 ROLE_DELIVERY_TRANSPORT_EDIT:
   name: 'Edit'
+  desc: ''
 
 ROLE_DELIVERY_TRANSPORT_DELETE:
   name: 'Delete'
+  desc: ''

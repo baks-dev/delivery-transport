@@ -21,51 +21,28 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\DeliveryTransport\Forms\ProductParameter\Admin;
+declare(strict_types=1);
 
-use BaksDev\DeliveryTransport\Forms\ProductParameter\ProductParameterFilterInterface;
-use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
-use Symfony\Component\HttpFoundation\Request;
+namespace BaksDev\DeliveryTransport\Security\ProductParameter;
 
-final class ProductParameterFilterDTO implements ProductParameterFilterInterface
+use BaksDev\Users\Profile\Group\Security\RoleInterface;
+use BaksDev\Users\Profile\Group\Security\VoterInterface;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+
+#[AutoconfigureTag('baks.security.voter')]
+
+final class VoterIndex implements VoterInterface
 {
-	public const category = 'XHJRudPaDx';
-	
-	private Request $request;
+    public const VOTER = 'INDEX';
 
-	public function __construct(Request $request)
-	{
-		$this->request = $request;
-	}
-	
-	
-	/** Категория */
-	private ?ProductCategoryUid $category = null;
+    public static function getVoter(): string
+    {
+        return Role::ROLE.'_'.self::VOTER;
+    }
 
+    public function equals(RoleInterface $role): bool
+    {
+        return $role->getRole() === Role::ROLE;
+    }
 
-	
-	public function setCategory(ProductCategoryUid|string|null $category) : void
-	{
-		if($category === null)
-		{
-			$this->request->getSession()->remove(self::category);
-		}
-
-        if(is_string($category))
-        {
-            $category = new ProductCategoryUid($category);
-        }
-
-		$this->category = $category;
-	}
-	
-	
-	public function getCategory() : ?ProductCategoryUid
-	{
-		return $this->category ?: $this->request->getSession()->get(self::category);
-	}
-	
-
-	
 }
-

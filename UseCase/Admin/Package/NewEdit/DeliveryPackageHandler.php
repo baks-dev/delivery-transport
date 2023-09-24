@@ -25,7 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\UseCase\Admin\Package\NewEdit;
 
-use BaksDev\Core\Services\Messenger\MessageDispatchInterface;
+use BaksDev\Core\Messenger\MessageDispatchInterface;
 use BaksDev\DeliveryTransport\Entity\Package\DeliveryPackage;
 use BaksDev\DeliveryTransport\Entity\Package\Event\DeliveryPackageEvent;
 use BaksDev\DeliveryTransport\Messenger\Package\DeliveryPackageMessage;
@@ -66,9 +66,10 @@ final class DeliveryPackageHandler
 
         if (count($errors) > 0)
         {
+            /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $errorsString = (string) $errors;
-            $this->logger->error($uniqid.': '.$errorsString);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
+
             return $uniqid;
         }
 
@@ -138,9 +139,10 @@ final class DeliveryPackageHandler
 
         if (count($errors) > 0)
         {
+            /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $errorsString = (string) $errors;
-            $this->logger->error($uniqid.': '.$errorsString);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
+
             return $uniqid;
         }
 
@@ -154,9 +156,10 @@ final class DeliveryPackageHandler
 
         if (count($errors) > 0)
         {
+            /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $errorsString = (string) $errors;
-            $this->logger->error($uniqid.': '.$errorsString);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
+
             return $uniqid;
         }
         

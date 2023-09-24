@@ -25,7 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed;
 
-use BaksDev\Core\Services\Messenger\MessageDispatchInterface;
+use BaksDev\Core\Messenger\MessageDispatchInterface;
 use BaksDev\Products\Stocks\Entity as ProductStockEntity;
 use BaksDev\Products\Stocks\Messenger\ProductStockMessage;
 use Doctrine\ORM\EntityManagerInterface;
@@ -62,9 +62,10 @@ final class CompletedProductStockHandler
 
         if (count($errors) > 0)
         {
+            /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $errorsString = (string) $errors;
-            $this->logger->error($uniqid.': '.$errorsString);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
+
             return $uniqid;
         }
 
@@ -142,9 +143,10 @@ final class CompletedProductStockHandler
 
         if (count($errors) > 0)
         {
+            /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $errorsString = (string) $errors;
-            $this->logger->error($uniqid.': '.$errorsString);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
+
             return $uniqid;
         }
 
@@ -156,9 +158,10 @@ final class CompletedProductStockHandler
 
         if (count($errors) > 0)
         {
+            /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $errorsString = (string) $errors;
-            $this->logger->error($uniqid.': '.$errorsString);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
+
             return $uniqid;
         }
 

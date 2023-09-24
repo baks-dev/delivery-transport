@@ -25,36 +25,31 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\Messenger\Package;
 
-use Symfony\Component\Cache\Adapter\ApcuAdapter;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use BaksDev\Core\Cache\AppCacheInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler(fromTransport: 'sync')]
 final class DeliveryPackageCacheClear
 {
+    private AppCacheInterface $cache;
+    private LoggerInterface $messageDispatchLogger;
 
-	public function __invoke(DeliveryPackageMessage $message): void
+    public function __construct(
+        AppCacheInterface $cache,
+        LoggerInterface $messageDispatchLogger,
+    ) {
+        $this->cache = $cache;
+        $this->messageDispatchLogger = $messageDispatchLogger;
+    }
+
+    public function __invoke(DeliveryPackageMessage $message): void
     {
-
         /* Чистим кеш модуля */
-        $cache = new FilesystemAdapter('DeliveryTransport');
+        $cache = $this->cache->init('DeliveryTransport');
         $cache->clear();
 
-        /* Сбрасываем индивидуальный кеш */
-        $cache = new ApcuAdapter('DeliveryTransport');
-        $cache->clear();
+        $this->messageDispatchLogger->info('Очистили кеш DeliveryTransport', [__LINE__ => __FILE__]);
 
-
-		$cache = new ApcuAdapter((string) $message->getId()->getValue());
-		$cache->clear();
-		
-		$cache = new ApcuAdapter((string) $message->getEvent()->getValue());
-		$cache->clear();
-		
-		if($message->getLast())
-		{
-			$cache = new ApcuAdapter((string) $message->getLast()->getValue());
-			$cache->clear();
-		}
 	}
 }

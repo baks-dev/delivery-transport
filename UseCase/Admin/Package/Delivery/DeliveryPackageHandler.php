@@ -26,7 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\DeliveryTransport\UseCase\Admin\Package\Delivery;
 
 
-use BaksDev\Core\Services\Messenger\MessageDispatchInterface;
+use BaksDev\Core\Messenger\MessageDispatchInterface;
 use BaksDev\DeliveryTransport\Entity\Package\DeliveryPackage;
 use BaksDev\DeliveryTransport\Entity\Package\Event\DeliveryPackageEvent;
 use BaksDev\DeliveryTransport\Messenger\Package\DeliveryPackageMessage;

@@ -1,8 +1,12 @@
 # Роль
+
 ROLE_DELIVERY_PACKAGE:
   name: 'Путевые листы'
   desc: 'Путевые листы доставки заказов'
 
+ROLE_DELIVERY_PACKAGE_INDEX:
+  name: 'Просмотр'
+  desc: ''
 
 ROLE_DELIVERY_PACKAGE_COMPLETED:
   name: 'Выдать заказ'
@@ -17,10 +21,15 @@ ROLE_DELIVERY_PACKAGE_NAVIGATOR:
   desc: 'Весь маршрут доставки заказа'
 
 
+# Параметры упаковки
 
 ROLE_DELIVERY_PACKAGE_PARAMETER:
   name: 'Параметры упаковки'
   desc: 'Параметры упаковки для погрузки заказов'
+
+ROLE_DELIVERY_PACKAGE_PARAMETER_INDEX:
+  name: 'Просмотр'
+  desc: ''
 
 ROLE_DELIVERY_PACKAGE_PARAMETER_EDIT:
   name: 'Редактировать'
@@ -34,18 +43,27 @@ ROLE_PRODUCT_STOCK_DIVIDE:
 
 
 
+# Транспорт
+
 ROLE_DELIVERY_TRANSPORT:
   name: 'Транспорт доставки'
   desc: 'Транспорт доставки заказов'
 
+ROLE_DELIVERY_TRANSPORT_INDEX:
+  name: 'Просмотр'
+  desc: ''
+
 ROLE_DELIVERY_TRANSPORT_NEW:
   name: 'Добавить'
+  desc: ''
 
 ROLE_DELIVERY_TRANSPORT_EDIT:
   name: 'Редактировать'
+  desc: ''
 
 ROLE_DELIVERY_TRANSPORT_DELETE:
   name: 'Удалить'
+  desc: ''
 
 
 
