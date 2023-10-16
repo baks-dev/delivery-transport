@@ -26,7 +26,8 @@ declare(strict_types=1);
 namespace BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit;
 
 use BaksDev\Core\Messenger\MessageDispatchInterface;
-use BaksDev\DeliveryTransport\Entity\Transport as Entity;
+use BaksDev\DeliveryTransport\Entity\Transport\DeliveryTransport;
+use BaksDev\DeliveryTransport\Entity\Transport\Event\DeliveryTransportEvent;
 use BaksDev\DeliveryTransport\Messenger\DeliveryTransportMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -47,7 +48,8 @@ final class DeliveryTransportHandler
         ValidatorInterface $validator,
         LoggerInterface $logger,
         MessageDispatchInterface $messageDispatch
-    ) {
+    )
+    {
         $this->entityManager = $entityManager;
         $this->validator = $validator;
         $this->logger = $logger;
@@ -56,32 +58,32 @@ final class DeliveryTransportHandler
 
     public function handle(
         DeliveryTransportDTO $command,
-        //?UploadedFile $cover = null
-    ): string|Entity\DeliveryTransport {
-        /* Валидация DeliveryTransportDTO */
+    ): string|DeliveryTransport
+    {
+        /* Валидация DTO */
         $errors = $this->validator->validate($command);
 
-        if (count($errors) > 0)
+        if(count($errors) > 0)
         {
             /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
 
             return $uniqid;
         }
 
-        if ($command->getEvent())
+        if($command->getEvent())
         {
-            $EventRepo = $this->entityManager->getRepository(Entity\Event\DeliveryTransportEvent::class)->find(
+            $EventRepo = $this->entityManager->getRepository(DeliveryTransportEvent::class)->find(
                 $command->getEvent()
             );
 
-            if ($EventRepo === null)
+            if($EventRepo === null)
             {
                 $uniqid = uniqid('', false);
                 $errorsString = sprintf(
                     'Not found %s by id: %s',
-                    Entity\Event\DeliveryTransportEvent::class,
+                    DeliveryTransportEvent::class,
                     $command->getEvent()
                 );
                 $this->logger->error($uniqid.': '.$errorsString);
@@ -89,69 +91,76 @@ final class DeliveryTransportHandler
                 return $uniqid;
             }
 
+            $EventRepo->setEntity($command);
+            $EventRepo->setEntityManager($this->entityManager);
             $Event = $EventRepo->cloneEntity();
-        } else
+        }
+        else
         {
-            $Event = new Entity\Event\DeliveryTransportEvent();
+            $Event = new DeliveryTransportEvent();
+            $Event->setEntity($command);
             $this->entityManager->persist($Event);
         }
 
-        $this->entityManager->clear();
+//        $this->entityManager->clear();
+//        $this->entityManager->persist($Event);
 
-        /* @var Entity\DeliveryTransport $Main */
-        if ($Event->getMain())
+
+        /* @var DeliveryTransport $Main */
+        if($Event->getMain())
         {
-            $Main = $this->entityManager->getRepository(Entity\DeliveryTransport::class)->findOneBy(
-                ['event' => $command->getEvent()]
-            );
+            $Main = $this->entityManager->getRepository(DeliveryTransport::class)
+                ->findOneBy(['event' => $command->getEvent()]);
 
-            if (empty($Main))
+            if(empty($Main))
             {
                 $uniqid = uniqid('', false);
                 $errorsString = sprintf(
                     'Not found %s by event: %s',
-                    Entity\Main::class,
+                    DeliveryTransport::class,
                     $command->getEvent()
                 );
                 $this->logger->error($uniqid.': '.$errorsString);
 
                 return $uniqid;
             }
-        } else
+        }
+        else
         {
-            $Main = new Entity\DeliveryTransport();
+            $Main = new DeliveryTransport();
             $this->entityManager->persist($Main);
             $Event->setMain($Main);
-        }
-
-        $Event->setEntity($command);
-        $this->entityManager->persist($Event);
-
-
-
-        /* Валидация Event */
-        $errors = $this->validator->validate($Event);
-
-        if (count($errors) > 0)
-        {
-            /** Ошибка валидации */
-            $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
-
-            return $uniqid;
         }
 
         /* присваиваем событие корню */
         $Main->setEvent($Event);
 
-        /* Валидация Main */
-        $errors = $this->validator->validate($Main);
 
-        if (count($errors) > 0)
+        /**
+         * Валидация Event
+         */
+
+        $errors = $this->validator->validate($Event);
+
+        if(count($errors) > 0)
         {
             /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
+
+            return $uniqid;
+        }
+
+        /**
+         * Валидация Main
+         */
+        $errors = $this->validator->validate($Main);
+
+        if(count($errors) > 0)
+        {
+            /** Ошибка валидации */
+            $uniqid = uniqid('', false);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
 
             return $uniqid;
         }

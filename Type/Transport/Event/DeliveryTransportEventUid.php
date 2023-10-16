@@ -25,7 +25,9 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\Type\Transport\Event;
 
+use App\Kernel;
 use BaksDev\Core\Type\UidType\Uid;
+use Symfony\Component\Uid\AbstractUid;
 
 
 final class DeliveryTransportEventUid extends Uid
@@ -33,4 +35,9 @@ final class DeliveryTransportEventUid extends Uid
     public const TEST = '0188a997-9840-7c59-8e13-17073fc955fb';
     
     public const TYPE = 'delivery_auto_event';
+
+    public function __construct(AbstractUid|string|null $value = null)
+    {
+        parent::__construct(Kernel::isTestEnvironment() && !$value ? self::TEST : $value);
+    }
 }

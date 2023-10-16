@@ -72,8 +72,15 @@ class DeliveryTransportRegion extends EntityEvent
         $this->event = $event;
     }
 
+    public function __toString(): string
+    {
+        return (string) $this->event;
+    }
+
     public function getDto($dto): mixed
     {
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
         if ($dto instanceof DeliveryTransportRegionInterface) {
             return parent::getDto($dto);
         }
@@ -83,7 +90,8 @@ class DeliveryTransportRegion extends EntityEvent
 
     public function setEntity($dto): mixed
     {
-        if ($dto instanceof DeliveryTransportRegionInterface) {
+        if ($dto instanceof DeliveryTransportRegionInterface || $dto instanceof self)
+        {
             return parent::setEntity($dto);
         }
 

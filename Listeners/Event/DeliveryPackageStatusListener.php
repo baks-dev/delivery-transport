@@ -28,6 +28,8 @@ namespace BaksDev\DeliveryTransport\Listeners\Event;
 
 use BaksDev\DeliveryTransport\Type\Package\Status\DeliveryPackageStatus\Collection\DeliveryPackageStatusCollection;
 use BaksDev\DeliveryTransport\Type\Package\Status\DeliveryPackageStatusType;
+use Symfony\Component\Console\ConsoleEvents;
+use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 
@@ -37,6 +39,7 @@ use Symfony\Component\HttpKernel\Event\ControllerEvent;
  * @see DeliveryPackageStatusType метод getPackageStatusStatus()
  */
 #[AsEventListener(event: ControllerEvent::class)]
+#[AsEventListener(event: ConsoleEvents::COMMAND)]
 final class DeliveryPackageStatusListener
 {
     private DeliveryPackageStatusCollection $collection;
@@ -52,5 +55,11 @@ final class DeliveryPackageStatusListener
         if (in_array(DeliveryPackageStatusType::class, get_declared_classes(), true)) {
             $this->collection->cases();
         }
+    }
+
+    public function onConsoleCommand(ConsoleCommandEvent $event): void
+    {
+        // Всегда инициируем в консольной комманде
+        $this->collection->cases();
     }
 }

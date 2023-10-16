@@ -145,7 +145,6 @@ final class PackageOrderProducts implements PackageOrderProductsInterface
             'price.product = product.id'
         );
 
-        //$qb->addSelect('product_event.product AS product_id');
         $qb->join(
             'product',
             ProductEvent::TABLE,
@@ -183,7 +182,7 @@ final class PackageOrderProducts implements PackageOrderProductsInterface
             'product',
             DeliveryPackageProductParameter::TABLE,
             'parameter',
-            'parameter.product = product_event.product AND 
+            'parameter.product = product_event.main AND 
             (parameter.offer IS NULL OR parameter.offer = product_offer.const) AND
             (parameter.variation IS NULL OR parameter.variation = product_variation.const) AND
             (parameter.modification IS NULL OR parameter.modification = product_modification.const)

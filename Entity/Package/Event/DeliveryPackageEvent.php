@@ -90,7 +90,7 @@ class DeliveryPackageEvent extends EntityEvent
 
     public function __clone()
     {
-        $this->id = new DeliveryPackageEventUid();
+        $this->id = clone $this->id;
     }
 
     public function __toString(): string
@@ -115,6 +115,8 @@ class DeliveryPackageEvent extends EntityEvent
 
     public function getDto($dto): mixed
     {
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
         if ($dto instanceof DeliveryPackageEventInterface)
         {
             return parent::getDto($dto);
@@ -125,7 +127,7 @@ class DeliveryPackageEvent extends EntityEvent
 
     public function setEntity($dto): mixed
     {
-        if ($dto instanceof DeliveryPackageEventInterface)
+        if ($dto instanceof DeliveryPackageEventInterface || $dto instanceof self)
         {
             return parent::setEntity($dto);
         }
@@ -133,29 +135,4 @@ class DeliveryPackageEvent extends EntityEvent
         throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
     }
 
-//	public function isModifyActionEquals(ModifyActionEnum $action) : bool
-//	{
-//		return $this->modify->equals($action);
-//	}
-
-//	public function getUploadClass() : DeliveryPackageImage
-//	{
-//		return $this->image ?: $this->image = new DeliveryPackageImage($this);
-//	}
-
-//	public function getNameByLocale(Locale $locale) : ?string
-//	{
-//		$name = null;
-//
-//		/** @var DeliveryPackageTrans $trans */
-//		foreach($this->translate as $trans)
-//		{
-//			if($name = $trans->name($locale))
-//			{
-//				break;
-//			}
-//		}
-//
-//		return $name;
-//	}
 }

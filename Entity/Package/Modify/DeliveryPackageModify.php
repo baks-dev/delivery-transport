@@ -96,9 +96,15 @@ class DeliveryPackageModify extends EntityEvent
         $this->agent = 'console';
     }
 
+    public function __toString(): string
+    {
+        return (string) $this->event;
+    }
 
     public function getDto($dto): mixed
     {
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
         if ($dto instanceof DeliveryPackageModifyInterface) {
             return parent::getDto($dto);
         }
@@ -108,7 +114,8 @@ class DeliveryPackageModify extends EntityEvent
 
     public function setEntity($dto): mixed
     {
-        if ($dto instanceof DeliveryPackageModifyInterface) {
+        if ($dto instanceof DeliveryPackageModifyInterface || $dto instanceof self)
+        {
             return parent::setEntity($dto);
         }
 

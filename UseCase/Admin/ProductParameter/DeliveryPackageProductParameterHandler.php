@@ -61,7 +61,7 @@ final class DeliveryPackageProductParameterHandler
         DeliveryPackageProductParameterDTO $command,
     ): string|DeliveryPackageProductParameter {
         /**
-         * Валидация ProductStockParameterDTO.
+         * Валидация DTO.
          */
         $errors = $this->validator->validate($command);
 
@@ -69,7 +69,7 @@ final class DeliveryPackageProductParameterHandler
         {
             /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
 
             return $uniqid;
         }
@@ -91,14 +91,17 @@ final class DeliveryPackageProductParameterHandler
 
         $ProductStockParameter->setEntity($command);
 
-        /* Валидация Event */
-        $errors = $this->validator->validate($ProductStockParameter);
+        /**
+         * Валидация Event
+         */
 
-        if (count($errors) > 0)
+        $errors = $this->validator->validate($Event);
+
+        if(count($errors) > 0)
         {
             /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
 
             return $uniqid;
         }

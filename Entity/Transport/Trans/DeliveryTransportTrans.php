@@ -68,8 +68,15 @@ class DeliveryTransportTrans extends EntityEvent
         $this->event = $event;
     }
 
+    public function __toString(): string
+    {
+        return (string) $this->event;
+    }
+
     public function getDto($dto): mixed
     {
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
         if ($dto instanceof DeliveryTransportTransInterface)
         {
             return parent::getDto($dto);
@@ -80,7 +87,7 @@ class DeliveryTransportTrans extends EntityEvent
 
     public function setEntity($dto): mixed
     {
-        if ($dto instanceof DeliveryTransportTransInterface)
+        if ($dto instanceof DeliveryTransportTransInterface || $dto instanceof self)
         {
             return parent::setEntity($dto);
         }

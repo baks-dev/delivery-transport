@@ -33,12 +33,21 @@
                 <div class="d-flex justify-content-between align-items-center gap-3">
 
                     <div class="w-100 d-flex align-items-center gap-3">
-                        {# ФОТО ПРОДУКТА  #}
-                        {% set img_path = product.product_image_cdn == true ? CDN_HOST : '' %}
-                        {% set product_image_ext = product.product_image_cdn == true ? 'small.'~product.product_image_ext : product.product_image_ext %}
 
-                        <div class="rounded-circle bg-contain lazy p-1" style="width: 50px; height: 50px;"
-                             data-bg="{{ product.product_image ? img_path ~ product.product_image ~ product_image_ext : '/assets/img/blank.svg' }}">
+                        {# Обложка  #}
+                        {% set image_path = '/assets/img/blank.svg' %}
+
+                        {% if product.product_image_ext is defined and product.product_image_ext is not null %}
+                            {% set img_host =  product.product_image_cdn == true  ? CDN_HOST : '' %}
+                            {% set img_dir = product.product_image %}
+                            {% set img_file = (img_host is empty ? '/image.' : '/small.') ~ product.product_image_ext %}
+                            {% set image_path = img_host ~ img_dir ~ img_file %}
+                        {% endif %}
+
+
+                        <div class="rounded-circle bg-contain lazy p-1"
+                             style="width: 50px; height: 50px;"
+                             data-bg="{{ image_path }}">
                         </div>
 
                         <div>
@@ -95,115 +104,6 @@
 
 
             {% endfor %}
-
-
-            {# {% for product in order_products %}
-				<div class="d-flex gap-3 align-items-center w-100">
-
-					{% set card = product.vars.data.card %}
-
-
-					{% set img_path = card.product_image_cdn == true ? CDN_HOST : '' %}
-					{% set product_image_ext = card.product_image_cdn == true ? 'small.'~card.product_image_ext : card.product_image_ext %}
-            #}{# ФОТО ПРОДУКТА  #}{#
-            <div>
-                <div class="icon rounded-4 mb-2 bg-contain p-1"
-                     style="width: 75px; height: 75px; background-image: url('{{ card.product_image ? img_path ~ card.product_image ~ product_image_ext : '/assets/img/blank.svg' }}');"
-                ></div>
-            </div>
-
-            <div>
-                <strong>
-                    {{ card.product_name }}
-            #}{# Значение торгового предложения #}{#
-            {{ card.product_offer_value|call_twig_func(card.product_offer_reference) }}
-            #}{# Значение множественного варианта ТП #}{#
-            {{ card.product_variation_value|call_twig_func(card.product_variation_reference) }}
-            #}{# Значение модификации множественного варианта ТП #}{#
-            {{ card.product_modification_value|call_twig_func(card.product_modification_reference) }}
-            #}{# Свойства, учавствующие в названии #}{#
-            #}{# {% for name_property in arr_property | filter(props => props.field_name == true) %}
-                    {{ name_property.field_name|call_twig_func(name_property.field_type) }}
-                {% endfor %} #}{#
-            #}{# {{ dump(product.vars.data) }}
-                {{ dump(product.vars.data.price.total) }} #}{#
-            </strong>
-
-            &nbsp;
-            #}{# Количество в заказе #}{#
-            <strong class="text-primary">( {{ product.vars.data.price.total }} шт. )
-            </strong>
-
-            &nbsp;
-
-            {% if form.vars.data.users.delivery.pickup == false and product.vars.data.price.total > card.stock %}
-                <span class="text-danger">
-                    {% if card.stock %}
-                        В наличии на складе <strong>{{ card.stock }}</strong> шт.
-                    {% else %}
-                        Нет в наличии
-                    {% endif %}
-                </span>
-
-                <div class="mt-1">
-            #}{# {% for move in form.move %}
-                                    {{ dump(move) }}
-                                {% endfor %}
-            #}{#
-            #}{# Перемещение  #}{#
-            {% if product.move %}
-
-                {% for move_product in product.move.product %}
-                    {{ form_row(move_product.product) }}
-                    {{ form_row(move_product.offer) }}
-                    {{ form_row(move_product.variation) }}
-                    {{ form_row(move_product.modification) }}
-
-                {% endfor %}
-            #}{# {{ dump(product.vars.data) }} #}{#
-            <div class="d-flex gap-3 align-items-center">
-                {% if product.move.warehouse is defined %}
-
-                    <span>Переместить недостоток {{ (product.vars.data.price.total - card.stock) }} шт. со склада:</span>
-
-                    <div class="w-50">
-                        {{ form_widget(product.move.warehouse, {
-                            placeholder: 'Выберите целевой Склад для перемещения ...', attr: { 'data-select' : 'select2' }
-                        }) }}
-                    </div>
-
-                {% else %}
-                    <span class="text-danger">
-                    Нет в наличии для перемещения
-                </span>
-                {% endif %}
-            </div>
-
-
-
-            {{ form_row(product.move.move.destination ) }}
-
-        {% endif %}
-
-
-    </div>
-{% else %}
-
-    {% if card.stock %}
-        &nbsp; <span class="text-success">В наличии  <strong>{{ card.stock }}</strong> шт. </span>
-    {% else %}
-        <span class="text-danger">Нет в наличии</span>
-    {% endif %}
-
-{% endif %}
-
-
-</div>
-
-</div>
-
-
-{% endfor %} #}
 
 
             <h4>

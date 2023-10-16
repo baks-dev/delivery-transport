@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\DeliveryTransport\UseCase\Admin\Transport\Delete;
 
 
+use BaksDev\DeliveryTransport\Entity\Transport\Event\DeliveryTransportEvent;
 use BaksDev\DeliveryTransport\Entity\Transport\Event\DeliveryTransportEventInterface;
 use BaksDev\DeliveryTransport\Type\Transport\Event\DeliveryTransportEventUid;
 use ReflectionProperty;
@@ -52,11 +53,11 @@ final class DeliveryTransportDeleteDTO implements DeliveryTransportEventInterfac
         return $this->id;
     }
     
-    public function setId(DeliveryTransportEventUid $id): void
+    public function setId(DeliveryTransportEvent|DeliveryTransportEventUid $id): void
     {
-        if (!(new ReflectionProperty($this::class, 'local'))->isInitialized($this))
+        if (!(new ReflectionProperty(self::class, 'id'))->isInitialized($this))
         {
-            $this->id = $id;
+            $this->id = $id instanceof DeliveryTransportEvent ? $id->getId() : $id;
         }
     }
 

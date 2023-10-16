@@ -43,7 +43,7 @@ final class CompleteControllerTest extends WebTestCase
 
 
     /** Доступ по роли */
-    public function testRoleProductSuccessful(): void
+    public function testRoleSuccessful(): void
     {
         // Получаем одно из событий
         $identifier = self::$identifier;

@@ -25,14 +25,14 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\Entity\Package;
 
-use InvalidArgumentException;
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
 use BaksDev\Core\Entity\EntityState;
-use Symfony\Component\Validator\Constraints as Assert;
 use BaksDev\DeliveryTransport\Entity\Transport\DeliveryTransport;
 use BaksDev\DeliveryTransport\Type\Package\Id\DeliveryPackageUid;
 use BaksDev\DeliveryTransport\Type\Transport\Id\DeliveryTransportUid;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+use InvalidArgumentException;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /* DeliveryPackage */
 
@@ -96,8 +96,15 @@ class DeliveryPackageTransport extends EntityState
         $this->date = $date;
     }
 
+    public function __toString(): string
+    {
+        return (string) $this->package;
+    }
+
     public function getDto($dto): mixed
     {
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
         if ($dto instanceof DeliveryPackageTransportInterface)
         {
             return parent::getDto($dto);
@@ -108,7 +115,7 @@ class DeliveryPackageTransport extends EntityState
 
     public function setEntity($dto): mixed
     {
-        if ($dto instanceof DeliveryPackageTransportInterface)
+        if ($dto instanceof DeliveryPackageTransportInterface || $dto instanceof self)
         {
             return parent::setEntity($dto);
         }

@@ -70,7 +70,7 @@ class DeliveryPackageProductParameter extends EntityState
     /** Постоянный уникальный идентификатор модификации */
     #[ORM\Column(type: ProductModificationConst::TYPE, nullable: true)]
     private ?ProductModificationConst $modification;
-    
+
     /**
      * Вес, кг
      */
@@ -118,7 +118,7 @@ class DeliveryPackageProductParameter extends EntityState
 
     public function __toString(): string
     {
-        return (string)$this->id;
+        return (string) $this->id;
     }
 
     public function getId(): ProductStockParameterUid
@@ -129,7 +129,10 @@ class DeliveryPackageProductParameter extends EntityState
 
     public function getDto($dto): mixed
     {
-        if ($dto instanceof DeliveryPackageProductParameterInterface) {
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
+        if($dto instanceof DeliveryPackageProductParameterInterface)
+        {
 
             /** Переводим вес граммы в килограммы   */
             return parent::getDto($dto);
@@ -140,7 +143,8 @@ class DeliveryPackageProductParameter extends EntityState
 
     public function setEntity($dto): mixed
     {
-        if ($dto instanceof DeliveryPackageProductParameterInterface) {
+        if($dto instanceof DeliveryPackageProductParameterInterface || $dto instanceof self)
+        {
 
             /** Объем, см3 */
             $this->size = $dto->getWidth() * $dto->getLength() * $dto->getHeight();

@@ -107,12 +107,12 @@ class DeliveryTransportEvent extends EntityEvent
 
     public function __clone()
     {
-        $this->id = new DeliveryTransportEventUid();
+        $this->id = clone $this->id;
     }
 
     public function __toString(): string
     {
-        return (string)$this->id;
+        return (string) $this->id;
     }
 
     public function getId(): DeliveryTransportEventUid
@@ -133,6 +133,8 @@ class DeliveryTransportEvent extends EntityEvent
 
     public function getDto($dto): mixed
     {
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
         if ($dto instanceof DeliveryTransportEventInterface) {
             return parent::getDto($dto);
         }
@@ -142,7 +144,8 @@ class DeliveryTransportEvent extends EntityEvent
 
     public function setEntity($dto): mixed
     {
-        if ($dto instanceof DeliveryTransportEventInterface) {
+        if ($dto instanceof DeliveryTransportEventInterface || $dto instanceof self)
+        {
             return parent::setEntity($dto);
         }
 

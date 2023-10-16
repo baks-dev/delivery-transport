@@ -48,7 +48,8 @@ final class DeliveryPackageHandler
         ValidatorInterface $validator,
         LoggerInterface $logger,
         MessageDispatchInterface $messageDispatch
-    ) {
+    )
+    {
         $this->entityManager = $entityManager;
         $this->validator = $validator;
         $this->logger = $logger;
@@ -58,28 +59,29 @@ final class DeliveryPackageHandler
     /** @see DeliveryPackage */
     public function handle(
         DeliveryPackageDTO $command,
-    ): string|DeliveryPackage {
+    ): string|DeliveryPackage
+    {
         /**
          *  Валидация DeliveryPackageDTO.
          */
         $errors = $this->validator->validate($command);
 
-        if (count($errors) > 0)
+        if(count($errors) > 0)
         {
             /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
 
             return $uniqid;
         }
 
-        if ($command->getEvent())
+        if($command->getEvent())
         {
             $EventRepo = $this->entityManager->getRepository(DeliveryPackageEvent::class)->find(
                 $command->getEvent()
             );
 
-            if ($EventRepo === null)
+            if($EventRepo === null)
             {
                 $uniqid = uniqid('', false);
                 $errorsString = sprintf(
@@ -92,24 +94,29 @@ final class DeliveryPackageHandler
                 return $uniqid;
             }
 
+            $EventRepo->setEntity($command);
+            $EventRepo->setEntityManager($this->entityManager);
             $Event = $EventRepo->cloneEntity();
         }
         else
         {
             $Event = new DeliveryPackageEvent();
+            $Event->setEntity($command);
             $this->entityManager->persist($Event);
         }
 
-        $this->entityManager->clear();
+//        $this->entityManager->clear();
+//        $this->entityManager->persist($Event);
+
+
 
         /* @var DeliveryPackage $Main */
-        if ($Event->getMain())
+        if($Event->getMain())
         {
-            $Main = $this->entityManager->getRepository(DeliveryPackage::class)->findOneBy(
-                ['event' => $command->getEvent()]
-            );
+            $Main = $this->entityManager->getRepository(DeliveryPackage::class)
+                ->findOneBy(['event' => $command->getEvent()]);
 
-            if (empty($Main))
+            if(empty($Main))
             {
                 $uniqid = uniqid('', false);
                 $errorsString = sprintf(
@@ -129,40 +136,39 @@ final class DeliveryPackageHandler
             $Event->setMain($Main);
         }
 
-        $Event->setEntity($command);
-        $this->entityManager->persist($Event);
+        /* присваиваем событие корню */
+        $Main->setEvent($Event);
+
 
         /**
-         * Валидация Event.
+         * Валидация Event
          */
+
         $errors = $this->validator->validate($Event);
 
-        if (count($errors) > 0)
+        if(count($errors) > 0)
         {
             /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
 
             return $uniqid;
         }
-
-        /* присваиваем событие корню */
-        $Main->setEvent($Event);
 
         /**
          * Валидация Main.
          */
         $errors = $this->validator->validate($Main);
 
-        if (count($errors) > 0)
+        if(count($errors) > 0)
         {
             /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
 
             return $uniqid;
         }
-        
+
         $this->entityManager->flush();
 
         /* Отправляем сообщение в шину */

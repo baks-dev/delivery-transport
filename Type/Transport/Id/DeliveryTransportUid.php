@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\Type\Transport\Id;
 
+use App\Kernel;
 use BaksDev\Core\Type\UidType\Uid;
 use Symfony\Component\Uid\AbstractUid;
 
@@ -49,7 +50,8 @@ final class DeliveryTransportUid extends Uid
         mixed $size = null,
         mixed $carrying = null,
     ) {
-        parent::__construct($value);
+        parent::__construct(Kernel::isTestEnvironment() && !$value ? self::TEST : $value);
+
         $this->attr = $attr;
         $this->option = $option;
         $this->carrying = $carrying;

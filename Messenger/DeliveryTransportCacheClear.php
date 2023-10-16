@@ -29,7 +29,7 @@ use BaksDev\Core\Cache\AppCacheInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-#[AsMessageHandler(fromTransport: 'sync')]
+#[AsMessageHandler]
 final class DeliveryTransportCacheClear
 {
     private AppCacheInterface $cache;
@@ -49,7 +49,7 @@ final class DeliveryTransportCacheClear
 		$cache = $this->cache->init('DeliveryTransport');
 		$cache->clear();
 
-        $this->messageDispatchLogger->info('Очистили кеш DeliveryTransport', [__LINE__ => __FILE__]);
+        $this->messageDispatchLogger->info('Очистили кеш DeliveryTransport', [__FILE__.':'.__LINE__]);
 
 	}
 }

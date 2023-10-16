@@ -25,11 +25,18 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\Type\Package\Id;
 
+use App\Kernel;
 use BaksDev\Core\Type\UidType\Uid;
+use Symfony\Component\Uid\AbstractUid;
 
 final class DeliveryPackageUid extends Uid
 {
     public const TEST = '0188a997-7499-7b04-b734-ef9750453ef1';
     
     public const TYPE = 'delivery_package';
+
+    public function __construct(AbstractUid|string|null $value = null)
+    {
+        parent::__construct(Kernel::isTestEnvironment() && !$value ? self::TEST : $value);
+    }
 }
