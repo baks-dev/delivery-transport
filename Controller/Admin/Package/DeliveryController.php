@@ -67,7 +67,7 @@ final class DeliveryController extends AbstractController
 
         // Форма
         $form = $this->createForm(DeliveryProductStockForm::class, $DeliveryProductStockDTO, [
-            'action' => $this->generateUrl('DeliveryTransport:admin.package.delivery', ['id' => $Stock->getId()]),
+            'action' => $this->generateUrl('delivery-transport:admin.package.delivery', ['id' => $Stock->getId()]),
         ]);
 
         $form->handleRequest($request);
@@ -81,7 +81,7 @@ final class DeliveryController extends AbstractController
                 $this->addFlash('success', 'admin.success.delivery', 'admin.delivery.package');
 
                 /* Чистим кеш модуля */
-                $cache = new FilesystemAdapter('DeliveryTransport');
+                $cache = new FilesystemAdapter('delivery-transport:');
                 $cache->clear();
 
                 /** Получаем упаковку с данным заказом */
@@ -103,7 +103,7 @@ final class DeliveryController extends AbstractController
                     }
                 }
 
-                return $this->redirectToRoute('DeliveryTransport:admin.package.index', ['package' => (string)$DeliveryPackage?->getId()], 200);
+                return $this->redirectToRoute('delivery-transport:admin.package.index', ['package' => (string)$DeliveryPackage?->getId()], 200);
             }
 
             $this->addFlash('danger', 'admin.danger.delivery', 'admin.delivery.package', $ProductStock);

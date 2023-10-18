@@ -104,7 +104,7 @@ final class DivideController extends AbstractController
 
         // Форма заявки
         $form = $this->createForm(DivideProductStockForm::class, $DivideProductStockDTO, [
-            'action' => $this->generateUrl('DeliveryTransport:admin.divide', ['id' => $ProductStockEvent->getId()]),
+            'action' => $this->generateUrl('delivery-transport:admin.divide', ['id' => $ProductStockEvent->getId()]),
         ]);
 
         $form->handleRequest($request);

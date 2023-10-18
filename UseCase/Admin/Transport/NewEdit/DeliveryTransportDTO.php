@@ -139,6 +139,11 @@ final class DeliveryTransportDTO implements DeliveryTransportEventInterface
 
     public function addTranslate(Trans\DeliveryTransportTransDTO $trans): void
     {
+        if(empty($trans->getLocal()->getLocalValue()))
+        {
+            return;
+        }
+
         if (!$this->translate->contains($trans))
         {
             $this->translate->add($trans);

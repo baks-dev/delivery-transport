@@ -24,7 +24,7 @@
             {% endif %}
 
 
-            <a href="{{ path('DeliveryTransport:admin.parameter.edit', {
+            <a href="{{ path('delivery-transport:admin.parameter.edit', {
                 product : item.id,
                 offer: item.product_offer_const,
                 variation: item.product_variation_const,
@@ -42,7 +42,7 @@
             <div class="ms-5">
 
                 {# Название #}
-                <a href="{{ path('DeliveryTransport:admin.parameter.edit', {
+                <a href="{{ path('delivery-transport:admin.parameter.edit', {
                     product : item.id,
                     offer: item.product_offer_const,
                     variation: item.product_variation_const,

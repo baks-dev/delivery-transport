@@ -55,7 +55,7 @@ final class NavigatorController extends AbstractController
         if (!$geoWarehouse)
         {
             $this->addFlash('danger', 'Невозможно определить геолокацию склада погрузки');
-            return $this->redirectToRoute('DeliveryTransport:admin.package.index');
+            return $this->redirectToRoute('delivery-transport:admin.package.index');
         }
 
         $goeData[] = $geoWarehouse['latitude'].','.$geoWarehouse['longitude'];

@@ -50,7 +50,7 @@ final class Role implements RoleInterface, MenuAdminInterface
     /** Метод возвращает PATH раздела */
     public function getPath(): string
     {
-        return 'DeliveryTransport:admin.parameter.index';
+        return 'delivery-transport:admin.parameter.index';
     }
 
     /**

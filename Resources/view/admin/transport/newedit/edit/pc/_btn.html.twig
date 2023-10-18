@@ -11,7 +11,7 @@
 		<div class="d-flex gap-3">
 			
 			<a href="{{ app.request.headers.get('referer') is null or app.request.uri == app.request.headers.get('referer') ?
-			path('Delivery:admin.index') : app.request.headers.get('referer') }}"
+			path('delivery:admin.index') : app.request.headers.get('referer') }}"
 					class="btn btn-light">
 				{{ 'btn.cancel'|trans({}, 'core.btn') }}
 			</a>

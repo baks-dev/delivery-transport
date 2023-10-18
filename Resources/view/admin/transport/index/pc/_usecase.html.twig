@@ -31,7 +31,7 @@
 		{# Редактировать #}
 		{% if is_granted(ROLE~'_EDIT') or is_granted('ROLE_ADMIN') %}
 			<li class="list-group-item d-flex justify-content-between bg-transparent border-0 text-truncate rounded-5">
-				<a href="{{ path('DeliveryTransport:admin.transport.newedit.edit', {id: item.event }) }}"
+				<a href="{{ path('delivery-transport:admin.transport.newedit.edit', {id: item.event }) }}"
 						class="text-decoration-none text-dark w-100"
 						title="{{ 'btn.edit'|trans({}, 'core.btn') }}">
 					{{ 'btn.edit'|trans({}, 'core.btn') }}
@@ -44,7 +44,7 @@
 		{% if  is_granted(ROLE~'_DELETE') or is_granted('ROLE_ADMIN') %}
 			<li class="list-group-item d-flex justify-content-between bg-transparent border-0 text-truncate rounded-5">
 				
-				<a href="{{ path('DeliveryTransport:admin.transport.delete', { id: item.event }) }}"
+				<a href="{{ path('delivery-transport:admin.transport.delete', { id: item.event }) }}"
 						class="text-decoration-none text-dark w-100 modal-link"
 						data-bs-toggle="modal"
 						data-bs-target="#modal"

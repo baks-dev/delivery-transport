@@ -1,6 +1,6 @@
 # BaksDev Delivery Transport
 
-![Version](https://img.shields.io/badge/version-6.3.6-blue) ![php 8.1+](https://img.shields.io/badge/php-min%208.1-red.svg)
+![Version](https://img.shields.io/badge/version-6.3.7-blue) ![php 8.1+](https://img.shields.io/badge/php-min%208.1-red.svg)
 
 Модуль парка автомобилей доставки заказов
 
@@ -35,5 +35,4 @@ $ php bin/phpunit --group=delivery-transport
 ## Лицензия ![License](https://img.shields.io/badge/MIT-green)
 
 The MIT License (MIT). Обратитесь к [Файлу лицензии](LICENSE.md) за дополнительной информацией.
-
 

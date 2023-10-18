@@ -63,10 +63,10 @@ return static function (ContainerConfigurator $container, DoctrineConfig $doctri
 
     $MODULE = substr(__DIR__, 0, strpos(__DIR__, "Resources"));
 
-    $emDefault->mapping('DeliveryTransport')
+    $emDefault->mapping('delivery-transport:')
         ->type('attribute')
         ->dir($MODULE.'Entity')
         ->isBundle(false)
         ->prefix('BaksDev\DeliveryTransport\Entity')
-        ->alias('DeliveryTransport');
+        ->alias('delivery-transport:');
 };

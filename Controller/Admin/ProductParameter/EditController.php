@@ -85,7 +85,7 @@ final class EditController extends AbstractController
             DeliveryPackageProductParameterForm::class,
             $DeliveryPackageProductParameterDTO,
             ['action' => $this->generateUrl(
-                'DeliveryTransport:admin.parameter.edit',
+                'delivery-transport:admin.parameter.edit',
                 [
                     'product' => $DeliveryPackageProductParameterDTO->getProduct(),
                     'offer' => $DeliveryPackageProductParameterDTO->getOffer(),
@@ -106,7 +106,7 @@ final class EditController extends AbstractController
                 {
                     $this->addFlash('success', 'admin.success.update', 'admin.product.parameter');
 
-                    return $this->redirectToRoute('DeliveryTransport:admin.parameter.index');
+                    return $this->redirectToRoute('delivery-transport:admin.parameter.index');
                 }
 
                 $this->addFlash('danger', 'admin.danger.new', 'admin.product.parameter', $ProductStockParameter);

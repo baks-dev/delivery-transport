@@ -88,7 +88,7 @@
 			{# Погрузка заказа #}
 			{% if orders.stocks_status == 'extradition' %}
 
-				<a href="{{ path('DeliveryTransport:admin.package.delivery', { id : orders.stock_id }) }}"
+				<a href="{{ path('delivery-transport:admin.package.delivery', { id : orders.stock_id }) }}"
 				   class="btn btn-warning modal-link text-nowrap"
 				   data-bs-toggle="modal"
 				   data-bs-target="#modal"
@@ -112,7 +112,7 @@
 						Ожидается доставка
 					</button>
 				{% else %}
-					<a href="{{ path('DeliveryTransport:admin.package.completed', { id : orders.stock_id }) }}"
+					<a href="{{ path('delivery-transport:admin.package.completed', { id : orders.stock_id }) }}"
 					   class="btn btn-success modal-link text-nowrap"
 					   data-bs-toggle="modal"
 					   data-bs-target="#modal"
@@ -128,7 +128,7 @@
 				{# Погрузка заявки перемещение  #}{#
 			{% elseif orders.order_move_status == 'extradition' %}
 
-				<a href="{{ path('DeliveryTransport:admin.package.delivery', { id : orders.order_move_id }) }}"
+				<a href="{{ path('delivery-transport:admin.package.delivery', { id : orders.order_move_id }) }}"
 				   class="btn btn-warning modal-link text-nowrap"
 				   data-bs-toggle="modal"
 				   data-bs-target="#modal"

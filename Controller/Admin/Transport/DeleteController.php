@@ -52,7 +52,7 @@ final class DeleteController extends AbstractController
         $DeliveryTransportDeleteDTO = new DeliveryTransportDeleteDTO();
         $DeliveryTransportEvent->getDto($DeliveryTransportDeleteDTO);
         $form = $this->createForm(DeliveryTransportDeleteForm::class, $DeliveryTransportDeleteDTO, [
-            'action' => $this->generateUrl('DeliveryTransport:admin.transport.delete', ['id' => $DeliveryTransportDeleteDTO->getEvent()]),
+            'action' => $this->generateUrl('delivery-transport:admin.transport.delete', ['id' => $DeliveryTransportDeleteDTO->getEvent()]),
         ]);
         $form->handleRequest($request);
 
@@ -64,7 +64,7 @@ final class DeleteController extends AbstractController
             {
                 $this->addFlash('admin.page.delete', 'admin.success.delete', 'admin.delivery.transport');
 
-                return $this->redirectToRoute('DeliveryTransport:admin.transport.index');
+                return $this->redirectToRoute('delivery-transport:admin.transport.index');
             }
 
             $this->addFlash(
@@ -74,7 +74,7 @@ final class DeleteController extends AbstractController
                 $DeliveryTransport
             );
 
-            return $this->redirectToRoute('DeliveryTransport:admin.transport.index', status: 400);
+            return $this->redirectToRoute('delivery-transport:admin.transport.index', status: 400);
         }
 
         return $this->render([

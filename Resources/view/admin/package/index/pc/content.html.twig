@@ -37,7 +37,7 @@
 
                 {# Добавить перемещение #}
                 {# {% if is_granted('ROLE_PRODUCT_STOCK_MOVING_NEW') or is_granted('ROLE_ADMIN') %}
-                    <a href="{{ path('ProductStocks:admin.moving.new') }}"
+                    <a href="{{ path('products-stocks:admin.moving.new') }}"
                        class="btn btn-danger modal-link"
                        data-bs-toggle="modal"
                        data-bs-target="#modal"
@@ -201,7 +201,7 @@
 
 
                     <div>
-                        <a href="{{ path('DeliveryTransport:admin.package.navigator', { id : item.package_id }) }}"
+                        <a href="{{ path('delivery-transport:admin.package.navigator', { id : item.package_id }) }}"
                            class="btn btn-primary text-nowrap"
                            data-bs-toggle="tooltip"
                            data-bs-placement="bottom"

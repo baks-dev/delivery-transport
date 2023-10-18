@@ -60,7 +60,7 @@ final class NewController extends AbstractController
             {
                 $this->addFlash('success', 'admin.success.new', 'admin.delivery.transport');
 
-                return $this->redirectToRoute('DeliveryTransport:admin.transport.index');
+                return $this->redirectToRoute('delivery-transport:admin.transport.index');
             }
 
             $this->addFlash('danger', 'admin.danger.new', 'admin.delivery.transport', $DeliveryTransport);

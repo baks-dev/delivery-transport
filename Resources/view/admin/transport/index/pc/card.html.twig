@@ -30,7 +30,7 @@
 				
 				{% if is_granted(ROLE~'_EDIT') or is_granted('ROLE_ADMIN') %}
 					{# Название #}
-					<a href="{{ path('DeliveryTransport:admin.transport.newedit.edit', { id: item.event }) }}"
+					<a href="{{ path('delivery-transport:admin.transport.newedit.edit', { id: item.event }) }}"
 							class="text-decoration-none"
 					>{{ item.auto_name }}</a>
 				{% else %}

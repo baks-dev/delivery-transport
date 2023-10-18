@@ -80,7 +80,7 @@ final class AllDeliveryTransportRegion implements AllDeliveryTransportRegionInte
 
 
         /* Кешируем результат ORM */
-        return $qb->enableCache('DeliveryTransport', 86400)->getResult();
+        return $qb->enableCache('delivery-transport:', 86400)->getResult();
 
     }
 }

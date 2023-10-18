@@ -23,33 +23,14 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\DeliveryTransport\Messenger;
+namespace BaksDev\DeliveryTransport\Messenger\Package;
 
 use BaksDev\Core\Cache\AppCacheInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-final class DeliveryTransportCacheClear
+final class DeliveryPackageDispatch
 {
-    private AppCacheInterface $cache;
-    private LoggerInterface $messageDispatchLogger;
-
-    public function __construct(
-        AppCacheInterface $cache,
-        LoggerInterface $messageDispatchLogger,
-    ) {
-        $this->cache = $cache;
-        $this->messageDispatchLogger = $messageDispatchLogger;
-    }
-
-    public function __invoke(DeliveryTransportMessage $message)
-	{
-		/* Чистим кеш модуля */
-		$cache = $this->cache->init('DeliveryTransport');
-		$cache->clear();
-
-        $this->messageDispatchLogger->info('Очистили кеш DeliveryTransport', [__FILE__.':'.__LINE__]);
-
-	}
+    public function __invoke(DeliveryPackageMessage $message): void {}
 }
