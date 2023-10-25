@@ -23,8 +23,10 @@
 
 namespace BaksDev\DeliveryTransport\UseCase\Admin\Transport\Delete\Modify;
 
+use BaksDev\Core\Type\Modify\Modify\ModifyActionDelete;
 use BaksDev\Core\Type\Modify\ModifyAction;
-use BaksDev\Core\Type\Modify\ModifyActionEnum;
+use BaksDev\Core\Type\Modify\Modify\ModifyActionNew;
+use BaksDev\Core\Type\Modify\Modify\ModifyActionUpdate;
 use BaksDev\DeliveryTransport\Entity\Transport\Modify\DeliveryTransportModifyInterface;
 
 /** @see DeliveryTransportModify $var */
@@ -35,7 +37,7 @@ final class DeliveryTransportModifyDTO implements DeliveryTransportModifyInterfa
 
     public function __construct()
     {
-        $this->action = new ModifyAction(ModifyActionEnum::DELETE);
+        $this->action = new ModifyAction(ModifyActionDelete::class);
     }
 
     /**
