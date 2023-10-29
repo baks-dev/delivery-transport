@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\DeliveryTransport\Type\Package\Status;
 
 use BaksDev\DeliveryTransport\Type\Package\Status\DeliveryPackageStatus\Collection\DeliveryPackageStatusInterface;
+use InvalidArgumentException;
 
 final class DeliveryPackageStatus
 {
@@ -33,15 +34,43 @@ final class DeliveryPackageStatus
 
     private ?DeliveryPackageStatusInterface $status = null;
 
-    public function __construct(self|string|DeliveryPackageStatusInterface $status)
+    public function __construct(DeliveryPackageStatusInterface|self|string $status)
     {
-        if ($status instanceof DeliveryPackageStatusInterface) {
-            $this->status = $status;
+        if(is_string($status) && class_exists($status))
+        {
+            $instance = new $status();
+
+            if($instance instanceof DeliveryPackageStatusInterface)
+            {
+                $this->status = $instance;
+                return;
+            }
         }
 
-        if ($status instanceof $this) {
-            $this->status = $status->getPackageStatusStatus();
+        if($status instanceof DeliveryPackageStatusInterface)
+        {
+            $this->status = $status;
+            return;
         }
+
+        if($status instanceof self)
+        {
+            $this->status = $status->getPackageStatus();
+            return;
+        }
+
+        /** @var DeliveryPackageStatusInterface $declare */
+        foreach(self::getDeclared() as $declare)
+        {
+            if($declare::equals($status))
+            {
+                $this->status = new $declare;
+                return;
+            }
+        }
+
+        throw new InvalidArgumentException(sprintf('Not found DeliveryPackageStatusInterface %s', $status));
+
     }
 
     public function __toString(): string
@@ -52,7 +81,7 @@ final class DeliveryPackageStatus
     /**
      * Возвращает значение (value) страны String
      */
-    public function getPackageStatusStatus(): DeliveryPackageStatusInterface
+    public function getPackageStatus(): DeliveryPackageStatusInterface
     {
         return $this->status;
     }
@@ -65,9 +94,35 @@ final class DeliveryPackageStatus
         return $this->status?->getValue();
     }
 
-    public function equals(DeliveryPackageStatusInterface $status): bool
+    public static function cases(): array
     {
-        return $this->status->getValue() === $status->getValue();
+        $case = [];
+
+        foreach(self::getDeclared() as $status)
+        {
+            /** @var DeliveryPackageStatusInterface $class */
+            $class = new $status;
+            $case[] = new self($class);
+        }
+
+        return $case;
+    }
+
+    public static function getDeclared(): array
+    {
+        return array_filter(
+            get_declared_classes(),
+            static function($className) {
+                return in_array(DeliveryPackageStatusInterface::class, class_implements($className), true);
+            }
+        );
+    }
+
+    public function equals(mixed $status): bool
+    {
+        $status = new self($status);
+
+        return $this->getPackageStatusValue() === $status->getPackageStatusValue();
     }
 
 }

@@ -34,20 +34,12 @@ final class DeliveryPackageStatusType extends StringType
 {
     public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
     {
-        return $value instanceof DeliveryPackageStatus ? $value->getPackageStatusValue() : $value;
+        return (string) $value;
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform): mixed
     {
-        foreach ($this->getPackageStatusStatus() as $status)
-        {
-            if ($status::STATUS === $value)
-            {
-                return new DeliveryPackageStatus(new $status());
-            }
-        }
-
-        throw new InvalidArgumentException(sprintf('Not found Delivery Package Status %s', $value));
+        return !empty($value) ? new DeliveryPackageStatus($value) : null;
     }
 
     public function getName(): string
@@ -55,25 +47,9 @@ final class DeliveryPackageStatusType extends StringType
         return DeliveryPackageStatus::TYPE;
     }
 
-    public function getPackageStatusStatus(): array
-    {
-        return array_filter(
-            get_declared_classes(),
-            static function ($className) {
-                return in_array(DeliveryPackageStatusInterface::class, class_implements($className), true);
-            }
-        );
-    }
 
     public function requiresSQLCommentHint(AbstractPlatform $platform): bool
     {
         return true;
-    }
-
-    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
-    {
-        $column['length'] = 10;
-
-        return $platform->getStringTypeDeclarationSQL($column);
     }
 }

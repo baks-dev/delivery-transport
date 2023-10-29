@@ -47,7 +47,7 @@ final class DeliveryPackageStatusCollection
         $case = null;
 
         foreach ($this->status as $status) {
-            $case[] = new DeliveryPackageStatus(new $status());
+            $case[] = new $status();
         }
 
         return $case;

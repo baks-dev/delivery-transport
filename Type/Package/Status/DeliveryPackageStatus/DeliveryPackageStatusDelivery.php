@@ -44,4 +44,11 @@ class DeliveryPackageStatusDelivery implements DeliveryPackageStatusInterface
         return self::STATUS;
     }
 
+    /**
+     * Проверяет, относится ли статус к данному объекту
+     */
+    public static function equals(string $status): bool
+    {
+        return self::STATUS === strtolower($status);
+    }
 }
