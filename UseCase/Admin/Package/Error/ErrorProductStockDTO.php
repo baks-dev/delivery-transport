@@ -21,7 +21,6 @@ declare(strict_types=1);
 namespace BaksDev\DeliveryTransport\UseCase\Admin\Package\Error;
 
 use BaksDev\Core\Type\UidType\Uid;
-use BaksDev\DeliveryTransport\Type\ProductStockStatus\ProductStockStatusError;
 use BaksDev\Products\Stocks\Entity\Event\ProductStockEventInterface;
 use BaksDev\Products\Stocks\Type\Event\ProductStockEventUid;
 use BaksDev\Products\Stocks\Type\Status\ProductStockStatus;
@@ -45,7 +44,7 @@ final class ErrorProductStockDTO implements ProductStockEventInterface
 
     public function __construct(ProductStockEventUid $id)
     {
-        $this->status = new ProductStockStatus(new ProductStockStatusError());
+        $this->status = new ProductStockStatus(new ProductStockStatus\ProductStockStatusError());
         $this->id = $id;
         $this->comment = 'Заказ имеет превышение по весу либо габаритам. Для доставки его необходимо разделить!';
     }
