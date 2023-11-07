@@ -58,7 +58,6 @@ final class ProductParameterFilterForm extends AbstractType
                 return $category->getOptions();
             },
             'label' => false,
-            /*'attr' => ['onchange' => 'this.form.submit()'],*/
         ]);
 
         $builder->addEventListener(

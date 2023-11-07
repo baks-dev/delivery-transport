@@ -93,7 +93,7 @@ final class DivideController extends AbstractController
 
         if($Order === null)
         {
-            throw new DomainException(sprintf('Заказ ID: %s не найден', $ProductStockEvent->getOrder()));
+            return new Response('Error 404');
         }
 
         /**
