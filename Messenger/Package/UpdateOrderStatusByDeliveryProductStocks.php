@@ -78,7 +78,6 @@ final class UpdateOrderStatusByDeliveryProductStocks
      */
     public function __invoke(ProductStockMessage $message): void
     {
-        $this->logger->info('MessageHandler', ['handler' => self::class]);
 
         $ProductStockEvent = $this->entityManager->getRepository(ProductStockEvent::class)
             ->find($message->getEvent());
@@ -101,7 +100,7 @@ final class UpdateOrderStatusByDeliveryProductStocks
                     ->getRepository(ProductStockTotal::class)
                     ->findOneBy(
                         [
-                            'warehouse' => $ProductStockEvent->getWarehouse(),
+                            'profile' => $ProductStockEvent->getProfile(),
                             'product' => $product->getProduct(),
                             'offer' => $product->getOffer(),
                             'variation' => $product->getVariation(),
@@ -112,7 +111,7 @@ final class UpdateOrderStatusByDeliveryProductStocks
                 if (!$ProductStockTotal)
                 {
                     $ProductStockTotal = new ProductStockTotal(
-                        $ProductStockEvent->getWarehouse(),
+                        $ProductStockEvent->getProfile(),
                         $product->getProduct(),
                         $product->getOffer(),
                         $product->getVariation(),
@@ -125,6 +124,19 @@ final class UpdateOrderStatusByDeliveryProductStocks
                 /** Снимаем резерв и наличие со склада (переход на баланс транспорта доставки) */
                 $ProductStockTotal->subTotal($product->getTotal());
                 $ProductStockTotal->subReserve($product->getTotal());
+
+                $this->logger->info('Перевели баланс продукции со склада на баланс транспорта',
+                    [
+                        __FILE__.':'.__LINE__,
+                        'profile' => $ProductStockEvent->getProfile(),
+                        'product' => $product->getProduct(),
+                        'offer' => $product->getOffer(),
+                        'variation' => $product->getVariation(),
+                        'modification' => $product->getModification(),
+                        'total' => $product->getTotal(),
+                    ]
+                );
+
             }
 
             $this->entityManager->flush();
@@ -136,7 +148,6 @@ final class UpdateOrderStatusByDeliveryProductStocks
         {
             return;
         }
-
 
         /**
          * Получаем событие заказа.
@@ -154,9 +165,17 @@ final class UpdateOrderStatusByDeliveryProductStocks
                 ->addData(['order' => (string) $ProductStockEvent->getOrder()])
                 ->addData(['profile' => (string) $ProductStockEvent->getProfile()])
                 ->send('orders');
+
+
+            $this->logger->info('Обновили статус заказа на "Доставка" (Delivery)',
+                [
+                    __FILE__.':'.__LINE__,
+                    'order' => (string) $ProductStockEvent->getOrder(),
+                    'profile' => (string) $ProductStockEvent->getProfile()
+                ]);
+
         }
 
-        $this->logger->info('MessageHandlerSuccess', ['handler' => self::class]);
 
     }
 }

@@ -86,7 +86,7 @@ final class UpdateOrderStatusByCompletedProductStocks
      */
     public function __invoke(ProductStockMessage $message): void
     {
-        $this->logger->info('MessageHandler', ['handler' => self::class]);
+
 
         /**
          * Получаем статус заявки.
@@ -111,7 +111,7 @@ final class UpdateOrderStatusByCompletedProductStocks
             $ProductStockEvent->getDto($WarehouseProductStockDTO);
 
             /** Присваиваем приходу - склад назначения */
-            $WarehouseProductStockDTO->setWarehouse($ProductStockEvent->getMove()->getDestination());
+            $WarehouseProductStockDTO->setProfile($ProductStockEvent->getMove()->getDestination());
             $this->WarehouseProductStockHandler->handle($WarehouseProductStockDTO);
 
 
@@ -141,8 +141,16 @@ final class UpdateOrderStatusByCompletedProductStocks
                 ->addData(['order' => (string) $ProductStockEvent->getOrder()])
                 ->addData(['profile' => (string) $ProductStockEvent->getProfile()])
                 ->send('orders');
+
+
+            $this->logger->info('Обновили статус заказа на "Выполнен" (Completed)',
+                [
+                    __FILE__.':'.__LINE__,
+                    'order' => (string) $ProductStockEvent->getOrder(),
+                    'profile' => (string) $ProductStockEvent->getProfile()
+                ]);
+
         }
 
-        $this->logger->info('MessageHandlerSuccess', ['handler' => self::class]);
     }
 }

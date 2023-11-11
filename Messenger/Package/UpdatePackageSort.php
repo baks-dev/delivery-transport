@@ -71,7 +71,6 @@ final class UpdatePackageSort
      */
     public function __invoke(DeliveryPackageMessage $message): bool
     {
-        $this->logger->info('MessageHandler', ['handler' => self::class]);
 
         /** Определяем геолокацию склада погрузки (начальную точку) */
         $DeliveryPackageUid = $message->getId();
@@ -135,6 +134,10 @@ final class UpdatePackageSort
         $DeliveryPackage->setInterval($interval);
 
         $this->entityManager->flush();
+
+
+        $this->logger->info('Обновили сортировку путевого листа', [__FILE__.':'.__LINE__]);
+
         return true;
     }
 }

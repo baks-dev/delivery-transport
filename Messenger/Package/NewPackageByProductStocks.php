@@ -138,14 +138,13 @@ final class NewPackageByProductStocks
      */
     public function __invoke(ProductStockMessage $message): void
     {
-        $this->logger->info('MessageHandler', ['handler' => self::class]);
-
         /** Получаем заявку */
 //        $ProductStock = $this->entityManager->getRepository(ProductStock::class)
 //            ->find($message->getId());
 
         /** Получаем статус заявки */
-        $ProductStockEvent = $this->entityManager->getRepository(ProductStockEvent::class)
+        $ProductStockEvent = $this->entityManager
+            ->getRepository(ProductStockEvent::class)
             ->find($message->getEvent());
 
         /*
@@ -163,8 +162,7 @@ final class NewPackageByProductStocks
         }
 
 
-
-
+        $this->logger->info('MessageHandler', ['handler' => self::class]);
 
         /*
          * Если заявка "ПРИНИМАЕМ ПРИХОД НА СКЛАД" - пробуем закрыть путевой лист и добавить заказ в путевой лист
