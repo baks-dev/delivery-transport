@@ -51,19 +51,22 @@ final class IndexController extends AbstractController
         #[ParamConverter(DeliveryPackageUid::class)] $package = null,
         int $page = 0,
     ): Response {
+
         // Поиск
         $search = new SearchDTO();
         $searchForm = $this->createForm(SearchForm::class, $search);
         $searchForm->handleRequest($request);
 
         // Фильтр
-        $ROLE_ADMIN = $this->isGranted('ROLE_ADMIN');
-        $filter = new DeliveryPackageFilterDTO($request, $ROLE_ADMIN ? null : $this->getProfileUid());
+        $filter = new DeliveryPackageFilterDTO($request);
         $filterForm = $this->createForm(DeliveryPackageFilterForm::class, $filter);
         $filterForm->handleRequest($request);
         
         // Получаем список
-        $DeliveryPackage = $allDeliveryPackage->fetchAllDeliveryPackageAssociative($search, $filter);
+        $DeliveryPackage = $allDeliveryPackage
+            ->search($search)
+            ->filter($filter)
+            ->fetchAllDeliveryPackageAssociative($this->getProfileUid());
 
         return $this->render(
             [

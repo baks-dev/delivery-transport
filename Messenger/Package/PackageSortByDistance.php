@@ -39,7 +39,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler(priority: 99)]
-final class UpdatePackageSort
+final class PackageSortByDistance
 {
     private EntityManagerInterface $entityManager;
 
@@ -57,7 +57,8 @@ final class UpdatePackageSort
         PackageWarehouseGeocodeInterface $packageWarehouseGeocode,
         GeocodeNavigator $geocodeNavigator,
         LoggerInterface $messageDispatchLogger
-    ) {
+    )
+    {
         $this->entityManager = $entityManager;
         $this->packageOrderGeocode = $packageOrderGeocode;
         $this->packageWarehouseGeocode = $packageWarehouseGeocode;
@@ -69,17 +70,16 @@ final class UpdatePackageSort
      * Сортируем поставку согласно общему маршруту (у кого больше маршрут - тот первый на погрузку)
      * Сортируем заказы по расстоянию для постройки маршрута.
      */
-    public function __invoke(DeliveryPackageMessage $message): bool
+    public function __invoke(DeliveryPackageMessage $message): void
     {
 
         /** Определяем геолокацию склада погрузки (начальную точку) */
         $DeliveryPackageUid = $message->getId();
         $geoWarehouse = $this->packageWarehouseGeocode->fetchPackageWarehouseGeocodeAssociative($DeliveryPackageUid);
 
-        if ($geoWarehouse === false)
+        if($geoWarehouse === false)
         {
-            // 'Невозможно определить путевой лист'
-            return false;
+            return;
         }
 
         /*
@@ -94,7 +94,7 @@ final class UpdatePackageSort
 
         $geoData = $this->packageOrderGeocode->fetchAllPackageOrderGeocodeAssociative($DeliveryPackageEventUid);
 
-        foreach ($geoData as $geo)
+        foreach($geoData as $geo)
         {
             /* Добавляем к навигации точки заказов */
             $this->geocodeNavigator->addGeocode(new GpsLatitude($geo['latitude']), new  GpsLongitude($geo['longitude']), $geo['id']);
@@ -108,7 +108,7 @@ final class UpdatePackageSort
         /*
          * Обновляем сортировку заказов в листе погрузки
          */
-        foreach ($navigator as $sort => $order)
+        foreach($navigator as $sort => $order)
         {
             /** Обновляем сортировку, если упаковка заказа */
 
@@ -116,7 +116,7 @@ final class UpdatePackageSort
                 ['event' => $DeliveryPackageEventUid, 'stock' => $order['attr']]
             );
 
-            $DeliveryPackageStocks?->setSort( $sort + 1);
+            $DeliveryPackageStocks?->setSort($sort + 1);
 
         }
 
@@ -128,16 +128,12 @@ final class UpdatePackageSort
         /**
          * Обновляем сортировку путевого листа.
          */
-        $DeliveryPackage = $this->entityManager->getRepository(DeliveryPackageTransport::class)->findOneBy(
-            ['package' => $DeliveryPackageUid]
-        );
+        $DeliveryPackage = $this->entityManager->getRepository(DeliveryPackageTransport::class)
+            ->findOneBy(['package' => $DeliveryPackageUid]);
         $DeliveryPackage->setInterval($interval);
 
         $this->entityManager->flush();
 
-
         $this->logger->info('Обновили сортировку путевого листа', [__FILE__.':'.__LINE__]);
-
-        return true;
     }
 }

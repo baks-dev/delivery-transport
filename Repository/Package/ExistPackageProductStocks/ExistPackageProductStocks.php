@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\Repository\Package\ExistPackageProductStocks;
 
+use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\DeliveryTransport\Entity\Package\DeliveryPackage;
 use BaksDev\DeliveryTransport\Entity\Package\Stocks\DeliveryPackageStocks;
 use BaksDev\DeliveryTransport\Type\Package\Id\DeliveryPackageUid;
@@ -36,12 +37,18 @@ use Doctrine\DBAL\Connection;
 
 final class ExistPackageProductStocks implements ExistPackageProductStocksInterface
 {
-    private Connection $connection;
+//    private Connection $connection;
+//
+//    public function __construct(
+//        Connection $connection,
+//    ) {
+//        $this->connection = $connection;
+//    }
 
-    public function __construct(
-        Connection $connection,
-    ) {
-        $this->connection = $connection;
+    private DBALQueryBuilder $DBALQueryBuilder;
+
+    public function __construct(DBALQueryBuilder $DBALQueryBuilder) {
+        $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
 
     /**
@@ -49,9 +56,9 @@ final class ExistPackageProductStocks implements ExistPackageProductStocksInterf
      */
     public function isExistStocksNotDeliveryPackage(DeliveryPackageUid $package): bool
     {
-        $qbExist = $this->connection->createQueryBuilder();
+        $qbExist = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
-        $qbExist->select('1');
+        //$qbExist->select('1');
 
         $qbExist->from(DeliveryPackage::TABLE, 'package');
 
@@ -78,13 +85,15 @@ final class ExistPackageProductStocks implements ExistPackageProductStocksInterf
 
         $qbExist->where('package.id = :package');
 
-        $qb = $this->connection->createQueryBuilder();
-        $qb->select(sprintf('EXISTS(%s)', $qbExist->getSQL()));
+        //$qb = $this->connection->createQueryBuilder();
+        //$qb->select(sprintf('EXISTS(%s)', $qbExist->getSQL()));
 
-        $qb->setParameter('package', $package, DeliveryPackageUid::TYPE);
-        $qb->setParameter('status', new ProductStockStatus(new ProductStockStatusDelivery()), ProductStockStatus::TYPE);
+        $qbExist->setParameter('package', $package, DeliveryPackageUid::TYPE);
+        $qbExist->setParameter('status', new ProductStockStatus(new ProductStockStatusDelivery()), ProductStockStatus::TYPE);
 
-        return $qb->fetchOne();
+        return $qbExist->fetchExist();
+
+        //return $qb->fetchOne();
     }
 
 
@@ -93,9 +102,9 @@ final class ExistPackageProductStocks implements ExistPackageProductStocksInterf
      */
     public function isExistStocksDeliveryPackage(DeliveryPackageUid $package): bool
     {
-        $qbExist = $this->connection->createQueryBuilder();
+        $qbExist = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
-        $qbExist->select('1');
+        //$qbExist->select('1');
 
         $qbExist->from(DeliveryPackage::TABLE, 'package');
 
@@ -122,12 +131,14 @@ final class ExistPackageProductStocks implements ExistPackageProductStocksInterf
 
         $qbExist->where('package.id = :package');
 
-        $qb = $this->connection->createQueryBuilder();
-        $qb->select(sprintf('EXISTS(%s)', $qbExist->getSQL()));
+        return $qbExist->fetchExist();
 
-        $qb->setParameter('package', $package, DeliveryPackageUid::TYPE);
-        $qb->setParameter('status', new ProductStockStatus(new ProductStockStatusDelivery()), ProductStockStatus::TYPE);
-
-        return $qb->fetchOne();
+//        $qb = $this->connection->createQueryBuilder();
+//        $qb->select(sprintf('EXISTS(%s)', $qbExist->getSQL()));
+//
+//        $qb->setParameter('package', $package, DeliveryPackageUid::TYPE);
+//        $qb->setParameter('status', new ProductStockStatus(new ProductStockStatusDelivery()), ProductStockStatus::TYPE);
+//
+//        return $qb->fetchOne();
     }
 }

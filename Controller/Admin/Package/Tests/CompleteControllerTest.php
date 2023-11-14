@@ -24,7 +24,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
-/** @group delivery-transport */
+/**
+ * @group delivery-transport
+ */
 #[When(env: 'test')]
 final class CompleteControllerTest extends WebTestCase
 {

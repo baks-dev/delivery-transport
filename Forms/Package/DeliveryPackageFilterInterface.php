@@ -30,5 +30,5 @@ interface DeliveryPackageFilterInterface
 {
     public function getDate(): ?DateTimeImmutable;
 
-    public function getProfile(): ?UserProfileUid;
+    //public function getProfile(): ?UserProfileUid;
 }

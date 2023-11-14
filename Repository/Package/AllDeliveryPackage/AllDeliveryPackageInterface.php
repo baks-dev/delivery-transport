@@ -25,15 +25,19 @@ namespace BaksDev\DeliveryTransport\Repository\Package\AllDeliveryPackage;
 
 use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Services\Paginator\PaginatorInterface;
+use BaksDev\DeliveryTransport\Forms\Package\Admin\DeliveryPackageFilterDTO;
 use BaksDev\DeliveryTransport\Forms\Package\DeliveryPackageFilterInterface;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
 interface AllDeliveryPackageInterface
 {
+
+    public function search(SearchDTO $search): self;
+
+    public function filter(DeliveryPackageFilterDTO $filter): self;
+
     /**
      * Метод возвращает пагинатор DeliveryPackage.
      */
-    public function fetchAllDeliveryPackageAssociative(
-        SearchDTO $search,
-        DeliveryPackageFilterInterface $filter
-    ): PaginatorInterface;
+    public function fetchAllDeliveryPackageAssociative(UserProfileUid $profile): PaginatorInterface;
 }

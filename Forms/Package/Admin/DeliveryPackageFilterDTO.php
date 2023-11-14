@@ -34,12 +34,14 @@ final class DeliveryPackageFilterDTO implements DeliveryPackageFilterInterface
 
     private Request $request;
 
-    private ?UserProfileUid $profile;
+    //private ?UserProfileUid $profile;
 
-    public function __construct(Request $request, ?UserProfileUid $profile)
+    public function __construct(Request $request)
+        //, ?UserProfileUid $profile
+        //)
     {
         $this->request = $request;
-        $this->profile = $profile;
+        //$this->profile = $profile;
     }
 
     /** Дата */
@@ -48,12 +50,11 @@ final class DeliveryPackageFilterDTO implements DeliveryPackageFilterInterface
     /**
      * Date.
      */
-    public function getDate(): ?DateTimeImmutable
+    public function getDate(): DateTimeImmutable
     {
+        $sessionDate = $this->request->getSession()->get(self::date) ?: new DateTimeImmutable();
 
-        $sessionDate = $this->request->getSession()->get(self::date) ?: null;
-
-        return $this->date ?: $sessionDate ;
+        return $this->date ?: $sessionDate;
     }
 
     public function setDate(?DateTimeImmutable $date): void
@@ -66,11 +67,11 @@ final class DeliveryPackageFilterDTO implements DeliveryPackageFilterInterface
         $this->date = $date;
     }
 
-    /**
-     * Profile.
-     */
-    public function getProfile(): ?UserProfileUid
-    {
-        return $this->profile;
-    }
+//    /**
+//     * Profile.
+//     */
+//    public function getProfile(): ?UserProfileUid
+//    {
+//        return $this->profile;
+//    }
 }

@@ -35,17 +35,13 @@ final class DeliveryPackageFilterForm extends AbstractType
 {
     private RequestStack $request;
 
-    public function __construct(
-
-        RequestStack $request,
-    ) {
+    public function __construct(RequestStack $request) {
 
         $this->request = $request;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-
         $builder->add('date', DateType::class, [
             'widget' => 'single_text',
             'html5' => false,

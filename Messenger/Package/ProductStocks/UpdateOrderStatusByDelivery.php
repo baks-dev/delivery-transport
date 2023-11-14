@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\DeliveryTransport\Messenger\Package;
+namespace BaksDev\DeliveryTransport\Messenger\Package\ProductStocks;
 
 use BaksDev\Centrifugo\Server\Publish\CentrifugoPublishInterface;
 use BaksDev\DeliveryTransport\Type\OrderStatus\OrderStatusDelivery;
@@ -37,12 +37,13 @@ use BaksDev\Products\Stocks\Entity\Products\ProductStockProduct;
 use BaksDev\Products\Stocks\Entity\ProductStockTotal;
 use BaksDev\Products\Stocks\Messenger\ProductStockMessage;
 use BaksDev\Products\Stocks\Repository\ProductStocksById\ProductStocksByIdInterface;
+use BaksDev\Users\Profile\UserProfile\Repository\UserByUserProfile\UserByUserProfileInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-#[AsMessageHandler(priority: 1)]
-final class UpdateOrderStatusByDeliveryProductStocks
+#[AsMessageHandler]
+final class UpdateOrderStatusByDelivery
 {
     private ProductStocksByIdInterface $productStocks;
 
@@ -63,18 +64,19 @@ final class UpdateOrderStatusByDeliveryProductStocks
         OrderStatusHandler $OrderStatusHandler,
         CentrifugoPublishInterface $CentrifugoPublish,
         LoggerInterface $messageDispatchLogger,
-
-    ) {
+    )
+    {
         $this->productStocks = $productStocks;
         $this->entityManager = $entityManager;
         $this->currentOrderEvent = $currentOrderEvent;
         $this->OrderStatusHandler = $OrderStatusHandler;
         $this->CentrifugoPublish = $CentrifugoPublish;
         $this->logger = $messageDispatchLogger;
+
     }
 
     /**
-     * Обновляет складской резерв + наличие и обновляет статус заказа при погрузке (Сменяется статус заявки на Delivery)
+     * Обновляет статус заказа при погрузке (Сменяется статус заявки на Delivery)
      */
     public function __invoke(ProductStockMessage $message): void
     {
@@ -83,68 +85,9 @@ final class UpdateOrderStatusByDeliveryProductStocks
             ->find($message->getEvent());
 
         // Если Статус складской заявки не является "ДОСТАВКА"
-        if (!$ProductStockEvent || !$ProductStockEvent->getStatus()->equals(new ProductStockStatusDelivery()))
-        {
-            return;
-        }
-
-        // Получаем всю продукцию в заявке со статусом Delivery
-        $products = $this->productStocks->getProductsByProductStocksStatus($message->getId(), new ProductStockStatusDelivery());
-
-        if ($products)
-        {
-            /** @var ProductStockProduct $product */
-            foreach ($products as $product)
-            {
-                $ProductStockTotal = $this->entityManager
-                    ->getRepository(ProductStockTotal::class)
-                    ->findOneBy(
-                        [
-                            'profile' => $ProductStockEvent->getProfile(),
-                            'product' => $product->getProduct(),
-                            'offer' => $product->getOffer(),
-                            'variation' => $product->getVariation(),
-                            'modification' => $product->getModification(),
-                        ]
-                    );
-
-                if (!$ProductStockTotal)
-                {
-                    $ProductStockTotal = new ProductStockTotal(
-                        $ProductStockEvent->getProfile(),
-                        $product->getProduct(),
-                        $product->getOffer(),
-                        $product->getVariation(),
-                        $product->getModification()
-                    );
-
-                    $this->entityManager->persist($ProductStockTotal);
-                }
-
-                /** Снимаем резерв и наличие со склада (переход на баланс транспорта доставки) */
-                $ProductStockTotal->subTotal($product->getTotal());
-                $ProductStockTotal->subReserve($product->getTotal());
-
-                $this->logger->info('Перевели баланс продукции со склада на баланс транспорта',
-                    [
-                        __FILE__.':'.__LINE__,
-                        'profile' => $ProductStockEvent->getProfile(),
-                        'product' => $product->getProduct(),
-                        'offer' => $product->getOffer(),
-                        'variation' => $product->getVariation(),
-                        'modification' => $product->getModification(),
-                        'total' => $product->getTotal(),
-                    ]
-                );
-
-            }
-
-            $this->entityManager->flush();
-        }
-
-
-        /* Если складская заявка перемещение - статус заказа не обновляем, пока заказ не будет полностью укомплектован */
-        if ($ProductStockEvent->getMoveOrder())
+        if(!$ProductStockEvent ||
+            $ProductStockEvent->getMoveOrder() ||
+            $ProductStockEvent->getStatus()->equals(new ProductStockStatusDelivery()) === false)
         {
             return;
         }
@@ -152,9 +95,9 @@ final class UpdateOrderStatusByDeliveryProductStocks
         /**
          * Получаем событие заказа.
          */
-        $OrderEvent = $this->currentOrderEvent->getCurrentOrderEventOrNull($ProductStockEvent->getOrder());
+        $OrderEvent = $this->currentOrderEvent->getCurrentOrderEvent($ProductStockEvent->getOrder());
 
-        if ($OrderEvent)
+        if($OrderEvent)
         {
             /** Обновляем статус заказа на "Доставка" (Delivery) */
             $OrderStatusDTO = new OrderStatusDTO(new OrderStatus(new OrderStatusDelivery()), $OrderEvent->getId(), $ProductStockEvent->getProfile());
@@ -175,7 +118,6 @@ final class UpdateOrderStatusByDeliveryProductStocks
                 ]);
 
         }
-
 
     }
 }

@@ -89,7 +89,7 @@ final class DivideController extends AbstractController
         /**
          * Получаем заказ.
          */
-        $Order = $currentOrderEvent->getCurrentOrderEventOrNull($ProductStockEvent->getOrder());
+        $Order = $currentOrderEvent->getCurrentOrderEvent($ProductStockEvent->getOrder());
 
         if($Order === null)
         {

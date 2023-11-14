@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\DeliveryTransport\Messenger\Package;
+namespace BaksDev\DeliveryTransport\Messenger\Package\Orders;
 
 use BaksDev\Centrifugo\Server\Publish\CentrifugoPublishInterface;
 use BaksDev\DeliveryTransport\Type\ProductStockStatus\ProductStockStatusCompleted;
@@ -40,11 +40,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-#[AsMessageHandler(priority: 1)]
-final class UpdateOrderStatusByCompletedProductStocks
+#[AsMessageHandler]
+final class UpdateOrderStatusByCompleted
 {
-    private ProductStocksByIdInterface $productStocks;
-
     private EntityManagerInterface $entityManager;
 
     private CurrentOrderEventInterface $currentOrderEvent;
@@ -54,31 +52,19 @@ final class UpdateOrderStatusByCompletedProductStocks
     private CentrifugoPublishInterface $CentrifugoPublish;
 
     private LoggerInterface $logger;
-    private WarehouseProductStockHandler $WarehouseProductStockHandler;
-
 
     public function __construct(
-        ProductStocksByIdInterface $productStocks,
         EntityManagerInterface $entityManager,
-        //ProductStockStatusCollection $collection,
         CurrentOrderEventInterface $currentOrderEvent,
         OrderStatusHandler $OrderStatusHandler,
         CentrifugoPublishInterface $CentrifugoPublish,
         LoggerInterface $messageDispatchLogger,
-        WarehouseProductStockHandler $WarehouseProductStockHandler,
     ) {
-        $this->productStocks = $productStocks;
         $this->entityManager = $entityManager;
-
-        // Инициируем статусы складских остатков
-        //$collection->cases();
-
         $this->currentOrderEvent = $currentOrderEvent;
         $this->OrderStatusHandler = $OrderStatusHandler;
         $this->CentrifugoPublish = $CentrifugoPublish;
         $this->logger = $messageDispatchLogger;
-
-        $this->WarehouseProductStockHandler = $WarehouseProductStockHandler;
     }
 
     /**
@@ -87,53 +73,28 @@ final class UpdateOrderStatusByCompletedProductStocks
     public function __invoke(ProductStockMessage $message): void
     {
 
-
-        /**
-         * Получаем статус заявки.
-         */
         $ProductStockEvent = $this->entityManager->getRepository(ProductStockEvent::class)
             ->find($message->getEvent());
 
-        // Если Статус складской заявки не является "Выдан по месту назначения"
-        if (!$ProductStockEvent || !$ProductStockEvent->getStatus()->equals(new ProductStockStatusCompleted()))
+        if (!$ProductStockEvent ||
+            $ProductStockEvent->getMoveOrder() ||
+            $ProductStockEvent->getStatus()->equals(new ProductStockStatusCompleted()) === false
+        )
         {
             return;
         }
-
-
-        /**
-         * Если упаковка складской заявки на перемещение - статус заказа не обновляем.
-         * Создаем только приход на склад
-         */
-        if ($ProductStockEvent->getMoveOrder())
-        {
-            $WarehouseProductStockDTO = new WarehouseProductStockDTO($ProductStockEvent->getProfile());
-            $ProductStockEvent->getDto($WarehouseProductStockDTO);
-
-            /** Присваиваем приходу - склад назначения */
-            $WarehouseProductStockDTO->setProfile($ProductStockEvent->getMove()->getDestination());
-            $this->WarehouseProductStockHandler->handle($WarehouseProductStockDTO);
-
-
-            /** Меняем статус заявки в путевке на выдан */
-
-
-            return;
-        }
-
-
-
-
 
         /**
          * Получаем событие заказа.
          */
-        $OrderEvent = $this->currentOrderEvent->getCurrentOrderEventOrNull($ProductStockEvent->getOrder());
+        $OrderEvent = $this->currentOrderEvent->getCurrentOrderEvent($ProductStockEvent->getOrder());
 
         if ($OrderEvent)
         {
             /** Обновляем статус заказа на "Выполнен" (Completed) */
-            $OrderStatusDTO = new OrderStatusDTO(new OrderStatus(new OrderStatus\OrderStatusCompleted()), $OrderEvent->getId(), $ProductStockEvent->getProfile());
+
+            $OrderStatusCompleted = new OrderStatus(OrderStatus\OrderStatusCompleted::class);
+            $OrderStatusDTO = new OrderStatusDTO($OrderStatusCompleted, $OrderEvent->getId(), $ProductStockEvent->getProfile());
             $this->OrderStatusHandler->handle($OrderStatusDTO);
 
             // Отправляем сокет для скрытия заказа у других менеджеров

@@ -44,6 +44,7 @@ use BaksDev\DeliveryTransport\Entity\Package\Stocks\DeliveryPackageStocks;
 use BaksDev\DeliveryTransport\Entity\Transport\DeliveryTransport;
 use BaksDev\DeliveryTransport\Entity\Transport\Event\DeliveryTransportEvent;
 use BaksDev\DeliveryTransport\Entity\Transport\Trans\DeliveryTransportTrans;
+use BaksDev\DeliveryTransport\Forms\Package\Admin\DeliveryPackageFilterDTO;
 use BaksDev\DeliveryTransport\Forms\Package\DeliveryPackageFilterInterface;
 use BaksDev\Orders\Order\Entity\Event\OrderEvent;
 use BaksDev\Orders\Order\Entity\Order;
@@ -54,6 +55,7 @@ use BaksDev\Products\Stocks\Entity\Event\ProductStockEvent;
 use BaksDev\Products\Stocks\Entity\Move\ProductStockMove;
 use BaksDev\Products\Stocks\Entity\Orders\ProductStockOrder;
 use BaksDev\Products\Stocks\Entity\ProductStock;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class AllDeliveryPackage implements AllDeliveryPackageInterface
@@ -64,7 +66,12 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
     private SwitcherInterface $switcher;
 
     private TranslatorInterface $translator;
+
     private DBALQueryBuilder $DBALQueryBuilder;
+
+    private ?SearchDTO $search = null;
+
+    private ?DeliveryPackageFilterDTO $filter = null;
 
     public function __construct(
         DBALQueryBuilder $DBALQueryBuilder,
@@ -80,20 +87,33 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
         $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
 
-    /** Метод возвращает пагинатор DeliveryPackage */
-    public function fetchAllDeliveryPackageAssociative(
-        SearchDTO $search,
-        DeliveryPackageFilterInterface $filter
-    ): PaginatorInterface
+    public function search(SearchDTO $search) : self
     {
-        $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
+       $this->search = $search;
+       return $this;
+    }
 
-        $qb->addSelect('package.id AS package_id')->addGroupBy('package.id');
-        $qb->addSelect('package.event AS package_event')->addGroupBy('package.event');
+    public function filter(DeliveryPackageFilterDTO $filter): self
+    {
+        $this->filter = $filter;
+        return $this;
+    }
+
+
+    /** Метод возвращает пагинатор DeliveryPackage */
+    public function fetchAllDeliveryPackageAssociative(UserProfileUid $profile): PaginatorInterface
+    {
+        $qb = $this->DBALQueryBuilder
+            ->createQueryBuilder(self::class)
+            ->bindLocal()
+        ;
+
+        $qb->addSelect('package.id AS package_id'); //->addGroupBy('package.id');
+        $qb->addSelect('package.event AS package_event'); //->addGroupBy('package.event');
         $qb->from(DeliveryPackage::TABLE, 'package');
 
 
-        $qb->addSelect('package_event.status AS package_status')->addGroupBy('package_event.status');
+        $qb->addSelect('package_event.status AS package_status'); //->addGroupBy('package_event.status');
 
         $qb->join(
             'package',
@@ -120,14 +140,14 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
 
 
         /* Путевой лист */
-        $qb->addSelect('package_transport.date_package AS package_date')->addGroupBy('package_transport.date_package');
-        $qb->addSelect('package_transport.interval AS package_interval')->addGroupBy('package_transport.interval');
+        $qb->addSelect('package_transport.date_package AS package_date'); //->addGroupBy('package_transport.date_package');
+        $qb->addSelect('package_transport.interval AS package_interval'); //->addGroupBy('package_transport.interval');
 
         $date = null;
 
-        if($filter->getDate())
+        if($this->filter?->getDate())
         {
-            $date = $filter->getDate()->getTimestamp();
+            $date = $this->filter->getDate()?->getTimestamp();
             $qb->setParameter('date', $date);
         }
 
@@ -200,7 +220,7 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
             'orders.id = product_stocks_order.ord OR orders.id = product_stocks_move.ord'
         );
 
-        // $qb->addSelect('orders_event.status AS order_status')->addGroupBy('orders_event.status');
+        // $qb->addSelect('orders_event.status AS order_status'); //->addGroupBy('orders_event.status');
         $qb->leftJoin(
             'orders',
             OrderEvent::TABLE,
@@ -208,7 +228,7 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
             'orders_event.id = orders.event'
         );
 
-        //$qb->addSelect('order_user.profile AS order_profile')->addGroupBy('order_user.profile');
+        //$qb->addSelect('order_user.profile AS order_profile'); //->addGroupBy('order_user.profile');
         $qb->leftJoin(
             'orders',
             OrderUser::TABLE,
@@ -246,10 +266,10 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
             'delivery_field_trans.field = delivery_field.id AND delivery_field_trans.local = :local'
         );
 
-        $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
+        //$qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
 
 
-        //$qb->addSelect('order_move_event.status AS order_move_status')->addGroupBy('order_move_event.status');
+        //$qb->addSelect('order_move_event.status AS order_move_status'); //->addGroupBy('order_move_event.status');
 
 
         /*$qb->leftJoin(
@@ -266,7 +286,7 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
             'delivery_transport.id = package_transport.transport'
         );
 
-        $qb->addSelect('delivery_transport_event.number AS transport_number')->addGroupBy('delivery_transport_event.number');
+        $qb->addSelect('delivery_transport_event.number AS transport_number'); //->addGroupBy('delivery_transport_event.number');
         $qb->join(
             'delivery_transport',
             DeliveryTransportEvent::TABLE,
@@ -274,7 +294,7 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
             'delivery_transport_event.id = delivery_transport.event'
         );
 
-        $qb->addSelect('delivery_transport_trans.name AS transport_name')->addGroupBy('delivery_transport_trans.name');
+        $qb->addSelect('delivery_transport_trans.name AS transport_name'); //->addGroupBy('delivery_transport_trans.name');
         $qb->join(
             'delivery_transport',
             DeliveryTransportTrans::TABLE,
@@ -282,7 +302,7 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
             'delivery_transport_trans.event = delivery_transport.event AND delivery_transport_trans.local = :local'
         );
 
-        $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
+        //$qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
 
         $qb->join(
             'delivery_transport_event',
@@ -298,7 +318,7 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
             'warehouse_region.event = warehouse.event'
         );
 
-        $qb->addSelect('warehouse_trans.name AS warehouse_name')->addGroupBy('warehouse_trans.name');
+        $qb->addSelect('warehouse_trans.name AS warehouse_name'); //->addGroupBy('warehouse_trans.name');
 
         $qb->join(
             'warehouse',
@@ -346,7 +366,7 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
         $qb->addOrderBy('package_transport.date_package');
         $qb->addOrderBy('package_transport.interval', 'DESC');
 
-
+        $qb->allGroupByExclude();
 
         return $this->paginator->fetchAllAssociative($qb);
     }

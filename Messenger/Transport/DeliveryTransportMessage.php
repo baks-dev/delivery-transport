@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\DeliveryTransport\Messenger;
+namespace BaksDev\DeliveryTransport\Messenger\Transport;
 
 
 

@@ -31,7 +31,6 @@ use BaksDev\DeliveryTransport\Type\Package\Id\DeliveryPackageUid;
 /** @see DeliveryPackageMessage */
 final class DeliveryPackageMessage
 {
-
     /** Идентификатор */
     private DeliveryPackageUid $id;
 
