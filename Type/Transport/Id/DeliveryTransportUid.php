@@ -50,7 +50,7 @@ final class DeliveryTransportUid extends Uid
         mixed $size = null,
         mixed $carrying = null,
     ) {
-        parent::__construct(Kernel::isTestEnvironment() && !$value ? self::TEST : $value);
+        parent::__construct($value);
 
         $this->attr = $attr;
         $this->option = $option;

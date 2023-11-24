@@ -36,8 +36,4 @@ final class DeliveryPackageEventUid extends Uid
     
     public const TYPE = 'delivery_package_event';
 
-    public function __construct(AbstractUid|string|null $value = null)
-    {
-        parent::__construct(Kernel::isTestEnvironment() && !$value ? self::TEST : $value);
-    }
 }

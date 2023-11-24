@@ -49,6 +49,6 @@ class DeliveryPackageStatusDelivery implements DeliveryPackageStatusInterface
      */
     public static function equals(string $status): bool
     {
-        return self::STATUS === strtolower($status);
+        return self::STATUS === mb_strtolower($status);
     }
 }
