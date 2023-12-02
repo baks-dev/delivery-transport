@@ -44,7 +44,7 @@ final class DeliveryTransportUid extends Uid
     private mixed $size;
 
     public function __construct(
-        AbstractUid|string|null $value = null,
+        AbstractUid|self|string|null $value = null,
         mixed $attr = null,
         mixed $option = null,
         mixed $size = null,
