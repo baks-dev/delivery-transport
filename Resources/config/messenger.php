@@ -29,7 +29,7 @@ return static function (FrameworkConfig $framework) {
         ->dsn('%env(MESSENGER_TRANSPORT_DSN)%')
         ->options(['queue_name' => 'delivery-transport'])
         ->retryStrategy()
-        ->maxRetries(5)
+        ->maxRetries(3)
         ->delay(1000)
         ->maxDelay(0)
         ->multiplier(3) // увеличиваем задержку перед каждой повторной попыткой
