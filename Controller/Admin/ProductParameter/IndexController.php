@@ -32,6 +32,8 @@ use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
 use BaksDev\DeliveryTransport\Forms\ProductParameter\Admin\ProductParameterFilterDTO;
 use BaksDev\DeliveryTransport\Forms\ProductParameter\Admin\ProductParameterFilterForm;
 use BaksDev\DeliveryTransport\Repository\ProductParameter\AllProductParameter\AllProductParameterInterface;
+use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
+use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterForm;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -46,19 +48,34 @@ final class IndexController extends AbstractController
         Request $request,
         AllProductParameterInterface $allProductParameter,
         int $page = 0,
-    ): Response {
+    ): Response
+    {
         // Поиск
         $search = new SearchDTO();
         $searchForm = $this->createForm(SearchForm::class, $search);
         $searchForm->handleRequest($request);
 
-        // Фильтр
-        $filter = new ProductParameterFilterDTO($request);
-        $filterForm = $this->createForm(ProductParameterFilterForm::class, $filter);
+        //        // Фильтр
+        //        $filter = new ProductParameterFilterDTO($request);
+        //        $filterForm = $this->createForm(ProductParameterFilterForm::class, $filter);
+        //        $filterForm->handleRequest($request);
+
+
+        /**
+         * Фильтр продукции по ТП
+         */
+        $filter = new ProductFilterDTO($request);
+        $filterForm = $this->createForm(ProductFilterForm::class, $filter, [
+            'action' => $this->generateUrl('delivery-transport:admin.parameter.index'),
+        ]);
         $filterForm->handleRequest($request);
+        !$filterForm->isSubmitted() ?: $this->redirectToReferer();
 
         // Получаем список
-        $ProductParameter = $allProductParameter->fetchAllProductParameterAssociative($search, $filter);
+        $ProductParameter = $allProductParameter
+            ->search($search)
+            ->filter($filter)
+            ->fetchAllProductParameterAssociative();
 
         return $this->render(
             [

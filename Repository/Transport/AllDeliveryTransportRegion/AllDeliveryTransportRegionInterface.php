@@ -24,11 +24,12 @@
 namespace BaksDev\DeliveryTransport\Repository\Transport\AllDeliveryTransportRegion;
 
 use BaksDev\Contacts\Region\Type\Call\Const\ContactsRegionCallConst;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
 interface AllDeliveryTransportRegionInterface
 {
     /**
      * Метод получает массив идентификаторов транспорта с геоданными региона обслуживания, объем и грузоподъемность
      */
-    public function getDeliveryTransportRegionGps(ContactsRegionCallConst $warehouse): ?array;
+    public function getDeliveryTransportRegionGps(UserProfileUid $profile): ?array;
 }

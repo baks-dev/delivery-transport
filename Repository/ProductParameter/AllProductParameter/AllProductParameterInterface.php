@@ -26,10 +26,15 @@ namespace BaksDev\DeliveryTransport\Repository\ProductParameter\AllProductParame
 use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Services\Paginator\PaginatorInterface;
 use BaksDev\DeliveryTransport\Forms\ProductParameter\ProductParameterFilterInterface;
+use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
 
 
 interface AllProductParameterInterface
 {
+    public function search(SearchDTO $search) : self;
+
+    public function filter(ProductFilterDTO $filter): self;
+
     /** Метод возвращает пагинатор ProductParameter */
-    public function fetchAllProductParameterAssociative(SearchDTO $search, ProductParameterFilterInterface $filter): PaginatorInterface;
+    public function fetchAllProductParameterAssociative(): PaginatorInterface;
 }

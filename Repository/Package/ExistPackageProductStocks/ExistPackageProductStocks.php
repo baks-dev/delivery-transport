@@ -37,17 +37,18 @@ use Doctrine\DBAL\Connection;
 
 final class ExistPackageProductStocks implements ExistPackageProductStocksInterface
 {
-//    private Connection $connection;
-//
-//    public function __construct(
-//        Connection $connection,
-//    ) {
-//        $this->connection = $connection;
-//    }
+    //    private Connection $connection;
+    //
+    //    public function __construct(
+    //        Connection $connection,
+    //    ) {
+    //        $this->connection = $connection;
+    //    }
 
     private DBALQueryBuilder $DBALQueryBuilder;
 
-    public function __construct(DBALQueryBuilder $DBALQueryBuilder) {
+    public function __construct(DBALQueryBuilder $DBALQueryBuilder)
+    {
         $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
 
@@ -106,7 +107,10 @@ final class ExistPackageProductStocks implements ExistPackageProductStocksInterf
 
         //$qbExist->select('1');
 
-        $qbExist->from(DeliveryPackage::TABLE, 'package');
+        $qbExist
+            ->from(DeliveryPackage::TABLE, 'package')
+            ->where('package.id = :package')
+            ->setParameter('package', $package, DeliveryPackageUid::TYPE);
 
         $qbExist->join(
             'package',
@@ -127,18 +131,18 @@ final class ExistPackageProductStocks implements ExistPackageProductStocksInterf
             ProductStockEvent::TABLE,
             'product_stock_event',
             'product_stock_event.id = product_stock.event AND product_stock_event.status = :status'
-        );
+        )
+            ->setParameter('status', new ProductStockStatus(new ProductStockStatusDelivery()), ProductStockStatus::TYPE);
 
-        $qbExist->where('package.id = :package');
 
         return $qbExist->fetchExist();
 
-//        $qb = $this->connection->createQueryBuilder();
-//        $qb->select(sprintf('EXISTS(%s)', $qbExist->getSQL()));
-//
-//        $qb->setParameter('package', $package, DeliveryPackageUid::TYPE);
-//        $qb->setParameter('status', new ProductStockStatus(new ProductStockStatusDelivery()), ProductStockStatus::TYPE);
-//
-//        return $qb->fetchOne();
+        //        $qb = $this->connection->createQueryBuilder();
+        //        $qb->select(sprintf('EXISTS(%s)', $qbExist->getSQL()));
+        //
+        //        $qb->setParameter('package', $package, DeliveryPackageUid::TYPE);
+        //        $qb->setParameter('status', new ProductStockStatus(new ProductStockStatusDelivery()), ProductStockStatus::TYPE);
+        //
+        //        return $qb->fetchOne();
     }
 }

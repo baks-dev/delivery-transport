@@ -96,10 +96,10 @@ final class EditController extends AbstractController
         );
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->has('product_stock_parameter'))
+        if ($form->isSubmitted() && $form->isValid() && $form->has('product_stock_parameter'))
         {
-            if ($form->isValid())
-            {
+            //if ($form->isValid())
+            //{
                 $ProductStockParameter = $DeliveryPackageProductParameterHandler->handle($DeliveryPackageProductParameterDTO);
 
                 if ($ProductStockParameter instanceof DeliveryPackageProductParameter)
@@ -109,20 +109,20 @@ final class EditController extends AbstractController
                     return $this->redirectToRoute('delivery-transport:admin.parameter.index');
                 }
 
-                $this->addFlash('danger', 'admin.danger.new', 'admin.product.parameter', $ProductStockParameter);
+                $this->addFlash('danger', 'admin.danger.update', 'admin.product.parameter', $ProductStockParameter);
 
                 return $this->redirectToReferer();
-            }
+            //}
             
-            return new JsonResponse(
-                [
-                    'type' => 'danger',
-                    'header' => 'Параметры упаковки',
-                    'message' => (string) $form->getErrors(),
-                    'status' => 400,
-                ],
-                400
-            );
+//            return new JsonResponse(
+//                [
+//                    'type' => 'danger',
+//                    'header' => 'Параметры упаковки',
+//                    'message' => (string) $form->getErrors(),
+//                    'status' => 400,
+//                ],
+//                400
+//            );
         }
 
         $card = $productDetail->fetchProductDetailByConstAssociative($product, $offer, $variation, $modification);

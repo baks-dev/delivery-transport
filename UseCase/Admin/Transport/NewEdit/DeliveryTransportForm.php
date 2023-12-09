@@ -27,6 +27,8 @@ namespace BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit;
 
 use BaksDev\Contacts\Region\Repository\WarehouseChoice\WarehouseChoiceInterface;
 use BaksDev\Contacts\Region\Type\Call\Const\ContactsRegionCallConst;
+use BaksDev\Users\Profile\UserProfile\Repository\UserProfileChoice\UserProfileChoiceInterface;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -38,16 +40,31 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class DeliveryTransportForm extends AbstractType
 {
-    private WarehouseChoiceInterface $warehouseChoice;
+    //    private WarehouseChoiceInterface $warehouseChoice;
+    //
+    //    public function __construct(
+    //        WarehouseChoiceInterface $warehouseChoice,
+    //    ) {
+    //        $this->warehouseChoice = $warehouseChoice;
+    //    }
 
-    public function __construct(
-        WarehouseChoiceInterface $warehouseChoice,
-    ) {
-        $this->warehouseChoice = $warehouseChoice;
+
+    private UserProfileChoiceInterface $userProfileChoice;
+
+    public function __construct(UserProfileChoiceInterface $userProfileChoice)
+    {
+        $this->userProfileChoice = $userProfileChoice;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+
+        /** @var DeliveryTransportDTO $data */
+        $data = $builder->getData();
+
+        /** Все профили пользователя */
+        $profiles = $this->userProfileChoice->getActiveUserProfile($data->getUsr());
+
         /*
          * Регистрационный номер
          */
@@ -59,21 +76,35 @@ final class DeliveryTransportForm extends AbstractType
         $builder->add('active', CheckboxType::class, ['required' => false]);
 
         /*
-         * Идентификатор склада, за которым закреплен транспорт (Константа склада).
+         * Идентификатор профиля, за которым закреплен транспорт (Константа склада).
          */
-        $builder
+
+        $builder->add('profile', ChoiceType::class, [
+            'choices' => $profiles,
+            'choice_value' => function(?UserProfileUid $profile) {
+                return $profile?->getValue();
+            },
+            'choice_label' => function(UserProfileUid $profile) {
+                return $profile->getAttr();
+            },
+
+            'label' => false,
+            'required' => true,
+        ]);
+
+        /*$builder
             ->add('warehouse', ChoiceType::class, [
-                'choices' => $this->warehouseChoice->fetchAllWarehouse(),
-                'choice_value' => function (?ContactsRegionCallConst $warehouse) {
+                'choices' => $profiles,
+                'choice_value' => function(?ContactsRegionCallConst $warehouse) {
                     return $warehouse?->getValue();
                 },
-                'choice_label' => function (ContactsRegionCallConst $warehouse) {
+                'choice_label' => function(ContactsRegionCallConst $warehouse) {
                     return $warehouse->getAttr();
                 },
 
                 'label' => false,
                 'required' => true,
-            ]);
+            ]);*/
 
         /*
         * Настройки локали

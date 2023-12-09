@@ -28,72 +28,119 @@ namespace BaksDev\DeliveryTransport\Repository\Transport\AllDeliveryTransport;
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Services\Paginator\PaginatorInterface;
-use BaksDev\Core\Services\Switcher\SwitcherInterface;
-use BaksDev\Core\Type\Locale\Locale;
-use BaksDev\DeliveryTransport\Entity\Transport as DeliveryTransportEntity;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use BaksDev\DeliveryTransport\Entity\Transport\DeliveryTransport;
+use BaksDev\DeliveryTransport\Entity\Transport\Event\DeliveryTransportEvent;
+use BaksDev\DeliveryTransport\Entity\Transport\Region\DeliveryTransportRegion;
+use BaksDev\DeliveryTransport\Entity\Transport\Trans\DeliveryTransportTrans;
+use BaksDev\Users\Profile\UserProfile\Entity\Personal\UserProfilePersonal;
+use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
 final class AllDeliveryTransport implements AllDeliveryTransportInterface
 {
 
     private PaginatorInterface $paginator;
 
-    private SwitcherInterface $switcher;
-
-    private TranslatorInterface $translator;
     private DBALQueryBuilder $DBALQueryBuilder;
 
+    private ?SearchDTO $search = null;
+
     public function __construct(
-     DBALQueryBuilder $DBALQueryBuilder,
-        PaginatorInterface $paginator,
-        SwitcherInterface $switcher,
-        TranslatorInterface $translator,
-    ) {
+        DBALQueryBuilder $DBALQueryBuilder,
+        PaginatorInterface $paginator
+    )
+    {
 
         $this->paginator = $paginator;
-        $this->switcher = $switcher;
-        $this->translator = $translator;
         $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
 
-    /** Метод возвращает пагинатор DeliveryTransport */
-    public function fetchAllDeliveryTransportAssociative(SearchDTO $search): PaginatorInterface
+
+    public function search(SearchDTO $search) : self
     {
-        $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
+        $this->search = $search;
+        return $this;
+    }
+
+    /** Метод возвращает пагинатор DeliveryTransport */
+    public function fetchAllDeliveryTransportAssociative(UserProfileUid $profile): PaginatorInterface
+    {
+        $qb = $this->DBALQueryBuilder
+            ->createQueryBuilder(self::class)
+            ->bindLocal();
 
 
-        $qb->addSelect('auto.id');
-        $qb->addSelect('auto.event');
-        $qb->from(DeliveryTransportEntity\DeliveryTransport::TABLE, 'auto');
+        $qb
+            ->addSelect('auto.id')
+            ->addSelect('auto.event')
+            ->from(DeliveryTransport::class, 'auto');
 
-        $qb->addSelect('event.number AS auto_number');
-        $qb->addSelect('event.active AS auto_active');
-        $qb->join(
-            'auto',
-            DeliveryTransportEntity\Event\DeliveryTransportEvent::TABLE,
+        $qb
+            ->addSelect('event.number AS auto_number')
+            ->addSelect('event.active AS auto_active')
+            ->join(
+                'auto',
+                DeliveryTransportEvent::class,
+                'event',
+                'event.id = auto.event AND event.profile = :profile'
+            )
+            ->setParameter('profile', $profile, UserProfileUid::TYPE)
+        ;
+
+        $qb
+            ->addSelect('trans.name AS auto_name')
+            ->leftJoin(
+                'event',
+                DeliveryTransportTrans::class,
+                'trans',
+                'trans.event = event.id AND trans.local = :local'
+            );
+
+        $qb
+            ->addSelect('region.address AS auto_address')
+            ->leftJoin(
+                'event',
+                DeliveryTransportRegion::class,
+                'region',
+                'region.event = event.id'
+            );
+
+
+
+        $qb
+            ->leftJoin(
             'event',
-            'event.id = auto.event'
+            UserProfile::TABLE,
+            'users_profile',
+            'users_profile.id = event.profile'
         );
 
-        $qb->addSelect('trans.name AS auto_name');
+        // Personal
+        $qb->addSelect('users_profile_personal.username AS users_profile_username');
+        $qb->addSelect('users_profile_personal.location AS users_profile_location');
+
         $qb->leftJoin(
-            'event',
-            DeliveryTransportEntity\Trans\DeliveryTransportTrans::TABLE,
-            'trans',
-            'trans.event = event.id AND trans.local = :local'
-        );
-
-        $qb->addSelect('region.address AS auto_address');
-        $qb->leftJoin(
-            'event',
-            DeliveryTransportEntity\Region\DeliveryTransportRegion::TABLE,
-            'region',
-            'region.event = event.id'
+            'users_profile',
+            UserProfilePersonal::TABLE,
+            'users_profile_personal',
+            'users_profile_personal.event = users_profile.event'
         );
 
 
-        $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
-
+        // Поиск
+        if($this->search->getQuery())
+        {
+            $qb
+                ->createSearchQueryBuilder($this->search)
+                //->addSearchEqualUid('warehouse.id')
+                //->addSearchEqualUid('warehouse.event')
+                //->addSearchLike('warehouse_trans.name')
+                ->addSearchLike('users_profile_personal.username')
+                ->addSearchLike('users_profile_personal.location')
+                ->addSearchLike('event.number')
+                ->addSearchLike('trans.name')
+            ;
+        }
 
 
         return $this->paginator->fetchAllAssociative($qb);

@@ -29,6 +29,9 @@ use BaksDev\Contacts\Region\Type\Call\Const\ContactsRegionCallConst;
 use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\DeliveryTransport\Entity\Transport\Event\DeliveryTransportEventInterface;
 use BaksDev\DeliveryTransport\Type\Transport\Event\DeliveryTransportEventUid;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+use BaksDev\Users\User\Entity\User;
+use BaksDev\Users\User\Type\Id\UserUid;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -49,11 +52,11 @@ final class DeliveryTransportDTO implements DeliveryTransportEventInterface
     private string $number;
 
     /**
-     * Идентификатор склада, за которым закреплен транспорт (Константа склада)
+     * Идентификатор профиля, за которым закреплен транспорт (Константа склада)
      */
     #[Assert\Uuid]
     #[Assert\NotBlank]
-    private ?ContactsRegionCallConst $warehouse = null;
+    private ?UserProfileUid $profile = null;
 
     /**
      * Флаг активности транспорта.
@@ -78,8 +81,15 @@ final class DeliveryTransportDTO implements DeliveryTransportEventInterface
     #[Assert\Valid]
     private Region\DeliveryTransportRegionDTO $region;
 
-    public function __construct()
+
+    /** Вспомогательные свойства */
+    private  UserUid $usr;
+
+
+    public function __construct(User|UserUid $usr)
     {
+        $this->usr = $usr instanceof User ? $usr->getId() : $usr;
+
         $this->translate = new ArrayCollection();
         $this->parameter = new  Parameter\DeliveryTransportParameterDTO();
         $this->region = new  Region\DeliveryTransportRegionDTO();
@@ -182,17 +192,54 @@ final class DeliveryTransportDTO implements DeliveryTransportEventInterface
     }
 
     /**
-     * Идентификатор склада, за которым закреплен транспорт (Константа склада)
+     * Profile
      */
-    public function getWarehouse(): ?ContactsRegionCallConst
+    public function getProfile(): ?UserProfileUid
     {
-        return $this->warehouse;
+        return $this->profile;
     }
 
-    public function setWarehouse(?ContactsRegionCallConst $warehouse):void
+    public function setProfile(?UserProfileUid $profile): self
     {
-        $this->warehouse = $warehouse;
+        $this->profile = $profile;
+        return $this;
     }
 
+    /**
+     * Usr
+     */
+    public function getUsr(): UserUid
+    {
+        return $this->usr;
+    }
+
+
+
+
+
+//    public function getWarehouse(): ?ContactsRegionCallConst
+//    {
+//        return $this->warehouse;
+//    }
+//
+//    public function setWarehouse(?ContactsRegionCallConst $warehouse):void
+//    {
+//        $this->warehouse = $warehouse;
+//    }
+
+
+//    /**
+//     * Id
+//     */
+//    public function getId(): ?DeliveryTransportEventUid
+//    {
+//        return $this->id;
+//    }
+
+//    public function setId(?DeliveryTransportEventUid $id): self
+//    {
+//        $this->id = $id;
+//        return $this;
+//    }
 
 }

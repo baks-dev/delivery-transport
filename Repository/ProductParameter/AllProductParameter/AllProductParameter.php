@@ -33,6 +33,7 @@ use BaksDev\DeliveryTransport\Forms\ProductParameter\ProductParameterFilterInter
 use BaksDev\Products\Category\Entity as CategoryEntity;
 use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
 use BaksDev\Products\Product\Entity;
+use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
 
 final class AllProductParameter implements AllProductParameterInterface
 {
@@ -41,38 +42,63 @@ final class AllProductParameter implements AllProductParameterInterface
 
     private DBALQueryBuilder $DBALQueryBuilder;
 
+    private ?SearchDTO $search = null;
+
+    private ?ProductFilterDTO $filter = null;
+
     public function __construct(
         DBALQueryBuilder $DBALQueryBuilder,
         PaginatorInterface $paginator,
-    ) {
+    )
+    {
 
         $this->paginator = $paginator;
         $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
 
+
+    public function search(SearchDTO $search): self
+    {
+        $this->search = $search;
+        return $this;
+    }
+
+    public function filter(ProductFilterDTO $filter): self
+    {
+        $this->filter = $filter;
+        return $this;
+    }
+
+
     /**
      * Метод возвращает пагинатор ProductParameter c параметрами упаковки
      */
-    public function fetchAllProductParameterAssociative(SearchDTO $search, ProductParameterFilterInterface $filter): PaginatorInterface
+    public function fetchAllProductParameterAssociative(): PaginatorInterface
     {
-        $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
+        $qb = $this->DBALQueryBuilder
+            ->createQueryBuilder(self::class)
+            ->bindLocal();
 
         $qb->select('product.id');
         $qb->addSelect('product.event');
 
-        $qb->from(Entity\Product::TABLE, 'product');
+        $qb->from(Entity\Product::class, 'product');
 
-        $qb->join('product', Entity\Event\ProductEvent::TABLE, 'product_event', 'product_event.id = product.event');
-
-        $qb->addSelect('product_trans.name AS product_name');
-        //$qb->addSelect('product_trans.preview AS product_preview');
-        $qb->leftJoin(
+        $qb->join(
+            'product',
+            Entity\Event\ProductEvent::class,
             'product_event',
-            Entity\Trans\ProductTrans::TABLE,
-            'product_trans',
-            'product_trans.event = product_event.id AND product_trans.local = :local'
-        )
-            ->bindLocal();
+            'product_event.id = product.event'
+        );
+
+        $qb
+            ->addSelect('product_trans.name AS product_name')
+            ->leftJoin(
+                'product_event',
+                Entity\Trans\ProductTrans::class,
+                'product_trans',
+                'product_trans.event = product_event.id AND product_trans.local = :local'
+            );
 
         /* ProductInfo */
 
@@ -80,7 +106,7 @@ final class AllProductParameter implements AllProductParameterInterface
 
         $qb->leftJoin(
             'product_event',
-            Entity\Info\ProductInfo::TABLE,
+            Entity\Info\ProductInfo::class,
             'product_info',
             'product_info.product = product.id'
         );
@@ -88,50 +114,67 @@ final class AllProductParameter implements AllProductParameterInterface
 
         /* Торговое предложение */
 
-        $qb->addSelect('product_offer.value as product_offer_value');
-        $qb->addSelect('product_offer.const as product_offer_const');
-        $qb->addSelect('product_offer.postfix as product_offer_postfix');
-        $qb->leftJoin(
-            'product_event',
-            Entity\Offers\ProductOffer::TABLE,
-            'product_offer',
-            'product_offer.event = product_event.id'
-        );
+        $qb
+            ->addSelect('product_offer.value as product_offer_value')
+            ->addSelect('product_offer.const as product_offer_const')
+            ->addSelect('product_offer.postfix as product_offer_postfix')
+            ->leftJoin(
+                'product_event',
+                Entity\Offers\ProductOffer::class,
+                'product_offer',
+                'product_offer.event = product_event.id'
+            );
+
+        if($this->filter?->getOffer())
+        {
+            $qb->andWhere('product_offer.value = :offer');
+            $qb->setParameter('offer', $this->filter->getOffer());
+        }
+
 
         /* Цена торгового предложения */
         $qb->leftJoin(
             'product_offer',
-            Entity\Offers\Price\ProductOfferPrice::TABLE,
+            Entity\Offers\Price\ProductOfferPrice::class,
             'product_offer_price',
             'product_offer_price.offer = product_offer.id'
         );
 
         /* Тип торгового предложения */
-        $qb->addSelect('category_offer.reference as product_offer_reference');
-        $qb->leftJoin(
-            'product_offer',
-            CategoryEntity\Offers\ProductCategoryOffers::TABLE,
-            'category_offer',
-            'category_offer.id = product_offer.category_offer'
-        );
+        $qb
+            ->addSelect('category_offer.reference as product_offer_reference')
+            ->leftJoin(
+                'product_offer',
+                CategoryEntity\Offers\ProductCategoryOffers::class,
+                'category_offer',
+                'category_offer.id = product_offer.category_offer'
+            );
 
         /* Множественные варианты торгового предложения */
 
-        $qb->addSelect('product_offer_variation.value as product_variation_value');
-        $qb->addSelect('product_offer_variation.const as product_variation_const');
-        $qb->addSelect('product_offer_variation.postfix as product_variation_postfix');
+        $qb
+            ->addSelect('product_offer_variation.value as product_variation_value')
+            ->addSelect('product_offer_variation.const as product_variation_const')
+            ->addSelect('product_offer_variation.postfix as product_variation_postfix')
+            ->leftJoin(
+                'product_offer',
+                Entity\Offers\Variation\ProductVariation::class,
+                'product_offer_variation',
+                'product_offer_variation.offer = product_offer.id'
+            );
 
-        $qb->leftJoin(
-            'product_offer',
-            Entity\Offers\Variation\ProductVariation::TABLE,
-            'product_offer_variation',
-            'product_offer_variation.offer = product_offer.id'
-        );
+
+        if($this->filter?->getVariation())
+        {
+            $qb->andWhere('product_offer_variation.value = :variation');
+            $qb->setParameter('variation', $this->filter->getVariation());
+        }
+
 
         /* Цена множественного варианта */
         $qb->leftJoin(
             'category_offer_variation',
-            Entity\Offers\Variation\Price\ProductVariationPrice::TABLE,
+            Entity\Offers\Variation\Price\ProductVariationPrice::class,
             'product_variation_price',
             'product_variation_price.variation = product_offer_variation.id'
         );
@@ -146,22 +189,30 @@ final class AllProductParameter implements AllProductParameterInterface
         );
 
         /* Модификация множественного варианта */
-        $qb->addSelect('product_offer_modification.value as product_modification_value');
-        $qb->addSelect('product_offer_modification.const as product_modification_const');
-        $qb->addSelect('product_offer_modification.postfix as product_modification_postfix');
+        $qb
+            ->addSelect('product_offer_modification.value as product_modification_value')
+            ->addSelect('product_offer_modification.const as product_modification_const')
+            ->addSelect('product_offer_modification.postfix as product_modification_postfix')
+            ->leftJoin(
+                'product_offer_variation',
+                Entity\Offers\Variation\Modification\ProductModification::class,
+                'product_offer_modification',
+                'product_offer_modification.variation = product_offer_variation.id '
+            );
 
-        $qb->leftJoin(
-            'product_offer_variation',
-            Entity\Offers\Variation\Modification\ProductModification::TABLE,
-            'product_offer_modification',
-            'product_offer_modification.variation = product_offer_variation.id '
-        );
+
+        if($this->filter?->getModification())
+        {
+            $qb->andWhere('product_offer_modification.value = :modification');
+            $qb->setParameter('modification', $this->filter->getModification());
+        }
+
 
         /* Получаем тип модификации множественного варианта */
         $qb->addSelect('category_offer_modification.reference as product_modification_reference');
         $qb->leftJoin(
             'product_offer_modification',
-            CategoryEntity\Offers\Variation\Modification\ProductCategoryModification::TABLE,
+            CategoryEntity\Offers\Variation\Modification\ProductCategoryModification::class,
             'category_offer_modification',
             'category_offer_modification.id = product_offer_modification.category_modification'
         );
@@ -186,21 +237,21 @@ final class AllProductParameter implements AllProductParameterInterface
 
         $qb->leftJoin(
             'product_event',
-            Entity\Photo\ProductPhoto::TABLE,
+            Entity\Photo\ProductPhoto::class,
             'product_photo',
             'product_photo.event = product_event.id AND product_photo.root = true'
         );
 
         $qb->leftJoin(
             'product_offer',
-            Entity\Offers\Variation\Image\ProductVariationImage::TABLE,
+            Entity\Offers\Variation\Image\ProductVariationImage::class,
             'product_offer_variation_image',
             'product_offer_variation_image.variation = product_offer_variation.id AND product_offer_variation_image.root = true'
         );
 
         $qb->leftJoin(
             'product_offer',
-            Entity\Offers\Image\ProductOfferImage::TABLE,
+            Entity\Offers\Image\ProductOfferImage::class,
             'product_offer_images',
             'product_offer_images.offer = product_offer.id AND product_offer_images.root = true'
         );
@@ -248,20 +299,20 @@ final class AllProductParameter implements AllProductParameterInterface
         /* Категория */
         $qb->join(
             'product_event',
-            Entity\Category\ProductCategory::TABLE,
+            Entity\Category\ProductCategory::class,
             'product_event_category',
             'product_event_category.event = product_event.id AND product_event_category.root = true'
         );
 
-        if ($filter->getCategory())
+        if($this->filter?->getCategory())
         {
             $qb->andWhere('product_event_category.category = :category');
-            $qb->setParameter('category', $filter->getCategory(), ProductCategoryUid::TYPE);
+            $qb->setParameter('category', $this->filter->getCategory(), ProductCategoryUid::TYPE);
         }
 
         $qb->join(
             'product_event_category',
-            CategoryEntity\ProductCategory::TABLE,
+            CategoryEntity\ProductCategory::class,
             'category',
             'category.id = product_event_category.category'
         );
@@ -270,11 +321,10 @@ final class AllProductParameter implements AllProductParameterInterface
 
         $qb->leftJoin(
             'category',
-            CategoryEntity\Trans\ProductCategoryTrans::TABLE,
+            CategoryEntity\Trans\ProductCategoryTrans::class,
             'category_trans',
             'category_trans.event = category.event AND category_trans.local = :local'
         );
-
 
 
         /** Длина, см  */
@@ -285,10 +335,13 @@ final class AllProductParameter implements AllProductParameterInterface
         $qb->addSelect('product_parameter.height AS product_parameter_height');
         /** Вес, кг */
         $qb->addSelect('product_parameter.weight AS product_parameter_weight');
+        /** Объем, см3 */
+        $qb->addSelect('product_parameter.size AS product_parameter_size');
+
 
         $qb->leftJoin(
             'product_offer_modification',
-            DeliveryPackageProductParameter::TABLE,
+            DeliveryPackageProductParameter::class,
             'product_parameter',
             'product_parameter.product = product.id AND 
             (product_parameter.offer IS NULL OR product_parameter.offer = product_offer.const) AND
@@ -298,10 +351,10 @@ final class AllProductParameter implements AllProductParameterInterface
         ');
 
 
-        if ($search->getQuery())
+        if($this->search?->getQuery())
         {
             $qb
-                ->createSearchQueryBuilder($search)
+                ->createSearchQueryBuilder($this->search)
                 ->addSearchEqualUid('account.id')
                 ->addSearchEqualUid('account.event')
                 ->addSearchLike('product_trans.name')
@@ -309,8 +362,7 @@ final class AllProductParameter implements AllProductParameterInterface
                 ->addSearchLike('product_info.article')
                 ->addSearchLike('product_offer.article')
                 ->addSearchLike('product_offer_modification.article')
-                ->addSearchLike('product_offer_variation.article')
-            ;
+                ->addSearchLike('product_offer_variation.article');
         }
 
         $qb->orderBy('product.event', 'DESC');

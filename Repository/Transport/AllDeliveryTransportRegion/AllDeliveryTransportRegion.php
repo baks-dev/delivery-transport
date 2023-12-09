@@ -29,6 +29,7 @@ use BaksDev\Contacts\Region\Type\Call\Const\ContactsRegionCallConst;
 use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\DeliveryTransport\Entity\Transport as DeliveryTransportEntity;
 use BaksDev\DeliveryTransport\Type\Transport\Id\DeliveryTransportUid;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
 final class AllDeliveryTransportRegion implements AllDeliveryTransportRegionInterface
 {
@@ -45,7 +46,7 @@ final class AllDeliveryTransportRegion implements AllDeliveryTransportRegionInte
     /**
      * Метод получает массив идентификаторов транспорта с геоданными региона обслуживания
      */
-    public function getDeliveryTransportRegionGps(ContactsRegionCallConst $warehouse): ?array
+    public function getDeliveryTransportRegionGps(UserProfileUid $profile): ?array
     {
         $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
@@ -59,8 +60,10 @@ final class AllDeliveryTransportRegion implements AllDeliveryTransportRegionInte
             DeliveryTransportEntity\Event\DeliveryTransportEvent::class,
             'event',
             'WITH',
-            'event.id = transport.event AND event.active = true AND event.warehouse = :warehouse'
-        );
+            'event.id = transport.event AND event.active = true AND event.profile = :profile'
+        )
+            ->setParameter('profile', $profile, UserProfileUid::TYPE)
+        ;
 
         $qb->join(
             DeliveryTransportEntity\Region\DeliveryTransportRegion::class,
@@ -76,11 +79,9 @@ final class AllDeliveryTransportRegion implements AllDeliveryTransportRegionInte
             'parameter.event = event.id'
         );
 
-        $qb->setParameter('warehouse', $warehouse, ContactsRegionCallConst::TYPE);
-
 
         /* Кешируем результат ORM */
-        return $qb->enableCache('delivery-transport:', 86400)->getResult();
+        return $qb->enableCache('delivery-transport', 86400)->getResult();
 
     }
 }

@@ -48,7 +48,7 @@
                                 {% set img_host =  product.product_image_cdn == true  ? CDN_HOST : '' %}
                                 {% set img_dir = product.product_image %}
                                 {% set img_file = (img_host is empty ? '/image.' : '/small.') ~ product.product_image_ext %}
-                                {% set image_path = img_host ~ img_table ~ img_dir ~ img_file %}
+                                {% set image_path = img_host ~ img_dir ~ img_file %}
                             {% endif %}
 
                             <div class="rounded-circle bg-contain lazy p-1" style="width: 50px; height: 50px;"

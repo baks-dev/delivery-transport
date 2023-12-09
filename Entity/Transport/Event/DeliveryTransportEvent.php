@@ -35,6 +35,7 @@ use BaksDev\DeliveryTransport\Entity\Transport\Region\DeliveryTransportRegion;
 use BaksDev\DeliveryTransport\Entity\Transport\Trans\DeliveryTransportTrans;
 use BaksDev\DeliveryTransport\Type\Transport\Event\DeliveryTransportEventUid;
 use BaksDev\DeliveryTransport\Type\Transport\Id\DeliveryTransportUid;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -73,11 +74,11 @@ class DeliveryTransportEvent extends EntityEvent
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
     private bool $active = true;
 
-    /** Идентификатор склада, за которым закреплен транспорт (Константа склада) */
+    /** Идентификатор профиля, за которым закреплен транспорт (Константа склада) */
     #[Assert\NotBlank]
     #[Assert\Uuid]
-    #[ORM\Column(type: ContactsRegionCallConst::TYPE)]
-    private ?ContactsRegionCallConst $warehouse = null;
+    #[ORM\Column(type: UserProfileUid::TYPE)]
+    private ?UserProfileUid $profile = null;
 
     /** Модификатор */
     #[ORM\OneToOne(mappedBy: 'event', targetEntity: DeliveryTransportModify::class, cascade: ['all'])]

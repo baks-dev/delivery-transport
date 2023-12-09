@@ -106,7 +106,7 @@ class DeliveryPackageProductParameter extends EntityState
      * Объем, см3
      */
     #[Assert\NotBlank]
-    #[Assert\Range(min: 10)]
+    #[Assert\Range(min: 1)]
     #[ORM\Column(type: Types::INTEGER)]
     private int $size;
 

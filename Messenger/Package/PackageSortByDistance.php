@@ -77,7 +77,7 @@ final class PackageSortByDistance
         $DeliveryPackageUid = $message->getId();
         $geoWarehouse = $this->packageWarehouseGeocode->fetchPackageWarehouseGeocodeAssociative($DeliveryPackageUid);
 
-        if($geoWarehouse === false)
+        if(!$geoWarehouse)
         {
             return;
         }

@@ -51,7 +51,9 @@ final class IndexController extends AbstractController
         $searchForm->handleRequest($request);
 
         // Получаем список
-        $DeliveryTransport = $allDeliveryTransport->fetchAllDeliveryTransportAssociative($search);
+        $DeliveryTransport = $allDeliveryTransport
+            ->search($search)
+            ->fetchAllDeliveryTransportAssociative($this->getProfileUid());
 
         //dd($DeliveryTransport);
 

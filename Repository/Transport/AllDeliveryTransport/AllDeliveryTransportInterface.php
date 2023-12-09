@@ -25,9 +25,13 @@ namespace BaksDev\DeliveryTransport\Repository\Transport\AllDeliveryTransport;
 
 use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Services\Paginator\PaginatorInterface;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
 interface AllDeliveryTransportInterface
 {
+    public function search(SearchDTO $search) : self;
+
     /** Метод возвращает пагинатор DeliveryTransport */
-    public function fetchAllDeliveryTransportAssociative(SearchDTO $search): PaginatorInterface;
+    public function fetchAllDeliveryTransportAssociative(UserProfileUid $profile): PaginatorInterface;
+
 }

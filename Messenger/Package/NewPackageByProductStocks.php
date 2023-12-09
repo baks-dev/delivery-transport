@@ -29,14 +29,10 @@ use BaksDev\Core\Messenger\MessageDispatchInterface;
 use BaksDev\DeliveryTransport\Entity\Package\DeliveryPackage;
 use BaksDev\DeliveryTransport\Entity\Package\DeliveryPackageTransport;
 use BaksDev\DeliveryTransport\Entity\Package\Event\DeliveryPackageEvent;
-use BaksDev\DeliveryTransport\Repository\Package\ExistPackageProductStocks\ExistPackageProductStocksInterface;
 use BaksDev\DeliveryTransport\Repository\Package\ExistStockPackage\ExistStockPackageInterface;
-use BaksDev\DeliveryTransport\Repository\Package\PackageByProductStocks\PackageByProductStocksInterface;
 use BaksDev\DeliveryTransport\Repository\Package\PackageOrderProducts\PackageOrderProductsInterface;
 use BaksDev\DeliveryTransport\Repository\Transport\AllDeliveryTransportRegion\AllDeliveryTransportRegionInterface;
 use BaksDev\DeliveryTransport\Type\ProductStockStatus\ProductStockStatusDivide;
-use BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed\CompletedPackageDTO;
-use BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed\CompletedPackageHandler;
 use BaksDev\DeliveryTransport\UseCase\Admin\Package\Error\ErrorProductStockDTO;
 use BaksDev\DeliveryTransport\UseCase\Admin\Package\Error\ErrorProductStockHandler;
 use BaksDev\DeliveryTransport\UseCase\Admin\Package\NewEdit\DeliveryPackageDTO;
@@ -103,7 +99,8 @@ final class NewPackageByProductStocks
         ErrorProductStockHandler $errorProductStockHandler,
         ProductStocksNewByOrderInterface $productStocksNewByOrder,
         MessageDispatchInterface $messageDispatch,
-    ) {
+    )
+    {
         $this->entityManager = $entityManager;
         $this->existMoveOrder = $existMoveOrder;
         $this->allDeliveryTransportRegion = $allDeliveryTransportRegion;
@@ -125,8 +122,8 @@ final class NewPackageByProductStocks
     public function __invoke(ProductStockMessage $message): void
     {
         /** Получаем заявку */
-//        $ProductStock = $this->entityManager->getRepository(ProductStock::class)
-//            ->find($message->getId());
+        //        $ProductStock = $this->entityManager->getRepository(ProductStock::class)
+        //            ->find($message->getId());
 
         /** Получаем статус заявки */
         $ProductStockEvent = $this->entityManager
@@ -136,14 +133,16 @@ final class NewPackageByProductStocks
         /*
          * Если Статус не является "Упаковка" - пропускаем погрузку
          */
-        if (!$ProductStockEvent ||
+        if(
+            !$ProductStockEvent ||
             !(
                 $ProductStockEvent->getStatus()->equals(new ProductStockStatusPackage()) || // заказ отправлен на упаковку
                 $ProductStockEvent->getStatus()->equals(new ProductStockStatusMoving()) || // если перемещение
                 $ProductStockEvent->getStatus()->equals(new ProductStockStatusDivide()) || // если деление заказа
                 $ProductStockEvent->getStatus()->equals(new ProductStockStatusIncoming()) // если приход на склад
             )
-        ) {
+        )
+        {
             return;
         }
 
@@ -153,18 +152,18 @@ final class NewPackageByProductStocks
         /*
          * Если заявка "ПРИНИМАЕМ ПРИХОД НА СКЛАД" - пробуем закрыть путевой лист и добавить заказ в путевой лист
          */
-        if ($ProductStockEvent->getStatus()->equals(new ProductStockStatusIncoming()))
+        if($ProductStockEvent->getStatus()->equals(new ProductStockStatusIncoming()))
         {
 
             /*  Если перемещение по заказу - получаем заявку по заказу, и добавляем в путевку  */
 
-            if ($ProductStockEvent->getMoveOrder() && $ProductStockEvent->getMoveDestination())
+            if($ProductStockEvent->getMoveOrder() && $ProductStockEvent->getMoveDestination())
             {
                 /** @var  ProductStockEvent $NewProductStocks */
                 $NewProductStocks = $this->productStocksNewByOrder
                     ->getProductStocksEventByOrderAndWarehouse($ProductStockEvent->getMoveOrder(), $ProductStockEvent->getMoveDestination());
 
-                if ($NewProductStocks)
+                if($NewProductStocks)
                 {
                     /* Отправляем сообщение в шину */
                     $this->messageDispatch->dispatch(
@@ -178,7 +177,7 @@ final class NewPackageByProductStocks
         /*
          * Если складская заявка на доставку заказа, но на заказ имеется заявка на перемещение - пропускаем погрузку
          */
-        if ($ProductStockEvent->getOrder() && $this->existMoveOrder->existProductMoveOrder($ProductStockEvent->getOrder()) === true)
+        if($ProductStockEvent->getOrder() && $this->existMoveOrder->existProductMoveOrder($ProductStockEvent->getOrder()) === true)
         {
             return;
         }
@@ -186,7 +185,7 @@ final class NewPackageByProductStocks
         /*
          * Если заявка уже имеется в поставке - пропускаем погрузку
          */
-        if ($this->existStockPackage->isExistStockPackage($message->getId()))
+        if($this->existStockPackage->isExistStockPackage($message->getId()))
         {
             $this->logger->warning('Заявка уже имеется в поставке', ['handler' => self::class]);
             return;
@@ -196,7 +195,7 @@ final class NewPackageByProductStocks
         /** Получаем геоданные пункта назначения складской заявки */
         $OrderGps = $this->orderDelivery->fetchProductStocksGps($message->getEvent());
 
-        if (!$OrderGps)
+        if(!$OrderGps)
         {
             $this->logger->warning('В заявке отсутствуют геоданные пункта назначения. Возможно заявка является закупкой!', ['handler' => self::class]);
             return;
@@ -207,19 +206,18 @@ final class NewPackageByProductStocks
         $OrderProductPackage = $this->packageOrderProducts->fetchAllPackageStocksProductsAssociative($message->getEvent());
 
 
-
         /** Дата начала поиска поставки - следующий день */
         $date = (new DateTimeImmutable())->setTime(0, 0);
         $deliveryDay = 1;
 
-        while (true)
+        while(true)
         {
             /** Каждый цикл добавляем сутки */
             $interval = new DateInterval('P1D');
             $date = $date->add($interval);
 
             $deliveryDay++;
-            if ($deliveryDay > 30)
+            if($deliveryDay > 30)
             {
                 /** Обновляем статус заявки на Error */
                 $ErrorProductStockDTO = new ErrorProductStockDTO($ProductStockEvent->getId());
@@ -231,18 +229,18 @@ final class NewPackageByProductStocks
             }
 
             /** Получаем транспорт, закрепленный за складом */
-            $DeliveryTransportRegion = $this->allDeliveryTransportRegion->getDeliveryTransportRegionGps($ProductStockEvent->getWarehouse());
+            $DeliveryTransportRegion = $this->allDeliveryTransportRegion->getDeliveryTransportRegionGps($ProductStockEvent->getProfile());
 
-            if (!$DeliveryTransportRegion)
+            if(!$DeliveryTransportRegion)
             {
-                throw new DomainException(sprintf('За складом ID: %s не закреплено ни одного транспорта', $ProductStockEvent->getWarehouse()));
+                throw new DomainException(sprintf('За складом ID: %s не закреплено ни одного транспорта', $ProductStockEvent->getProfile()));
             }
 
             /* Перебираем транспорт и добавляем в поставку */
-            while (true)
+            while(true)
             {
                 /* Если транспорта больше нет в массиве - обрываем цикл, и пробуем добавить на следующий день поставку  */
-                if (empty($DeliveryTransportRegion))
+                if(empty($DeliveryTransportRegion))
                 {
                     $this->logger->info(sprintf('На дату %s невозможно добавить поставку, пробуем на другую дату', $date->format('d.m.Y')));
                     break;
@@ -253,7 +251,7 @@ final class NewPackageByProductStocks
                 $current = null;
 
                 /* Поиск транспорта, ближайшего к точке доставки (по региону обслуживания) */
-                foreach ($DeliveryTransportRegion as $key => $transport)
+                foreach($DeliveryTransportRegion as $key => $transport)
                 {
                     $geocodeDistance = $this->geocodeDistance
                         ->fromLatitude((float) $OrderGps['latitude'])
@@ -262,7 +260,7 @@ final class NewPackageByProductStocks
                         ->toLongitude((float) $transport->getOption()->getValue())
                         ->getDistance();
 
-                    if ($distance === null || $distance > $geocodeDistance)
+                    if($distance === null || $distance > $geocodeDistance)
                     {
                         $distance = $geocodeDistance;
                         $DeliveryTransportUid = $transport;
@@ -273,18 +271,20 @@ final class NewPackageByProductStocks
                 /** Получаем имеющуюся поставку на данный транспорт в указанную дату */
                 $DeliveryPackageTransportDTO = new DeliveryPackageTransportDTO();
                 /** @var DeliveryPackageTransport $DeliveryPackageTransport */
-                $DeliveryPackageTransport = $this->entityManager->getRepository(DeliveryPackageTransport::class)->findOneBy(
-                    ['date' => $date->getTimestamp(), 'transport' => $DeliveryTransportUid]
-                );
+                $DeliveryPackageTransport = $this->entityManager
+                    ->getRepository(DeliveryPackageTransport::class)
+                    ->findOneBy(
+                        ['date' => $date->getTimestamp(), 'transport' => $DeliveryTransportUid]
+                    );
 
                 $DeliveryPackageDTO = new DeliveryPackageDTO();
 
                 /* Создаем новую поставку на указанную дату, если поставки на данный транспорт не найдено */
-                if (empty($DeliveryPackageTransport))
+                if($DeliveryPackageTransport === null)
                 {
                     $DeliveryPackage = $this->deliveryPackageHandler->handle($DeliveryPackageDTO);
 
-                    if ($DeliveryPackage instanceof DeliveryPackage)
+                    if($DeliveryPackage instanceof DeliveryPackage)
                     {
                         $DeliveryPackageTransportDTO->setPackage($DeliveryPackage);
                         $DeliveryPackageTransportDTO->setTransport($DeliveryTransportUid);
@@ -292,7 +292,7 @@ final class NewPackageByProductStocks
 
                         $DeliveryPackageTransport = $this->packageTransportHandler->handle($DeliveryPackageTransportDTO);
 
-                        if (!$DeliveryPackageTransport instanceof DeliveryPackageTransport)
+                        if(!$DeliveryPackageTransport instanceof DeliveryPackageTransport)
                         {
                             $DeliveryPackage = $this->entityManager->getRepository(DeliveryPackage::class)->find($DeliveryPackage->getId());
                             $this->entityManager->remove($DeliveryPackage);
@@ -322,14 +322,14 @@ final class NewPackageByProductStocks
                 $package = true; // по умолчанию все заказы вмещаются
 
                 /* Добавляем по очереди товары в заказе в транспорт */
-                foreach ($OrderProductPackage as $product)
+                foreach($OrderProductPackage as $product)
                 {
-                    if (empty($product['size']) || empty($product['weight']))
+                    if(empty($product['size']) || empty($product['weight']))
                     {
                         throw new DomainException('Для добавления товара в поставку необходимо указать параметры упаковки товара');
                     }
 
-                    for ($i = 1; $i <= $product['total']; $i++)
+                    for($i = 1; $i <= $product['total']; $i++)
                     {
                         $DeliveryPackageTransportDTO->addSize($product['size']);
                         $DeliveryPackageTransportDTO->addCarrying($product['weight']);
@@ -341,7 +341,7 @@ final class NewPackageByProductStocks
                         $this->logger->info(sprintf('Добавили вес %s поставке %s max %s', $product['weight'], $DeliveryPackageTransportDTO->getCarrying(), $maxCarrying));
 
                         /* Если заказ превышает объем или грузоподъемность - пропускаем и продуем добавить в другой транспорт */
-                        if ($DeliveryPackageTransportDTO->getSize() > $maxSize || $DeliveryPackageTransportDTO->getCarrying() > $maxCarrying)
+                        if($DeliveryPackageTransportDTO->getSize() > $maxSize || $DeliveryPackageTransportDTO->getCarrying() > $maxCarrying)
                         {
                             $package = false;
 
@@ -354,7 +354,7 @@ final class NewPackageByProductStocks
                     }
                 }
 
-                if ($package === true)
+                if($package === true)
                 {
                     /** Добавляем заказ в поставку */
                     $DeliveryPackageEvent = $this->entityManager->getRepository(DeliveryPackageEvent::class)->find(
@@ -370,12 +370,12 @@ final class NewPackageByProductStocks
                     /** Сохраняем заказ в поставке */
                     $DeliveryPackage = $this->deliveryPackageHandler->handle($DeliveryPackageDTO);
 
-                    if ($DeliveryPackage instanceof DeliveryPackage)
+                    if($DeliveryPackage instanceof DeliveryPackage)
                     {
                         /** Сохраняем параметры поставки */
                         $DeliveryPackageTransport = $this->packageTransportHandler->handle($DeliveryPackageTransportDTO);
 
-                        if (!$DeliveryPackageTransport instanceof DeliveryPackageTransport)
+                        if(!$DeliveryPackageTransport instanceof DeliveryPackageTransport)
                         {
                             $DeliveryPackage = $this->entityManager->getRepository(DeliveryPackage::class)->find($DeliveryPackage->getId());
                             $this->entityManager->remove($DeliveryPackage);
@@ -397,7 +397,6 @@ final class NewPackageByProductStocks
                 }
             }
         }
-
 
 
         $this->logger->info('MessageHandlerSuccess', ['handler' => self::class]);

@@ -25,56 +25,22 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\UseCase\Admin\ProductParameter;
 
-use BaksDev\Core\Messenger\MessageDispatchInterface;
+use BaksDev\Core\Entity\AbstractHandler;
 use BaksDev\DeliveryTransport\Entity\ProductParameter\DeliveryPackageProductParameter;
-use BaksDev\DeliveryTransport\Messenger\DeliveryTransportMessage;
+use BaksDev\DeliveryTransport\Messenger\Transport\DeliveryTransportMessage;
 use BaksDev\DeliveryTransport\Type\Transport\Event\DeliveryTransportEventUid;
 use BaksDev\DeliveryTransport\Type\Transport\Id\DeliveryTransportUid;
-use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-final class DeliveryPackageProductParameterHandler
+final class DeliveryPackageProductParameterHandler extends AbstractHandler
 {
-    private EntityManagerInterface $entityManager;
-
-    private ValidatorInterface $validator;
-
-    private LoggerInterface $logger;
-
-    private MessageDispatchInterface $messageDispatch;
-
-    public function __construct(
-        EntityManagerInterface $entityManager,
-        ValidatorInterface $validator,
-        LoggerInterface $logger,
-        MessageDispatchInterface $messageDispatch
-    ) {
-        $this->entityManager = $entityManager;
-        $this->validator = $validator;
-        $this->logger = $logger;
-        $this->messageDispatch = $messageDispatch;
-    }
 
     /** @see DeliveryPackageProductParameter */
     public function handle(
         DeliveryPackageProductParameterDTO $command,
     ): string|DeliveryPackageProductParameter {
-        /**
-         * Валидация DTO.
-         */
-        $errors = $this->validator->validate($command);
+        /** Валидация DTO  */
+        $this->validatorCollection->add($command);
 
-        if (count($errors) > 0)
-        {
-            /** Ошибка валидации */
-            $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
-
-            return $uniqid;
-        }
-
-        $this->entityManager->clear();
 
         $ProductStockParameter = $this->entityManager->getRepository(DeliveryPackageProductParameter::class)
             ->findOneBy([
@@ -87,26 +53,19 @@ final class DeliveryPackageProductParameterHandler
         if (!$ProductStockParameter)
         {
             $ProductStockParameter = new DeliveryPackageProductParameter();
+            $this->entityManager->persist($ProductStockParameter);
         }
 
         $ProductStockParameter->setEntity($command);
+        $this->validatorCollection->add($ProductStockParameter);
 
-        /**
-         * Валидация Event
-         */
 
-        $errors = $this->validator->validate($Event);
-
-        if(count($errors) > 0)
+        /** Валидация всех объектов */
+        if($this->validatorCollection->isInvalid())
         {
-            /** Ошибка валидации */
-            $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
-
-            return $uniqid;
+            return $this->validatorCollection->getErrorUniqid();
         }
 
-        $this->entityManager->persist($ProductStockParameter);
         $this->entityManager->flush();
 
         /* Отправляем сообщение в шину */
@@ -117,4 +76,6 @@ final class DeliveryPackageProductParameterHandler
 
         return $ProductStockParameter;
     }
+
+
 }

@@ -46,7 +46,10 @@ final class NewController extends AbstractController
         DeliveryTransportHandler $DeliveryTransportHandler,
     ): Response {
 
-        $DeliveryTransportDTO = new DeliveryTransportDTO();
+        $DeliveryTransportDTO = new DeliveryTransportDTO($this->getUsr());
+        $DeliveryTransportDTO->setProfile($this->getProfileUid());
+
+
 
         // Форма
         $form = $this->createForm(DeliveryTransportForm::class, $DeliveryTransportDTO);

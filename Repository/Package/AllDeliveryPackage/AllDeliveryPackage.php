@@ -55,6 +55,8 @@ use BaksDev\Products\Stocks\Entity\Event\ProductStockEvent;
 use BaksDev\Products\Stocks\Entity\Move\ProductStockMove;
 use BaksDev\Products\Stocks\Entity\Orders\ProductStockOrder;
 use BaksDev\Products\Stocks\Entity\ProductStock;
+use BaksDev\Users\Profile\UserProfile\Entity\Personal\UserProfilePersonal;
+use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -192,22 +194,52 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
         );
 
 
+
+
+
+
+
+
         /** Пункт назначения при перемещении */
 
-        $qb->leftJoin(
-            'product_stocks_move',
-            ContactsRegionCall::TABLE,
-            'destination',
-            'destination.const = product_stocks_move.destination AND EXISTS(SELECT 1 FROM '.ContactsRegion::TABLE.' WHERE event = destination.event)'
-        );
+//        $qb->leftJoin(
+//            'product_stocks_move',
+//            ContactsRegionCall::TABLE,
+//            'destination',
+//            'destination.const = product_stocks_move.destination AND EXISTS(SELECT 1 FROM '.ContactsRegion::TABLE.' WHERE event = destination.event)'
+//        );
+//
+//
+//        $qb->leftJoin(
+//            'destination',
+//            ContactsRegionCallTrans::TABLE,
+//            'destination_trans',
+//            'destination_trans.call = destination.id AND destination_trans.local = :local'
+//        );
 
 
-        $qb->leftJoin(
-            'destination',
-            ContactsRegionCallTrans::TABLE,
-            'destination_trans',
-            'destination_trans.call = destination.id AND destination_trans.local = :local'
-        );
+
+        $qb
+            //->addSelect('profile.id')
+            ->leftJoin(
+                'product_stocks_move',
+                UserProfile::class,
+                'destination',
+                'destination.id = product_stocks_move.destination'
+            );
+
+
+        $qb
+            ->addSelect('destination_trans.username AS destination_name')
+            ->addSelect('destination_trans.location AS destination_location')
+            ->leftJoin(
+                'destination',
+                UserProfilePersonal::TABLE,
+                'destination_trans',
+                'destination_trans.event = destination.event'
+            );
+
+
 
 
         /* Данные заказа */
@@ -302,30 +334,79 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
             'delivery_transport_trans.event = delivery_transport.event AND delivery_transport_trans.local = :local'
         );
 
-        //$qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
 
-        $qb->join(
-            'delivery_transport_event',
-            ContactsRegionCall::TABLE,
-            'warehouse',
-            'warehouse.const = delivery_transport_event.warehouse'
-        );
 
-        $qb->join(
-            'warehouse',
-            ContactsRegion::TABLE,
-            'warehouse_region',
-            'warehouse_region.event = warehouse.event'
-        );
 
-        $qb->addSelect('warehouse_trans.name AS warehouse_name'); //->addGroupBy('warehouse_trans.name');
 
-        $qb->join(
-            'warehouse',
-            ContactsRegionCallTrans::TABLE,
-            'warehouse_trans',
-            'warehouse_trans.call = warehouse.id AND warehouse_trans.local = :local'
-        );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//        //$qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
+//
+//        $qb->join(
+//            'delivery_transport_event',
+//            ContactsRegionCall::TABLE,
+//            'warehouse',
+//            'warehouse.const = delivery_transport_event.warehouse'
+//        );
+//
+//        $qb->join(
+//            'warehouse',
+//            ContactsRegion::TABLE,
+//            'warehouse_region',
+//            'warehouse_region.event = warehouse.event'
+//        );
+//
+//        $qb->addSelect('warehouse_trans.name AS warehouse_name'); //->addGroupBy('warehouse_trans.name');
+//
+//        $qb->join(
+//            'warehouse',
+//            ContactsRegionCallTrans::TABLE,
+//            'warehouse_trans',
+//            'warehouse_trans.call = warehouse.id AND warehouse_trans.local = :local'
+//        );
+
+
+
+
+
+
+        $qb
+            //->addSelect('profile.id')
+            ->join(
+                'delivery_transport_event',
+                UserProfile::class,
+                'warehouse',
+                'warehouse.id = delivery_transport_event.profile'
+            );
+
+
+        $qb
+            ->addSelect('warehouse_trans.username AS warehouse_name')
+            ->addSelect('warehouse_trans.location AS warehouse_location')
+            ->join(
+                'warehouse',
+                UserProfilePersonal::TABLE,
+                'warehouse_trans',
+                'warehouse_trans.event = warehouse.event'
+            );
+
+
+
+
+
+
 
 
         $qb->addSelect(
@@ -367,6 +448,9 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
         $qb->addOrderBy('package_transport.interval', 'DESC');
 
         $qb->allGroupByExclude();
+
+
+        //dd($qb->fetchAllAssociative());
 
         return $this->paginator->fetchAllAssociative($qb);
     }

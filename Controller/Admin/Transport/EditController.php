@@ -32,6 +32,7 @@ use BaksDev\DeliveryTransport\Entity\Transport\Event\DeliveryTransportEvent;
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\DeliveryTransportDTO;
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\DeliveryTransportForm;
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\DeliveryTransportHandler;
+use InvalidArgumentException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,19 +48,20 @@ final class EditController extends AbstractController
         Request $request,
         #[MapEntity] DeliveryTransportEvent $DeliveryTransportEvent,
         DeliveryTransportHandler $DeliveryTransportHandler,
-    ): Response {
-        $DeliveryTransportDTO = new DeliveryTransportDTO();
+    ): Response
+    {
+        $DeliveryTransportDTO = new DeliveryTransportDTO($this->getUsr());
         $DeliveryTransportEvent->getDto($DeliveryTransportDTO);
 
         // Форма
         $form = $this->createForm(DeliveryTransportForm::class, $DeliveryTransportDTO);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid() && $form->has('delivery_transport'))
+        if($form->isSubmitted() && $form->isValid() && $form->has('delivery_transport'))
         {
             $DeliveryTransport = $DeliveryTransportHandler->handle($DeliveryTransportDTO);
 
-            if ($DeliveryTransport instanceof DeliveryTransport)
+            if($DeliveryTransport instanceof DeliveryTransport)
             {
                 $this->addFlash('success', 'admin.success.new', 'admin.delivery.transport');
 
@@ -69,6 +71,11 @@ final class EditController extends AbstractController
             $this->addFlash('danger', 'admin.danger.new', 'admin.delivery.transport', $DeliveryTransport);
 
             return $this->redirectToReferer();
+        }
+
+        if(!$DeliveryTransportDTO->getProfile()?->equals($this->getProfileUid()))
+        {
+            throw new InvalidArgumentException('Page Not Found');
         }
 
         return $this->render(['form' => $form->createView()]);
