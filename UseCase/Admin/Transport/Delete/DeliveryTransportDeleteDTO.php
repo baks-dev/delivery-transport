@@ -29,6 +29,7 @@ namespace BaksDev\DeliveryTransport\UseCase\Admin\Transport\Delete;
 use BaksDev\DeliveryTransport\Entity\Transport\Event\DeliveryTransportEvent;
 use BaksDev\DeliveryTransport\Entity\Transport\Event\DeliveryTransportEventInterface;
 use BaksDev\DeliveryTransport\Type\Transport\Event\DeliveryTransportEventUid;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use ReflectionProperty;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -39,6 +40,13 @@ final class DeliveryTransportDeleteDTO implements DeliveryTransportEventInterfac
     #[Assert\NotBlank]
     #[Assert\Uuid]
     private readonly DeliveryTransportEventUid $id;
+
+    /**
+     * Идентификатор профиля, за которым закреплен транспорт (Константа склада)
+     */
+    #[Assert\Uuid]
+    #[Assert\NotBlank]
+    private readonly UserProfileUid $profile;
 
     #[Assert\Valid]
     private Modify\DeliveryTransportModifyDTO $modify;
@@ -59,6 +67,12 @@ final class DeliveryTransportDeleteDTO implements DeliveryTransportEventInterfac
         {
             $this->id = $id instanceof DeliveryTransportEvent ? $id->getId() : $id;
         }
+    }
+
+
+    public function getProfile(): UserProfileUid
+    {
+        return $this->profile;
     }
 
 

@@ -73,7 +73,7 @@ final class EditController extends AbstractController
             return $this->redirectToReferer();
         }
 
-        if(!$DeliveryTransportDTO->getProfile()?->equals($this->getProfileUid()))
+        if(!$this->isGranted('ROLE_ADMIN') && !$DeliveryTransportDTO->getProfile()?->equals($this->getProfileUid()))
         {
             throw new InvalidArgumentException('Page Not Found');
         }

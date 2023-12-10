@@ -212,34 +212,4 @@ final class DeliveryTransportDTO implements DeliveryTransportEventInterface
     {
         return $this->usr;
     }
-
-
-
-
-
-//    public function getWarehouse(): ?ContactsRegionCallConst
-//    {
-//        return $this->warehouse;
-//    }
-//
-//    public function setWarehouse(?ContactsRegionCallConst $warehouse):void
-//    {
-//        $this->warehouse = $warehouse;
-//    }
-
-
-//    /**
-//     * Id
-//     */
-//    public function getId(): ?DeliveryTransportEventUid
-//    {
-//        return $this->id;
-//    }
-
-//    public function setId(?DeliveryTransportEventUid $id): self
-//    {
-//        $this->id = $id;
-//        return $this;
-//    }
-
 }

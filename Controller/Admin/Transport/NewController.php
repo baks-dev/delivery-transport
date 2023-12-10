@@ -50,7 +50,6 @@ final class NewController extends AbstractController
         $DeliveryTransportDTO->setProfile($this->getProfileUid());
 
 
-
         // Форма
         $form = $this->createForm(DeliveryTransportForm::class, $DeliveryTransportDTO);
         $form->handleRequest($request);

@@ -32,6 +32,7 @@ use BaksDev\DeliveryTransport\Entity\Transport\Event\DeliveryTransportEvent;
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\Delete\DeliveryTransportDeleteDTO;
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\Delete\DeliveryTransportDeleteForm;
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\Delete\DeliveryTransportDeleteHandler;
+use InvalidArgumentException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,8 +48,9 @@ final class DeleteController extends AbstractController
         Request $request,
         #[MapEntity] DeliveryTransportEvent $DeliveryTransportEvent,
         DeliveryTransportDeleteHandler $DeliveryTransportDeleteHandler,
-    ): Response {
-        
+    ): Response
+    {
+
         $DeliveryTransportDeleteDTO = new DeliveryTransportDeleteDTO();
         $DeliveryTransportEvent->getDto($DeliveryTransportDeleteDTO);
         $form = $this->createForm(DeliveryTransportDeleteForm::class, $DeliveryTransportDeleteDTO, [
@@ -56,11 +58,11 @@ final class DeleteController extends AbstractController
         ]);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid() && $form->has('delivery_transport_delete'))
+        if($form->isSubmitted() && $form->isValid() && $form->has('delivery_transport_delete'))
         {
             $DeliveryTransport = $DeliveryTransportDeleteHandler->handle($DeliveryTransportDeleteDTO);
 
-            if ($DeliveryTransport instanceof DeliveryTransport)
+            if($DeliveryTransport instanceof DeliveryTransport)
             {
                 $this->addFlash('admin.page.delete', 'admin.success.delete', 'admin.delivery.transport');
 
@@ -75,6 +77,11 @@ final class DeleteController extends AbstractController
             );
 
             return $this->redirectToRoute('delivery-transport:admin.transport.index', status: 400);
+        }
+
+        if(!$this->isGranted('ROLE_ADMIN') && !$DeliveryTransportDeleteDTO->getProfile()?->equals($this->getProfileUid()))
+        {
+            throw new InvalidArgumentException('Page Not Found');
         }
 
         return $this->render([
