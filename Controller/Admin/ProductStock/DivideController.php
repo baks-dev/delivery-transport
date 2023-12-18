@@ -44,8 +44,8 @@ use BaksDev\Orders\Order\Entity\Order;
 use BaksDev\Orders\Order\Repository\CurrentOrderEvent\CurrentOrderEventInterface;
 use BaksDev\Orders\Order\Repository\OrderDelivery\OrderDeliveryInterface;
 use BaksDev\Orders\Order\Type\Status\OrderStatus;
-use BaksDev\Orders\Order\UseCase\Admin\NewEdit\OrderDTO;
-use BaksDev\Orders\Order\UseCase\Admin\NewEdit\OrderHandler;
+use BaksDev\Orders\Order\UseCase\Admin\Edit\EditOrderDTO;
+use BaksDev\Orders\Order\UseCase\Admin\Edit\EditOrderHandler;
 use BaksDev\Orders\Order\UseCase\User\Basket\Add\OrderProductDTO;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
@@ -83,7 +83,7 @@ final class DivideController extends AbstractController
         DeliveryPackageTransportHandler $packageTransportHandler,
         DivideProductStockHandler $divideProductStockHandler,
         CurrentOrderEventInterface $currentOrderEvent,
-        OrderHandler $OrderHandler,
+        EditOrderHandler $OrderHandler,
     ): Response
     {
         /**
@@ -306,7 +306,7 @@ final class DivideController extends AbstractController
             foreach($PackageProducts as $packageProduct)
             {
                 /** Создаем новый заказ */
-                $newOrder = new OrderDTO();
+                $newOrder = new EditOrderDTO();
                 $Order->getDto($newOrder);
                 $newOrder->resetId();
                 $newOrder->setStatus(new OrderStatus(new OrderStatus\OrderStatusPackage()));
