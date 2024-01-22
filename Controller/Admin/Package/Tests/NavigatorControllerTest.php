@@ -33,7 +33,7 @@ final class NavigatorControllerTest extends WebTestCase
 
     private const ROLE = 'ROLE_DELIVERY_PACKAGE_NAVIGATOR';
 
-    private static ?DeliveryPackageUid $identifier;
+    private static ?DeliveryPackageUid $identifier = null;
 
     public static function setUpBeforeClass(): void
     {
@@ -65,10 +65,8 @@ final class NavigatorControllerTest extends WebTestCase
                 self::assertResponseRedirects();
             }
         }
-        else
-        {
-            self::assertTrue(true);
-        }
+
+        self::assertTrue(true);
     }
 
     // доступ по роли ROLE_ADMIN
@@ -95,10 +93,9 @@ final class NavigatorControllerTest extends WebTestCase
 
             }
         }
-        else
-        {
-            self::assertTrue(true);
-        }
+
+
+        self::assertTrue(true);
     }
 
     // доступ по роли ROLE_USER
@@ -123,10 +120,8 @@ final class NavigatorControllerTest extends WebTestCase
                 self::assertResponseStatusCodeSame(403);
             }
         }
-        else
-        {
-            self::assertTrue(true);
-        }
+
+        self::assertTrue(true);
     }
 
     /** Доступ по без роли */
@@ -150,9 +145,7 @@ final class NavigatorControllerTest extends WebTestCase
                 self::assertResponseStatusCodeSame(401);
             }
         }
-        else
-        {
-            self::assertTrue(true);
-        }
+
+        self::assertTrue(true);
     }
 }

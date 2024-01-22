@@ -50,6 +50,8 @@ final class IndexControllerTest extends WebTestCase
 
             self::assertResponseIsSuccessful();
         }
+
+        self::assertTrue(true);
     }
 
     /** Доступ по роли ROLE_ADMIN */
@@ -69,6 +71,8 @@ final class IndexControllerTest extends WebTestCase
 
             self::assertResponseIsSuccessful();
         }
+
+        self::assertTrue(true);
     }
 
     /** Доступ по роли ROLE_USER */
@@ -87,6 +91,8 @@ final class IndexControllerTest extends WebTestCase
 
             self::assertResponseStatusCodeSame(403);
         }
+
+        self::assertTrue(true);
     }
 
     /** Доступ по без роли */
@@ -104,5 +110,7 @@ final class IndexControllerTest extends WebTestCase
             // Full authentication is required to access this resource
             self::assertResponseStatusCodeSame(401);
         }
+
+        self::assertTrue(true);
     }
 }

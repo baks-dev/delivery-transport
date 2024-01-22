@@ -32,7 +32,7 @@ final class EditControllerTest extends WebTestCase
 
     private const ROLE = 'ROLE_DELIVERY_PACKAGE_PARAMETER_EDIT';
 
-    private static ?ProductUid $identifier;
+    private static ?ProductUid $identifier = null;
     
     public static function setUpBeforeClass(): void
     {
@@ -63,10 +63,9 @@ final class EditControllerTest extends WebTestCase
 
                 self::assertResponseIsSuccessful();
             }
-        } else
-        {
-            self::assertTrue(true);
         }
+
+        self::assertTrue(true);
     }
 
     // доступ по роли ROLE_ADMIN
@@ -91,10 +90,9 @@ final class EditControllerTest extends WebTestCase
 
                 self::assertResponseIsSuccessful();
             }
-        } else
-        {
-            self::assertTrue(true);
         }
+
+        self::assertTrue(true);
     }
 
     // доступ по роли ROLE_USER
@@ -118,10 +116,9 @@ final class EditControllerTest extends WebTestCase
 
                 self::assertResponseStatusCodeSame(403);
             }
-        } else
-        {
-            self::assertTrue(true);
         }
+
+        self::assertTrue(true);
     }
 
     /** Доступ по без роли */
@@ -144,9 +141,8 @@ final class EditControllerTest extends WebTestCase
                 // Full authentication is required to access this resource
                 self::assertResponseStatusCodeSame(401);
             }
-        } else
-        {
-            self::assertTrue(true);
         }
+
+        self::assertTrue(true);
     }
 }
