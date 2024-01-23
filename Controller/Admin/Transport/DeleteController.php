@@ -81,7 +81,7 @@ final class DeleteController extends AbstractController
 
         if(!$this->isGranted('ROLE_ADMIN') && !$DeliveryTransportDeleteDTO->getProfile()?->equals($this->getProfileUid()))
         {
-            throw new InvalidArgumentException('Page Not Found');
+            throw new InvalidArgumentException('Page Not Found', 403);
         }
 
         return $this->render([

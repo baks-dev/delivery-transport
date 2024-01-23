@@ -131,6 +131,9 @@ final class DeliveryTransportEditTest extends KernelTestCase
 
         self::assertTrue(($handle instanceof  DeliveryTransport), $handle.': Ошибка DeliveryTransport');
 
+        $em->clear();
+        //$em->close();
+
     }
 
 }

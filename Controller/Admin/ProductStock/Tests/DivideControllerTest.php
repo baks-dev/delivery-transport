@@ -39,6 +39,9 @@ final class DivideControllerTest extends WebTestCase
         // Получаем одно из событий Продукта
         $em = self::getContainer()->get(EntityManagerInterface::class);
         self::$identifier = $em->getRepository(ProductStock::class)->findOneBy([], ['id' => 'DESC'])?->getEvent();
+
+        $em->clear();
+        //$em->close();
     }
     
     /** Доступ по роли */

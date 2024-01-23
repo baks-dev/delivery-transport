@@ -178,6 +178,8 @@ final class DeliveryTransportDeleteTest extends KernelTestCase
 
 
         $em->flush();
+        $em->clear();
+        //$em->close();
 
         self::assertNull($DeliveryTransport);
 

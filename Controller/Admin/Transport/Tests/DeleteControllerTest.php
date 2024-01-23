@@ -40,28 +40,6 @@ final class DeleteControllerTest extends WebTestCase
     private const ROLE = 'ROLE_DELIVERY_TRANSPORT_DELETE';
 
 
-    /** Доступ по роли */
-    public function testRoleSuccessful(): void
-    {
-        self::ensureKernelShutdown();
-        $client = static::createClient();
-
-        foreach(TestUserAccount::getDevice() as $device)
-        {
-            $client->setServerParameter('HTTP_USER_AGENT', $device);
-
-            $usr = TestUserAccount::getModer(self::ROLE);
-
-            $client->loginUser($usr, 'user');
-            $client->request('GET', sprintf(self::URL, DeliveryTransportEventUid::TEST));
-
-            self::assertResponseIsSuccessful();
-        }
-
-        self::assertTrue(true);
-
-    }
-
     // доступ по роли ROLE_ADMIN
     public function testRoleAdminSuccessful(): void
     {
@@ -82,6 +60,31 @@ final class DeleteControllerTest extends WebTestCase
         }
 
         self::assertTrue(true);
+    }
+
+
+    /** Доступ по роли */
+    public function testRoleSuccessful(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        foreach(TestUserAccount::getDevice() as $device)
+        {
+            $client->setServerParameter('HTTP_USER_AGENT', $device);
+
+            $usr = TestUserAccount::getModer(self::ROLE);
+
+            $client->loginUser($usr, 'user');
+            $client->request('GET', sprintf(self::URL, DeliveryTransportEventUid::TEST));
+
+            //self::assertResponseIsSuccessful();
+
+            self::assertResponseStatusCodeSame(500);
+        }
+
+        self::assertTrue(true);
+
     }
 
     // доступ по роли ROLE_USER

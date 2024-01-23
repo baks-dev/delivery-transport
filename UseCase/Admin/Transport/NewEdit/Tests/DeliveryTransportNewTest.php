@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Tests;
 
+use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Type\Gps\GpsLatitude;
 use BaksDev\Core\Type\Gps\GpsLongitude;
 use BaksDev\Core\Type\Locale\Locale;
@@ -39,6 +40,8 @@ use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Trans\DeliveryTran
 use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use BaksDev\Users\User\Type\Id\UserUid;
+use BaksDev\Wildberries\Products\Entity\Cards\WbProductCard;
+use BaksDev\Wildberries\Products\Type\Cards\Id\WbCardUid;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
@@ -74,6 +77,8 @@ final class DeliveryTransportNewTest extends KernelTestCase
         }
 
         $em->flush();
+        $em->clear();
+        //$em->close();
     }
 
 
@@ -161,9 +166,25 @@ final class DeliveryTransportNewTest extends KernelTestCase
         self::bootKernel();
         $container = self::getContainer();
 
-        /** @var EntityManagerInterface $em */
-        $em = $container->get(EntityManagerInterface::class);
-        $DeliveryTransport = $em->getRepository(DeliveryTransport::class)->find(DeliveryTransportUid::TEST);
-        self::assertNotNull($DeliveryTransport);
+        self::bootKernel();
+        $container = self::getContainer();
+
+        /** @var DBALQueryBuilder $dbal */
+        $dbal = $container->get(DBALQueryBuilder::class);
+
+        $dbal->createQueryBuilder(self::class);
+        $dbal
+            ->from(DeliveryTransport::class, 'test')
+            ->where('test.id = :id')
+            ->setParameter('id', DeliveryTransportUid::TEST)
+        ;
+
+        self::assertTrue($dbal->fetchExist());
+
+//
+//        /** @var EntityManagerInterface $em */
+//        $em = $container->get(EntityManagerInterface::class);
+//        $DeliveryTransport = $em->getRepository(DeliveryTransport::class)->find(DeliveryTransportUid::TEST);
+//        self::assertNotNull($DeliveryTransport);
     }
 }

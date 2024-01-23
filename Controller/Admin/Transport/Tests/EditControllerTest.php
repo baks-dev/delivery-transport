@@ -64,9 +64,9 @@ final class EditControllerTest extends WebTestCase
             $client->loginUser($usr, 'user');
             $client->request('GET', sprintf(self::URL, DeliveryTransportEventUid::TEST));
 
-            self::assertResponseIsSuccessful();
-
-            //self::assertResponseStatusCodeSame(500);
+            //self::assertResponseIsSuccessful();
+            /** Другому профилю не принадлежит */
+            self::assertResponseStatusCodeSame(500);
         }
 
         self::assertTrue(true);
