@@ -65,8 +65,7 @@ final class DeliveryTransportParameterForm extends AbstractType
         $builder->add('length', IntegerType::class,
             [
                 'attr' => [
-                    'min' => 1,
-                    'max' => 300
+                    'min' => 1
                 ]
             ]
         );
@@ -77,8 +76,7 @@ final class DeliveryTransportParameterForm extends AbstractType
         $builder->add('width', IntegerType::class,
             [
                 'attr' => [
-                    'min' => 1,
-                    'max' => 300
+                    'min' => 1
                 ]
             ]
         );
@@ -89,8 +87,7 @@ final class DeliveryTransportParameterForm extends AbstractType
         $builder->add('height', IntegerType::class,
             [
                 'attr' => [
-                    'min' => 1,
-                    'max' => 300
+                    'min' => 1
                 ]
             ]
         );
