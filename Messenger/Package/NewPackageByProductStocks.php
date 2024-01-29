@@ -95,7 +95,7 @@ final class NewPackageByProductStocks
         PackageOrderProductsInterface $packageOrderProducts,
         DeliveryPackageHandler $deliveryPackageHandler,
         DeliveryPackageTransportHandler $packageTransportHandler,
-        LoggerInterface $messageDispatchLogger,
+        LoggerInterface $deliveryTransportLogger,
         ExistStockPackageInterface $existStockPackage,
         ErrorProductStockHandler $errorProductStockHandler,
         ProductStocksNewByOrderInterface $productStocksNewByOrder,
@@ -110,7 +110,7 @@ final class NewPackageByProductStocks
         $this->packageOrderProducts = $packageOrderProducts;
         $this->deliveryPackageHandler = $deliveryPackageHandler;
         $this->packageTransportHandler = $packageTransportHandler;
-        $this->logger = $messageDispatchLogger;
+        $this->logger = $deliveryTransportLogger;
         $this->existStockPackage = $existStockPackage;
         $this->errorProductStockHandler = $errorProductStockHandler;
         $this->productStocksNewByOrder = $productStocksNewByOrder;

@@ -55,12 +55,12 @@ final class UpdateProductStocksTotalByDelivery
     public function __construct(
         ProductStocksByIdInterface $productStocks,
         EntityManagerInterface $entityManager,
-        LoggerInterface $messageDispatchLogger,
+        LoggerInterface $deliveryTransportLogger,
     )
     {
         $this->productStocks = $productStocks;
         $this->entityManager = $entityManager;
-        $this->logger = $messageDispatchLogger;
+        $this->logger = $deliveryTransportLogger;
     }
 
     /**

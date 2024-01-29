@@ -56,14 +56,14 @@ final class NewProductStocksWarehouseByMove
     public function __construct(
         UserByUserProfileInterface $userByUserProfile,
         EntityManagerInterface $entityManager,
-        LoggerInterface $messageDispatchLogger,
+        LoggerInterface $deliveryTransportLogger,
         WarehouseProductStockHandler $WarehouseProductStockHandler,
     ) {
 
         $this->entityManager = $entityManager;
         $this->WarehouseProductStockHandler = $WarehouseProductStockHandler;
         $this->userByUserProfile = $userByUserProfile;
-        $this->logger = $messageDispatchLogger;
+        $this->logger = $deliveryTransportLogger;
     }
 
     /**

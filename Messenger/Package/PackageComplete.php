@@ -72,14 +72,14 @@ final class PackageComplete
 
 
     public function __construct(
-        LoggerInterface $messageDispatchLogger,
+        LoggerInterface $deliveryTransportLogger,
         ExistPackageProductStocksInterface $existPackageProductStocks,
         PackageByProductStocksInterface $packageByProductStocks,
         CompletedPackageHandler $completedPackageHandler,
 
     )
     {
-        $this->logger = $messageDispatchLogger;
+        $this->logger = $deliveryTransportLogger;
         $this->existPackageProductStocks = $existPackageProductStocks;
         $this->packageByProductStocks = $packageByProductStocks;
         $this->completedPackageHandler = $completedPackageHandler;

@@ -56,14 +56,14 @@ final class PackageSortByDistance
         PackageOrderGeocodeInterface $packageOrderGeocode,
         PackageWarehouseGeocodeInterface $packageWarehouseGeocode,
         GeocodeNavigator $geocodeNavigator,
-        LoggerInterface $messageDispatchLogger
+        LoggerInterface $deliveryTransportLogger
     )
     {
         $this->entityManager = $entityManager;
         $this->packageOrderGeocode = $packageOrderGeocode;
         $this->packageWarehouseGeocode = $packageWarehouseGeocode;
         $this->geocodeNavigator = $geocodeNavigator;
-        $this->logger = $messageDispatchLogger;
+        $this->logger = $deliveryTransportLogger;
     }
 
     /**

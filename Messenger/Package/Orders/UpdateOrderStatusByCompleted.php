@@ -58,13 +58,13 @@ final class UpdateOrderStatusByCompleted
         CurrentOrderEventInterface $currentOrderEvent,
         OrderStatusHandler $OrderStatusHandler,
         CentrifugoPublishInterface $CentrifugoPublish,
-        LoggerInterface $messageDispatchLogger,
+        LoggerInterface $deliveryTransportLogger,
     ) {
         $this->entityManager = $entityManager;
         $this->currentOrderEvent = $currentOrderEvent;
         $this->OrderStatusHandler = $OrderStatusHandler;
         $this->CentrifugoPublish = $CentrifugoPublish;
-        $this->logger = $messageDispatchLogger;
+        $this->logger = $deliveryTransportLogger;
     }
 
     /**

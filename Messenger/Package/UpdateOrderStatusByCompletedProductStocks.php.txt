@@ -64,7 +64,7 @@ final class UpdateOrderStatusByCompletedProductStocks
         CurrentOrderEventInterface $currentOrderEvent,
         OrderStatusHandler $OrderStatusHandler,
         CentrifugoPublishInterface $CentrifugoPublish,
-        LoggerInterface $messageDispatchLogger,
+        LoggerInterface deliveryTransportLogger,
         WarehouseProductStockHandler $WarehouseProductStockHandler,
     ) {
         $this->productStocks = $productStocks;
@@ -76,7 +76,7 @@ final class UpdateOrderStatusByCompletedProductStocks
         $this->currentOrderEvent = $currentOrderEvent;
         $this->OrderStatusHandler = $OrderStatusHandler;
         $this->CentrifugoPublish = $CentrifugoPublish;
-        $this->logger = $messageDispatchLogger;
+        $this->logger = deliveryTransportLogger;
 
         $this->WarehouseProductStockHandler = $WarehouseProductStockHandler;
     }
