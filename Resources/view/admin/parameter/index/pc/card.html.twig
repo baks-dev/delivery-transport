@@ -51,7 +51,7 @@
                    class="text-decoration-none mb-1 modal-link fw-bolder text-muted"
                    data-bs-toggle="modal"
                    data-bs-target="#modal"
-                   title="Детали заявки">
+                   title="Параметры упаковки">
 
                     {{ item.product_name }}
 
@@ -73,9 +73,9 @@
 
 
                 {# Описание #}
-                {#<div class="text-muted small">
-                    #}{#{{ string_width(item.product_preview, 150)|raw }}#}{#
-                </div>#}
+                {# <div class="text-muted small">
+                #}{# {{ string_width(item.product_preview, 150)|raw }} #}{#
+                </div> #}
 
                 {# Артикул #}
                 <div class="text-muted ">
@@ -102,14 +102,27 @@
         {{ item.product_parameter_height?: badge|raw }}
     </td>
 
-    <td class="text-center">
-        {{ item.product_parameter_size?: badge|raw }}
+    <td class="text-center text-nowrap">
+
+        {% if item.product_parameter_size %}
+
+            {% if item.product_parameter_size > 10 %}
+                {{ (item.product_parameter_size / 10) }} см3
+
+            {% elseif item.product_parameter_size > 1000 %}
+                {{ (item.product_parameter_size / 1000) }} м3
+            {% else %}
+                {{ item.product_parameter_size }} мм3
+            {% endif %}
+
+        {% else %}
+            {{ badge|raw }}
+        {% endif %}
+
     </td>
 
-
-
     <td class="text-center">
-        {{ item.product_parameter_weight ? item.product_parameter_weight / 100: badge|raw }}
+        {{ item.product_parameter_weight ? (item.product_parameter_weight / 100) : badge|raw }}
     </td>
 
 </tr>

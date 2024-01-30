@@ -82,7 +82,7 @@ class DeliveryPackageProductParameter extends EntityState
      * Длина (Глубина), см
      */
     #[Assert\NotBlank]
-    #[Assert\Range(min: 1, max: 500)]
+    #[Assert\Range(min: 1, max: 32767)]
     #[ORM\Column(type: Types::SMALLINT)]
     private int $length;
 
@@ -90,7 +90,7 @@ class DeliveryPackageProductParameter extends EntityState
      * Ширина, см
      */
     #[Assert\NotBlank]
-    #[Assert\Range(min: 1, max: 500)]
+    #[Assert\Range(min: 1, max: 32767)]
     #[ORM\Column(type: Types::SMALLINT)]
     private int $width;
 

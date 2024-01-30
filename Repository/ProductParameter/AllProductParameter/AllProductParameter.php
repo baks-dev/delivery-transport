@@ -30,9 +30,12 @@ use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Services\Paginator\PaginatorInterface;
 use BaksDev\DeliveryTransport\Entity\ProductParameter\DeliveryPackageProductParameter;
 use BaksDev\DeliveryTransport\Forms\ProductParameter\ProductParameterFilterInterface;
+use BaksDev\Elastic\Api\Index\ElasticGetIndex;
+use BaksDev\Elastic\BaksDevElasticBundle;
 use BaksDev\Products\Category\Entity as CategoryEntity;
 use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
 use BaksDev\Products\Product\Entity;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
 
 final class AllProductParameter implements AllProductParameterInterface
@@ -45,15 +48,18 @@ final class AllProductParameter implements AllProductParameterInterface
     private ?SearchDTO $search = null;
 
     private ?ProductFilterDTO $filter = null;
+    private ?ElasticGetIndex $elasticGetIndex;
 
     public function __construct(
         DBALQueryBuilder $DBALQueryBuilder,
         PaginatorInterface $paginator,
+        ?ElasticGetIndex $elasticGetIndex = null
     )
     {
 
         $this->paginator = $paginator;
         $this->DBALQueryBuilder = $DBALQueryBuilder;
+        $this->elasticGetIndex = $elasticGetIndex;
     }
 
 
@@ -353,19 +359,60 @@ final class AllProductParameter implements AllProductParameterInterface
 
         if($this->search?->getQuery())
         {
-            $qb
-                ->createSearchQueryBuilder($this->search)
-                ->addSearchEqualUid('account.id')
-                ->addSearchEqualUid('account.event')
-                ->addSearchLike('product_trans.name')
-                //->addSearchLike('product_trans.preview')
-                ->addSearchLike('product_info.article')
-                ->addSearchLike('product_offer.article')
-                ->addSearchLike('product_offer_modification.article')
-                ->addSearchLike('product_offer_variation.article');
+
+            if($this->elasticGetIndex)
+            {
+                /** Поиск по модификации */
+                $result = $this->elasticGetIndex->handle(ProductModification::class, $this->search->getQuery(), 1);
+                $counter = $result['hits']['total']['value'];
+
+                if($counter)
+                {
+
+                    /** Идентификаторы */
+                    $data = array_column($result['hits']['hits'], "_source");
+
+                    $qb
+                        ->createSearchQueryBuilder($this->search)
+                        ->addSearchInArray('product_offer_modification.id', array_column($data, "id"));
+
+                    return $this->paginator->fetchAllAssociative($qb);
+                }
+
+                /** Поиск по продукции */
+                $result = $this->elasticGetIndex->handle(Entity\Product::class, $this->search->getQuery(), 1);
+
+                $counter = $result['hits']['total']['value'];
+
+                if($counter)
+                {
+                    /** Идентификаторы */
+                    $data = array_column($result['hits']['hits'], "_source");
+
+                    $qb
+                        ->createSearchQueryBuilder($this->search)
+                        ->addSearchInArray('product.id', array_column($data, "id"));
+
+                    return $this->paginator->fetchAllAssociative($qb);
+                }
+            }
+
+                $qb
+                    ->createSearchQueryBuilder($this->search)
+                    ->addSearchEqualUid('account.id')
+                    ->addSearchEqualUid('account.event')
+                    ->addSearchLike('product_trans.name')
+                    //->addSearchLike('product_trans.preview')
+                    ->addSearchLike('product_info.article')
+                    ->addSearchLike('product_offer.article')
+                    ->addSearchLike('product_offer_modification.article')
+                    ->addSearchLike('product_offer_variation.article');
+
+                $qb->orderBy('product.event', 'DESC');
+
         }
 
-        $qb->orderBy('product.event', 'DESC');
+
 
         return $this->paginator->fetchAllAssociative($qb);
 

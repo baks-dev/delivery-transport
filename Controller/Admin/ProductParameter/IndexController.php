@@ -68,6 +68,7 @@ final class IndexController extends AbstractController
         $filterForm = $this->createForm(ProductFilterForm::class, $filter, [
             'action' => $this->generateUrl('delivery-transport:admin.parameter.index'),
         ]);
+
         $filterForm->handleRequest($request);
         !$filterForm->isSubmitted() ?: $this->redirectToReferer();
 
