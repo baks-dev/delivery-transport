@@ -67,7 +67,7 @@ use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[AsController]
-//#[RoleSecurity('ROLE_PRODUCT_STOCKS_DIVIDE')]
+#[RoleSecurity('ROLE_PRODUCT_STOCKS_DIVIDE')]
 final class DivideController extends AbstractController
 {
     /** Разделить заявку по транспорту так, чтобы он эффективно был помещен в транспорт */
