@@ -48,7 +48,9 @@ use Symfony\Component\Routing\Annotation\Route;
 #[RoleSecurity('ROLE_DELIVERY_PACKAGE_DELIVERY')]
 final class DeliveryController extends AbstractController
 {
-    /** Погрузка заявки в транспорт для доставки */
+    /**
+     * Погрузка заявки в транспорт для доставки
+     */
     #[Route('/admin/delivery/package/delivery/{id}', name: 'admin.package.delivery', methods: ['GET', 'POST'])]
     public function delivery(
         Request $request,
@@ -78,10 +80,14 @@ final class DeliveryController extends AbstractController
 
             if($ProductStock instanceof ProductStock)
             {
-                $this->addFlash('success', 'admin.success.delivery', 'admin.delivery.package');
+                $this->addFlash(
+                    'page.index',
+                    'success.delivery',
+                    'delivery-transport.package'
+                );
 
                 /* Чистим кеш модуля */
-                $cache = new FilesystemAdapter('delivery-transport:');
+                $cache = new FilesystemAdapter('delivery-transport');
                 $cache->clear();
 
                 /** Получаем упаковку с данным заказом */
@@ -98,19 +104,29 @@ final class DeliveryController extends AbstractController
 
                         if(!$DeliveryPackageHandlerResult instanceof DeliveryPackage)
                         {
-                            $this->addFlash('danger', 'admin.danger.delivery', 'admin.delivery.package', $DeliveryPackageHandlerResult);
+                            $this->addFlash(
+                                'page.index',
+                                'danger.delivery',
+                                'delivery-transport.package',
+                                $DeliveryPackageHandlerResult);
                         }
                     }
                 }
 
-                return $this->redirectToRoute('delivery-transport:admin.package.index', ['package' => (string)$DeliveryPackage?->getId()], 200);
+                return $this
+                    ->redirectToRoute('delivery-transport:admin.package.index',
+                        ['package' => (string) $DeliveryPackage?->getId()]);
             }
 
-            $this->addFlash('danger', 'admin.danger.delivery', 'admin.delivery.package', $ProductStock);
+            $this->addFlash(
+                'page.index',
+                'danger.delivery',
+                'delivery-transport.package',
+                $ProductStock);
 
             return $this->redirectToReferer();
         }
-        
+
         return $this->render([
                 'form' => $form->createView(),
                 'products' => $productDetail->fetchAllProductsByProductStocksAssociative($Stock->getId())

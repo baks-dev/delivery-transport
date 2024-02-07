@@ -360,10 +360,12 @@ final class AllProductParameter implements AllProductParameterInterface
         if($this->search?->getQuery())
         {
 
-            if($this->elasticGetIndex)
+            /** Поиск по модификации */
+            $result = $this->elasticGetIndex ? $this->elasticGetIndex->handle(ProductModification::class, $this->search->getQuery(), 1) : false;
+
+            if($result)
             {
-                /** Поиск по модификации */
-                $result = $this->elasticGetIndex->handle(ProductModification::class, $this->search->getQuery(), 1);
+
                 $counter = $result['hits']['total']['value'];
 
                 if($counter)
@@ -397,21 +399,21 @@ final class AllProductParameter implements AllProductParameterInterface
                 }
             }
 
-                $qb
-                    ->createSearchQueryBuilder($this->search)
-                    ->addSearchEqualUid('account.id')
-                    ->addSearchEqualUid('account.event')
-                    ->addSearchLike('product_trans.name')
-                    //->addSearchLike('product_trans.preview')
-                    ->addSearchLike('product_info.article')
-                    ->addSearchLike('product_offer.article')
-                    ->addSearchLike('product_offer_modification.article')
-                    ->addSearchLike('product_offer_variation.article');
 
-                $qb->orderBy('product.event', 'DESC');
+            $qb
+                ->createSearchQueryBuilder($this->search)
+                ->addSearchEqualUid('account.id')
+                ->addSearchEqualUid('account.event')
+                ->addSearchLike('product_trans.name')
+                //->addSearchLike('product_trans.preview')
+                ->addSearchLike('product_info.article')
+                ->addSearchLike('product_offer.article')
+                ->addSearchLike('product_offer_modification.article')
+                ->addSearchLike('product_offer_variation.article');
+
+            $qb->orderBy('product.event', 'DESC');
 
         }
-
 
 
         return $this->paginator->fetchAllAssociative($qb);

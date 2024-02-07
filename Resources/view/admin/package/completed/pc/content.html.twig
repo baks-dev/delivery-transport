@@ -1,4 +1,4 @@
-{% trans_default_domain 'admin.delivery.package' %}
+{% trans_default_domain 'delivery-transport.package' %}
 
 {% set current = products|first %}
 
@@ -46,10 +46,25 @@
 
             {# Пункт назанчания #}
             {% if current.destination %}
-                {{ current.destination|call_twig_func('contacts_region_type') }}
+                {#{{ current.destination|call_twig_func('contacts_region_type') }}#}
+
+
+
+                <div class="d-flex gap-3 align-items-center mb-1 text-primary">
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                             class="text-muted" viewBox="0 0 16 16">
+                            <path d="M14.763.075A.5.5 0 0 1 15 .5v15a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5V14h-1v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V10a.5.5 0 0 1 .342-.474L6 7.64V4.5a.5.5 0 0 1 .276-.447l8-4a.5.5 0 0 1 .487.022ZM6 8.694 1 10.36V15h5V8.694ZM7 15h2v-1.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5V15h2V1.309l-7 3.5V15Z"></path>
+                            <path d="M2 11h1v1H2v-1Zm2 0h1v1H4v-1Zm-2 2h1v1H2v-1Zm2 0h1v1H4v-1Zm4-4h1v1H8V9Zm2 0h1v1h-1V9Zm-2 2h1v1H8v-1Zm2 0h1v1h-1v-1Zm2-2h1v1h-1V9Zm0 2h1v1h-1v-1ZM8 7h1v1H8V7Zm2 0h1v1h-1V7Zm2 0h1v1h-1V7ZM8 5h1v1H8V5Zm2 0h1v1h-1V5Zm2 0h1v1h-1V5Zm0-2h1v1h-1V3Z"></path>
+                        </svg>
+                    </div>
+
+
+                    <a href="https://yandex.ru/maps/?pt={{ current.destination_longitude }},{{ current.destination_latitude }}&z=18&l=map" class="text-decoration-none"
+                       target="_blank">{{ current.destination_location }}</a></div>
+
+
             {% else %}
-
-
                 {% for field in current.order_fields|json_decode %}
                     {{ field.order_field_value|call_twig_func(field.order_field_type, field.order_field_name) }}
                 {% endfor %}
@@ -66,7 +81,7 @@
 
 
             {% for product in products %}
-                <div class="d-flex justify-content-between align-items-center gap-3">
+                <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
 
                     <div class="w-100 d-flex align-items-center gap-3">
 
@@ -94,10 +109,9 @@
                                 offer: product.product_offer_value,
                                 variation: product.product_variation_value,
                                 modification: product.product_modification_value
-                            }) }}" target="_detail">
+                            }) }}" class="fw-bold text-decoration-none" target="_detail">
 
                                 {{ product.product_name }}
-
 
                                 {# Значение множественного варианта ТП #}
                                 {{ product.product_variation_value|call_twig_func(product.product_variation_reference~'_render')
@@ -118,15 +132,15 @@
                             <div class="text-muted small">
 
                                 {% if product.product_offer_value %}
-                                    {{ product.product_offer_name }} : {{ product.product_offer_value|call_twig_func(product.product_offer_reference) }}
+                                    {{ product.product_offer_name }} : <strong>{{ product.product_offer_value|call_twig_func(product.product_offer_reference) }}</strong>
                                 {% endif %}
 
                                 {% if product.product_variation_value %}
-                                    , {{ product.product_variation_name }} : {{ product.product_variation_value|call_twig_func(product.product_variation_reference) }}
+                                    , {{ product.product_variation_name }} : <strong>{{ product.product_variation_value|call_twig_func(product.product_variation_reference) }}</strong>
                                 {% endif %}
 
                                 {% if product.product_modification_value %}
-                                    , {{ product.product_modification_name }}: {{ product.product_modification_value|call_twig_func(product.product_modification_reference) }}
+                                    , {{ product.product_modification_name }}: <strong>{{ product.product_modification_value|call_twig_func(product.product_modification_reference) }}</strong>
                                 {% endif %}
                             </div>
                         </div>
@@ -141,23 +155,11 @@
 
             {% endfor %}
 
+            <div class="alert alert-warning" role="alert">
+                Убедитесь, что выбран именно тот заказ, который необходимо выдать клиенту, и нажмите Заказ выдан. <br>
+                Если Вы ошиблись в заказе, нажмите кнопку Отмена.
+            </div>
 
-            <h4>
-                {# Вы уверены, что желаете удалить транспорт #}
-                {# {{ 'admin.form.label.delete'|trans }} "{{ name }}"? #}
-
-            </h4>
-            <br>
-            <p>
-
-                Убедитесь, что выбран именно тот заказ, который необходимо выдать клиенту, и нажмите Заказ выдан.
-                Если
-                вы ошиблись в заказе, нажмите кнопку Отмена.
-
-                {# Убедитесь, что выбран именно тот объект, который нужно удалить, и нажмите Удалить. Если вы не
-                    желаете удалять выбранный объект, нажмите кнопку Отмена.  #}
-                {# {{ 'txt.default.delete'|trans({}, 'core.modal') }} #}
-            </p>
         </div>
 
         <div class="modal-footer">

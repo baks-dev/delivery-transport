@@ -45,7 +45,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler]
 final class UpdateOrderStatusByDelivery
 {
-    private ProductStocksByIdInterface $productStocks;
+    //private ProductStocksByIdInterface $productStocks;
 
     private EntityManagerInterface $entityManager;
 
@@ -58,7 +58,7 @@ final class UpdateOrderStatusByDelivery
     private LoggerInterface $logger;
 
     public function __construct(
-        ProductStocksByIdInterface $productStocks,
+        //ProductStocksByIdInterface $productStocks,
         EntityManagerInterface $entityManager,
         CurrentOrderEventInterface $currentOrderEvent,
         OrderStatusHandler $OrderStatusHandler,
@@ -66,7 +66,7 @@ final class UpdateOrderStatusByDelivery
         LoggerInterface $deliveryTransportLogger,
     )
     {
-        $this->productStocks = $productStocks;
+        //$this->productStocks = $productStocks;
         $this->entityManager = $entityManager;
         $this->currentOrderEvent = $currentOrderEvent;
         $this->OrderStatusHandler = $OrderStatusHandler;
@@ -76,7 +76,7 @@ final class UpdateOrderStatusByDelivery
     }
 
     /**
-     * Обновляет статус заказа при погрузке (Сменяется статус заявки на Delivery)
+     * Обновляет статус заказа при погрузке (Сменяется статус заявки на Delivery «Доставка»)
      */
     public function __invoke(ProductStockMessage $message): void
     {
@@ -85,9 +85,11 @@ final class UpdateOrderStatusByDelivery
             ->find($message->getEvent());
 
         // Если Статус складской заявки не является "ДОСТАВКА"
-        if(!$ProductStockEvent ||
+        if(
+            !$ProductStockEvent ||
             $ProductStockEvent->getMoveOrder() ||
-            $ProductStockEvent->getStatus()->equals(new ProductStockStatusDelivery()) === false)
+            $ProductStockEvent->getStatus()->equals(new ProductStockStatusDelivery()) === false
+        )
         {
             return;
         }
@@ -100,7 +102,9 @@ final class UpdateOrderStatusByDelivery
         if($OrderEvent)
         {
             /** Обновляем статус заказа на "Доставка" (Delivery) */
-            $OrderStatusDTO = new OrderStatusDTO(new OrderStatus(new OrderStatusDelivery()), $OrderEvent->getId(), $ProductStockEvent->getProfile());
+            $OrderStatusDTO = new OrderStatusDTO(
+                OrderStatusDelivery::class,
+                $OrderEvent->getId(), $ProductStockEvent->getProfile());
             $this->OrderStatusHandler->handle($OrderStatusDTO);
 
             // Отправляем сокет для скрытия заказа у других менеджеров

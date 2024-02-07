@@ -47,6 +47,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'delivery_transport_event')]
+#[ORM\Index(columns: ['profile'])]
 class DeliveryTransportEvent extends EntityEvent
 {
     public const TABLE = 'delivery_transport_event';

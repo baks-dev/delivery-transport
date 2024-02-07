@@ -1,4 +1,4 @@
-{% trans_default_domain('admin.delivery.package') %}
+{% trans_default_domain('delivery-transport.package') %}
 
 <main class="main d-print-none ">
 
@@ -12,24 +12,27 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
 
 
-            <div class="w-100">
+
+            <div class="w-100 d-flex gap-3 align-items-center">
                 <h1 class="h4 text-uppercase fw-bolder mb-0">
-                    {{ 'admin.page.index'|trans }}
-
-                    {% if filter.date.vars.data|date('d.m.Y') != date('now')|date('d.m.Y') %}
-                        <span class="text-danger pointer"
-                              data-bs-toggle="tooltip"
-                              data-bs-placement="bottom"
-                              data-bs-delay='{"show":600,"hide":100}'
-                              title="Дата не является текущей"
-                        >
-                            {{ filter.date.vars.data|date('d.m.Y') }}
-                        </span>
-                    {% elseif filter.date.vars.data is not null %}
-                        {{ filter.date.vars.data|date('d.m.Y') }}
-                    {% endif %}
-
+                    {{ 'page.index'|trans }}
                 </h1>
+
+                {% if filter.date.vars.data|date('d.m.Y') != date('now')|date('d.m.Y') %}
+
+                    <span class="badge text-bg-danger pointer"
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="bottom"
+                          data-bs-delay='{"show":600,"hide":100}'
+                          title="Дата не является текущей"
+                    >{{ filter.date.vars.data|format_datetime(pattern="d MMMM Y") }}</span>
+
+                {% elseif filter.date.vars.data is not null %}
+                    <span class="badge text-bg-success">{{ filter.date.vars.data|format_datetime(pattern="d MMMM Y") }}</span>
+                {% else %}
+                    <span class="badge text-bg-success">{{ filter.date.vars.data|format_datetime(pattern="d MMMM Y") }}</span>
+                {% endif %}
+
             </div>
 
 
@@ -56,13 +59,29 @@
                 {# Форма поиска по разделу #}
                 {% include Template('/_includes/'~baks_settings.device~'/search.html.twig') %}
 
-                <div class="col-2">
-
+                <div class="w-100">
                     {{ form_start(filter) }}
 
-                    <div class="w-100" style="height: 55px;">
 
-                        <div class="input-group mb-3">
+                    <div class="w-100 d-flex gap-3 justify-content-end" style="height: 55px;">
+
+                        <div style="width: 160px;">
+                            {#{{ form_row(filter.status, {  placeholder : 'Состояние ...', attr : { 'data-select' : 'select2' }  }) }}#}
+                        </div>
+
+                        <div class="d-flex gap-3" style="width: 265px;">
+
+                            {# НАЗАД #}
+                            {{ form_row(filter.back, { label: '
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                         viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd"
+                                              d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"></path>
+                                    </svg>
+                        '}) }}
+
+
+                            <div class="input-group mb-3">
                             <span class="input-group-text">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                      class="bi bi-calendar2-week" viewBox="0 0 16 16">
@@ -70,10 +89,17 @@
                                     <path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5V4zM11 7.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"/>
                                 </svg>
                             </span>
+                                {{ form_widget(filter.date, { attr: { placeholder : 'Дата' } }) }}
+                            </div>
 
-                            {{ form_widget(filter.date, { attr: { placeholder : 'Дата' } }) }}
 
+                            {# ВПЕРЕД #}
+                            {{ form_row(filter.next, { label: '
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16" class="fw-bolder">
+                            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"></path></svg>
+                        '}) }}
                         </div>
+
 
                     </div>
                     {{ form_end(filter) }}
@@ -87,6 +113,8 @@
                 {% set card = null %}
 
                 {% for key, item in query.data %}
+
+                {% set package_orders = item.package_orders|json_decode %}
 
                 {% if card != item.package_id %}
 
@@ -105,13 +133,12 @@
         {# TODO:  #}
         {# {% set package_status = 'delivery' %} #}
 
-        {% set package_orders = item.package_orders|json_decode %}
+
+
+
 
         {# Сортируем в обратном порядке для погрузки #}
         {% if package_status != 'delivery' %}
-
-
-
             {#{% set package_orders = package_orders|sort((a, b) => a.package_order_sort <=> b.package_order_sort)|reverse %}#}
         {% endif %}
 
@@ -140,6 +167,7 @@
                         <a href="#" class="text-hover-primary fw-bolder text-decoration-none">
 
 
+                            {# Статус путевого листа  #}
                             {% if package_status == 'delivery' %}
 
                                 <span class="badge text-bg-success me-3">
@@ -171,7 +199,7 @@
                         </a>
 
 
-                        {# Датат путевого листа #}
+                        {# Дата путевого листа #}
                         {% if item.package_date|date('d.m.Y') != date('now')|date('d.m.Y') %}
                             <span class="text-danger pointer"
                                   data-bs-toggle="tooltip"
@@ -205,7 +233,6 @@
 
                     </div>
 
-
                     <div>
                         <a href="{{ path('delivery-transport:admin.package.navigator', { id : item.package_id }) }}"
                            class="btn btn-primary text-nowrap"
@@ -230,14 +257,18 @@
 
                 <table>
                     <tbody>
-                    {{ include(_self|replace({ "content.html.twig": "_table.thead.html.twig" })) }}
+                        {{ include(_self|replace({ "content.html.twig": "_table.thead.html.twig" })) }}
                     </tbody>
 
                     {% set card = item.package_id %}
+                    {% set sort = 1 %}
+
                     {% endif %}
 
-                    {% for sort, orders in package_orders %}
+
+                    {% for orders in package_orders %}
                         {{ include(_self|replace({ "content.html.twig": "_table.tbody.html.twig" })) }}
+                        {% set sort = sort + 1 %}
                     {% endfor %}
 
                     {% endfor %}

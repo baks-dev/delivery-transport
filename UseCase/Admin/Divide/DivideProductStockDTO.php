@@ -49,10 +49,10 @@ final class DivideProductStockDTO implements ProductStockEventInterface, OrderEv
     #[Assert\Length(max: 36)]
     private string $number;
 
-    /** Константа Целевого склада */
-    #[Assert\NotBlank]
-    #[Assert\Uuid]
-    private ?ContactsRegionCallConst $warehouse = null;
+//    /** Константа Целевого склада */
+//    #[Assert\NotBlank]
+//    #[Assert\Uuid]
+//    private ?ContactsRegionCallConst $warehouse = null;
 
 //    /** Константа склада назначения при перемещении */
 //    #[Assert\NotBlank]
@@ -74,7 +74,7 @@ final class DivideProductStockDTO implements ProductStockEventInterface, OrderEv
     {
         $this->status = new ProductStockStatus(new ProductStockStatusDivide());
         $this->product = new ArrayCollection();
-        $this->number = time() . random_int(100, 999);
+        $this->number = number_format(microtime(true) * 100, 0, '.', '.');
         $this->ord = new Orders\DivideProductStockOrderDTO();
     }
 
@@ -153,16 +153,16 @@ final class DivideProductStockDTO implements ProductStockEventInterface, OrderEv
         $this->number = $number;
     }
 
-    /** Константа Целевого склада */
-    public function getWarehouse(): ?ContactsRegionCallConst
-    {
-        return $this->warehouse;
-    }
-
-    public function setWarehouse(?ContactsRegionCallConst $warehouse): void
-    {
-        $this->warehouse = $warehouse;
-    }
+//    /** Константа Целевого склада */
+//    public function getWarehouse(): ?ContactsRegionCallConst
+//    {
+//        return $this->warehouse;
+//    }
+//
+//    public function setWarehouse(?ContactsRegionCallConst $warehouse): void
+//    {
+//        $this->warehouse = $warehouse;
+//    }
 
 
     /** Идентификатор заказа на сборку */

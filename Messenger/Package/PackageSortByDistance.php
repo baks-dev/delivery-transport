@@ -82,6 +82,7 @@ final class PackageSortByDistance
             return;
         }
 
+
         /*
          * Присваиваем начальную точку навигатору
          */
@@ -126,7 +127,7 @@ final class PackageSortByDistance
         $interval = $this->geocodeNavigator->getInterval();
 
         /**
-         * Обновляем сортировку путевого листа.
+         * Обновляем сортировку путевого листа по растоянию.
          */
         $DeliveryPackage = $this->entityManager->getRepository(DeliveryPackageTransport::class)
             ->findOneBy(['package' => $DeliveryPackageUid]);

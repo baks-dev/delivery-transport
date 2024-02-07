@@ -34,27 +34,34 @@ final class DeliveryPackageFilterDTO implements DeliveryPackageFilterInterface
 
     private Request $request;
 
-    //private ?UserProfileUid $profile;
-
-    public function __construct(Request $request)
-        //, ?UserProfileUid $profile
-        //)
-    {
-        $this->request = $request;
-        //$this->profile = $profile;
-    }
-
     /** Дата */
     private ?DateTimeImmutable $date = null;
+
+
+    public function __construct(Request $request)
+    {
+        $this->request = $request;
+    }
+
 
     /**
      * Date.
      */
-    public function getDate(): DateTimeImmutable
+    public function getDate(): ?DateTimeImmutable
     {
-        $sessionDate = $this->request->getSession()->get(self::date) ?: new DateTimeImmutable();
+        $session = $this->request->getSession();
 
-        return $this->date ?: $sessionDate;
+        $sessionDate = $session->get(self::date) ?: new DateTimeImmutable();
+
+        //dump(time() - $session->getMetadataBag()->getLastUsed());
+
+        if(time() - $session->getMetadataBag()->getLastUsed() > 300)
+        {
+            $session->remove(self::date);
+            $this->date = new DateTimeImmutable();
+        }
+
+        return $this->date ?: $sessionDate ;
     }
 
     public function setDate(?DateTimeImmutable $date): void
@@ -63,9 +70,15 @@ final class DeliveryPackageFilterDTO implements DeliveryPackageFilterInterface
         {
             $this->request->getSession()->remove(self::date);
         }
+        else
+        {
+            $this->request->getSession()->set(self::date, $date);
+        }
 
         $this->date = $date;
     }
+
+
 
 //    /**
 //     * Profile.

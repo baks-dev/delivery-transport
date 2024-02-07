@@ -1,12 +1,12 @@
-{% trans_default_domain 'admin.delivery.transport' %}
+{% trans_default_domain 'delivery-transport.transport' %}
 
 <div class="d-flex justify-content-between gap-3">
 
 	{# Регистрационный номер #}
-	{{ form_row(form.number, { label: 'admin.form.label.number'|trans }) }}
+	{{ form_row(form.number, { label: 'form.label.number'|trans }) }}
 
 	{# Грузоподъемность, кг. #}
-	{{ form_row(form.parameter.carrying, { label: 'admin.form.label.carrying'|trans} ) }}
+	{{ form_row(form.parameter.carrying, { label: 'form.label.carrying'|trans} ) }}
 
 </div>
 
@@ -23,7 +23,7 @@
                     <div class="form-check d-flex align-items-center">
                         {{ form_widget(form.active, { label: false }) }}
                         <span>
-                            {{ 'admin.form.label.active'|trans }}
+                            {{ 'form.label.active'|trans }}
                         </span>
                     </div>
                 </span>

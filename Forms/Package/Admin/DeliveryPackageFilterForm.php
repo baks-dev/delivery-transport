@@ -25,6 +25,7 @@ namespace BaksDev\DeliveryTransport\Forms\Package\Admin;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -50,6 +51,31 @@ final class DeliveryPackageFilterForm extends AbstractType
             'format' => 'dd.MM.yyyy',
             'input' => 'datetime_immutable',
         ]);
+
+        $builder->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function (FormEvent $event): void {
+                /** @var DeliveryPackageFilterDTO $data */
+                $data = $event->getData();
+
+                $this->request->getSession()->set(DeliveryPackageFilterDTO::date, $data->getDate());
+                //$this->request->getSession()->set(ManufactureFilterDTO::status, $data->getStatus());
+            }
+        );
+
+
+        $builder->add(
+            'back',
+            SubmitType::class,
+            ['label' => 'Back', 'label_html' => true, 'attr' => ['class' => 'btn-light']]
+        );
+
+
+        $builder->add(
+            'next',
+            SubmitType::class,
+            ['label' => 'next', 'label_html' => true, 'attr' => ['class' => 'btn-light']]
+        );
 
         $builder->addEventListener(
             FormEvents::POST_SUBMIT,

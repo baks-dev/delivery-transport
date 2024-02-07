@@ -28,6 +28,7 @@ namespace BaksDev\DeliveryTransport\UseCase\Admin\Package\NewEdit;
 use BaksDev\DeliveryTransport\Entity\Package\Event\DeliveryPackageEventInterface;
 use BaksDev\DeliveryTransport\Type\Package\Event\DeliveryPackageEventUid;
 use BaksDev\DeliveryTransport\Type\Package\Status\DeliveryPackageStatus;
+use BaksDev\DeliveryTransport\Type\Package\Status\DeliveryPackageStatus\DeliveryPackageStatusNew;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -50,13 +51,12 @@ final class DeliveryPackageDTO implements DeliveryPackageEventInterface
 
     /** Статус поставки */
     #[Assert\NotBlank]
-    private DeliveryPackageStatus $status;
+    private readonly DeliveryPackageStatus $status;
 
     public function __construct()
     {
-        //$this->ord = new ArrayCollection();
         $this->stock = new ArrayCollection();
-        $this->status = new DeliveryPackageStatus(new DeliveryPackageStatus\DeliveryPackageStatusNew());
+        $this->status = new DeliveryPackageStatus( DeliveryPackageStatusNew::class);
     }
 
     public function getEvent(): ?DeliveryPackageEventUid
@@ -126,8 +126,8 @@ final class DeliveryPackageDTO implements DeliveryPackageEventInterface
         return $this->status;
     }
 
-    public function setStatus(DeliveryPackageStatus $status): void
-    {
-        $this->status = $status;
-    }
+//    public function setStatus(DeliveryPackageStatus $status): void
+//    {
+//        $this->status = $status;
+//    }
 }

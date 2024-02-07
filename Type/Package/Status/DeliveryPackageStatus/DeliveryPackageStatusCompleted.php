@@ -28,26 +28,20 @@ namespace BaksDev\DeliveryTransport\Type\Package\Status\DeliveryPackageStatus;
 use BaksDev\DeliveryTransport\Type\Package\Status\DeliveryPackageStatus\Collection\DeliveryPackageStatusInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-
+/**
+ * Статус Completed «Завершена (Все заказы в поставке выданы клиентам)»
+ */
 #[AutoconfigureTag('baks.delivery.package.status')]
 class DeliveryPackageStatusCompleted implements DeliveryPackageStatusInterface
 {
-    /**
-     * Статус "Завершена (Все заказы в поставке выданы клиентам)"
-     */
+
     public const STATUS = 'completed';
 
-    /**
-     * Возвращает значение (value)
-     */
     public function getValue(): string
     {
         return self::STATUS;
     }
 
-    /**
-     * Проверяет, относится ли статус к данному объекту
-     */
     public static function equals(string $status): bool
     {
         return self::STATUS === mb_strtolower($status);

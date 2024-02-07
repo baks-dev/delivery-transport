@@ -28,7 +28,9 @@ namespace BaksDev\DeliveryTransport\Messenger\Package\Orders;
 use BaksDev\Centrifugo\Server\Publish\CentrifugoPublishInterface;
 use BaksDev\DeliveryTransport\Type\ProductStockStatus\ProductStockStatusCompleted;
 use BaksDev\Orders\Order\Repository\CurrentOrderEvent\CurrentOrderEventInterface;
-use BaksDev\Orders\Order\Type\Status\OrderStatus;
+
+//use BaksDev\Orders\Order\Type\Status\OrderStatus;
+use BaksDev\Orders\Order\Type\Status\OrderStatus\OrderStatusCompleted;
 use BaksDev\Orders\Order\UseCase\Admin\Status\OrderStatusDTO;
 use BaksDev\Orders\Order\UseCase\Admin\Status\OrderStatusHandler;
 use BaksDev\Products\Stocks\Entity\Event\ProductStockEvent;
@@ -59,7 +61,8 @@ final class UpdateOrderStatusByCompleted
         OrderStatusHandler $OrderStatusHandler,
         CentrifugoPublishInterface $CentrifugoPublish,
         LoggerInterface $deliveryTransportLogger,
-    ) {
+    )
+    {
         $this->entityManager = $entityManager;
         $this->currentOrderEvent = $currentOrderEvent;
         $this->OrderStatusHandler = $OrderStatusHandler;
@@ -76,42 +79,61 @@ final class UpdateOrderStatusByCompleted
         $ProductStockEvent = $this->entityManager->getRepository(ProductStockEvent::class)
             ->find($message->getEvent());
 
-        if (!$ProductStockEvent ||
-            $ProductStockEvent->getMoveOrder() ||
-            $ProductStockEvent->getStatus()->equals(new ProductStockStatusCompleted()) === false
-        )
+        if(!$ProductStockEvent)
         {
             return;
         }
+
+        if($ProductStockEvent->getStatus()->equals(new ProductStockStatusCompleted()) === false)
+        {
+            return;
+        }
+
+        if($ProductStockEvent->getMoveOrder() !== null)
+        {
+            $this->logger
+                ->warning('Не обновляем статус заказа: Заявка на перемещение по заказу между складами (ожидаем сборку на целевом складе и доставки клиенту)',
+                    [__FILE__.':'.__LINE__, $message]);
+            return;
+        }
+
+        $this->logger
+            ->info('Обновляем статус заказа при доставке заказа в пункт назначения (выдан клиенту).',
+                [__FILE__.':'.__LINE__, $message]);
 
         /**
          * Получаем событие заказа.
          */
         $OrderEvent = $this->currentOrderEvent->getCurrentOrderEvent($ProductStockEvent->getOrder());
 
-        if ($OrderEvent)
+
+        if(!$OrderEvent)
         {
-            /** Обновляем статус заказа на "Выполнен" (Completed) */
-
-            $OrderStatusCompleted = new OrderStatus(OrderStatus\OrderStatusCompleted::class);
-            $OrderStatusDTO = new OrderStatusDTO($OrderStatusCompleted, $OrderEvent->getId(), $ProductStockEvent->getProfile());
-            $this->OrderStatusHandler->handle($OrderStatusDTO);
-
-            // Отправляем сокет для скрытия заказа у других менеджеров
-            $this->CentrifugoPublish
-                ->addData(['order' => (string) $ProductStockEvent->getOrder()])
-                ->addData(['profile' => (string) $ProductStockEvent->getProfile()])
-                ->send('orders');
-
-
-            $this->logger->info('Обновили статус заказа на "Выполнен" (Completed)',
-                [
-                    __FILE__.':'.__LINE__,
-                    'order' => (string) $ProductStockEvent->getOrder(),
-                    'profile' => (string) $ProductStockEvent->getProfile()
-                ]);
-
+            $this->logger
+                ->warning('не возможно получить событие заказа',
+                    [__FILE__.':'.__LINE__, 'OrderUid' => (string) $ProductStockEvent->getOrder()]);
+            return;
         }
+
+
+        /** Обновляем статус заказа на Completed «Выдан по месту назначения» */
+
+        $OrderStatusDTO = new OrderStatusDTO(OrderStatusCompleted::class, $OrderEvent->getId(), $ProductStockEvent->getProfile());
+        $this->OrderStatusHandler->handle($OrderStatusDTO);
+
+        // Отправляем сокет для скрытия заказа у других менеджеров
+        $this->CentrifugoPublish
+            ->addData(['order' => (string) $ProductStockEvent->getOrder()])
+            ->addData(['profile' => (string) $ProductStockEvent->getProfile()])
+            ->send('orders');
+
+        $this->logger->info('Обновили статус заказа на Completed «Выдан по месту назначения»',
+            [
+                __FILE__.':'.__LINE__,
+                'OrderUid' => (string) $ProductStockEvent->getOrder(),
+                'UserProfileUid' => (string) $ProductStockEvent->getProfile()
+            ]);
+
 
     }
 }

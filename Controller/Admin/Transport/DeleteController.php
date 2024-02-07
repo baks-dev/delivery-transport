@@ -64,15 +64,19 @@ final class DeleteController extends AbstractController
 
             if($DeliveryTransport instanceof DeliveryTransport)
             {
-                $this->addFlash('admin.page.delete', 'admin.success.delete', 'admin.delivery.transport');
+                $this->addFlash(
+                    'page.delete',
+                    'success.delete',
+                    'delivery-transport.transport'
+                );
 
                 return $this->redirectToRoute('delivery-transport:admin.transport.index');
             }
 
             $this->addFlash(
-                'admin.page.delete',
-                'admin.danger.delete',
-                'admin.delivery.transport',
+                'page.delete',
+                'danger.delete',
+                'delivery-transport.transport',
                 $DeliveryTransport
             );
 

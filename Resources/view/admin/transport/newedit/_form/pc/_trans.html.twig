@@ -1,4 +1,4 @@
-{% trans_default_domain 'admin.delivery.transport' %}
+{% trans_default_domain 'delivery-transport.transport' %}
 
 {% if form.translate.count > 1 %}
 	
@@ -44,7 +44,7 @@
 			{{ form_row(translate.local) }}
 			
 			{# Название транспортного средства  #}
-			{{ form_row(translate.name, { label : 'admin.form.label.trans.name'|trans, attr: { 'data-lang' : translate.vars.id ~ "_"~translate.vars.value.local  }  }) }}
+			{{ form_row(translate.name, { label : 'form.label.trans.name'|trans, attr: { 'data-lang' : translate.vars.id ~ "_"~translate.vars.value.local  }  }) }}
 
 		</div>
 	{% endfor %}

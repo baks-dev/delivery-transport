@@ -58,7 +58,8 @@ final class EditController extends AbstractController
         #[ParamConverter(ProductOfferConst::class)] $offer = null,
         #[ParamConverter(ProductVariationConst::class)] $variation = null,
         #[ParamConverter(ProductModificationConst::class)] $modification = null,
-    ): Response {
+    ): Response
+    {
 
         $DeliveryPackageProductParameterDTO = new DeliveryPackageProductParameterDTO();
         $DeliveryPackageProductParameterDTO
@@ -75,7 +76,7 @@ final class EditController extends AbstractController
                 'modification' => $DeliveryPackageProductParameterDTO->getModification()
             ]);
 
-        if ($ProductStockParameter)
+        if($ProductStockParameter)
         {
             $ProductStockParameter->getDto($DeliveryPackageProductParameterDTO);
         }
@@ -94,35 +95,23 @@ final class EditController extends AbstractController
                 ]
             )]
         );
+
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid() && $form->has('product_stock_parameter'))
+        if($form->isSubmitted() && $form->isValid() && $form->has('product_stock_parameter'))
         {
-            //if ($form->isValid())
-            //{
-                $ProductStockParameter = $DeliveryPackageProductParameterHandler->handle($DeliveryPackageProductParameterDTO);
 
-                if ($ProductStockParameter instanceof DeliveryPackageProductParameter)
-                {
-                    $this->addFlash('success', 'admin.success.update', 'admin.product.parameter');
+            $handle = $DeliveryPackageProductParameterHandler->handle($DeliveryPackageProductParameterDTO);
 
-                    return $this->redirectToRoute('delivery-transport:admin.parameter.index');
-                }
+            $this->addFlash
+            (
+                'page.edit',
+                $handle instanceof DeliveryPackageProductParameter ? 'success.edit' : 'danger.edit',
+                'delivery-transport.parameter',
+                $handle
+            );
 
-                $this->addFlash('danger', 'admin.danger.update', 'admin.product.parameter', $ProductStockParameter);
-
-                return $this->redirectToReferer();
-            //}
-            
-//            return new JsonResponse(
-//                [
-//                    'type' => 'danger',
-//                    'header' => 'Параметры упаковки',
-//                    'message' => (string) $form->getErrors(),
-//                    'status' => 400,
-//                ],
-//                400
-//            );
+            return $this->redirectToReferer();
         }
 
         $card = $productDetail->fetchProductDetailByConstAssociative($product, $offer, $variation, $modification);

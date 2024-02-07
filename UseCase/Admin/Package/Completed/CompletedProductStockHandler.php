@@ -25,160 +25,206 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed;
 
+use BaksDev\Core\Entity\AbstractHandler;
 use BaksDev\Core\Messenger\MessageDispatchInterface;
 use BaksDev\Products\Stocks\Entity\Event\ProductStockEvent;
 use BaksDev\Products\Stocks\Entity\ProductStock;
 use BaksDev\Products\Stocks\Messenger\ProductStockMessage;
 use Doctrine\ORM\EntityManagerInterface;
+use DomainException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-final class CompletedProductStockHandler
+final class CompletedProductStockHandler extends AbstractHandler
 {
-    private EntityManagerInterface $entityManager;
+//    private EntityManagerInterface $entityManager;
+//
+//    private ValidatorInterface $validator;
+//
+//    private LoggerInterface $logger;
+//
+//    private MessageDispatchInterface $messageDispatch;
+//
+//    public function __construct(
+//        EntityManagerInterface $entityManager,
+//        ValidatorInterface $validator,
+//        LoggerInterface $logger,
+//        MessageDispatchInterface $messageDispatch
+//    )
+//    {
+//        $this->entityManager = $entityManager;
+//        $this->validator = $validator;
+//        $this->logger = $logger;
+//        $this->messageDispatch = $messageDispatch;
+//    }
 
-    private ValidatorInterface $validator;
 
-    private LoggerInterface $logger;
 
-    private MessageDispatchInterface $messageDispatch;
-
-    public function __construct(
-        EntityManagerInterface $entityManager,
-        ValidatorInterface $validator,
-        LoggerInterface $logger,
-        MessageDispatchInterface $messageDispatch
-    )
+    /**
+     * Обновляем статус заказа Wildberries
+     */
+    public function handle(CompletedProductStockDTO $command): string|ProductStock
     {
-        $this->entityManager = $entityManager;
-        $this->validator = $validator;
-        $this->logger = $logger;
-        $this->messageDispatch = $messageDispatch;
-    }
+        /** Валидация $command  */
+        $this->validatorCollection->add($command);
 
-    public function handle(
-        CompletedProductStockDTO $command,
-    ): string|ProductStock
-    {
-        /* Валидация DTO */
-        $errors = $this->validator->validate($command);
+        $this->main = new ProductStock();
+        $this->event = new ProductStockEvent();
 
-        if(count($errors) > 0)
+        try
         {
-            /** Ошибка валидации */
-            $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
-
-            return $uniqid;
+            $this->preUpdate($command, true);
+        }
+        catch(DomainException $errorUniqid)
+        {
+            return $errorUniqid->getMessage();
         }
 
-        if($command->getEvent())
+        /** Валидация всех объектов */
+        if($this->validatorCollection->isInvalid())
         {
-            $EventRepo = $this->entityManager->getRepository(ProductStockEvent::class)->find(
-                $command->getEvent()
-            );
-
-            if($EventRepo === null)
-            {
-                $uniqid = uniqid('', false);
-                $errorsString = sprintf(
-                    'Not found %s by id: %s',
-                    ProductStockEvent::class,
-                    $command->getEvent()
-                );
-                $this->logger->error($uniqid.': '.$errorsString);
-
-                return $uniqid;
-            }
-
-
-            $EventRepo->setEntity($command);
-            $EventRepo->setEntityManager($this->entityManager);
-            $Event = $EventRepo->cloneEntity();
-//            $this->entityManager->clear();
-//            $this->entityManager->persist($Event);
-        }
-        else
-        {
-            $uniqid = uniqid('', false);
-            $errorsString = sprintf(
-                'Not found %s by id: %s',
-                ProductStockEvent::class,
-                $command->getEvent()
-            );
-            $this->logger->error($uniqid.': '.$errorsString);
-
-            return $uniqid;
-        }
-
-
-        /* @var ProductStock $Main */
-        if($Event->getMain())
-        {
-            $Main = $this->entityManager->getRepository(ProductStock::class)
-                ->findOneBy(['event' => $command->getEvent()]);
-
-            if(empty($Main))
-            {
-                $uniqid = uniqid('', false);
-                $errorsString = sprintf(
-                    'Not found %s by event: %s',
-                    ProductStock::class,
-                    $command->getEvent()
-                );
-                $this->logger->error($uniqid.': '.$errorsString);
-
-                return $uniqid;
-            }
-        }
-        else
-        {
-            $Main = new ProductStock();
-            $this->entityManager->persist($Main);
-            $Event->setMain($Main);
-        }
-
-        /* присваиваем событие корню */
-        $Main->setEvent($Event);
-
-        /**
-         * Валидация Event
-         */
-
-        $errors = $this->validator->validate($Event);
-
-        if(count($errors) > 0)
-        {
-            /** Ошибка валидации */
-            $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
-
-            return $uniqid;
-        }
-
-
-        /**
-         * Валидация Main
-         */
-        $errors = $this->validator->validate($Main);
-
-        if(count($errors) > 0)
-        {
-            /** Ошибка валидации */
-            $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
-
-            return $uniqid;
+            return $this->validatorCollection->getErrorUniqid();
         }
 
         $this->entityManager->flush();
 
-        /* Отправляем событие в шину  */
+        /* Отправляем сообщение в шину */
         $this->messageDispatch->dispatch(
-            message: new ProductStockMessage($Main->getId(), $Main->getEvent(), $command->getEvent()),
-            transport: 'products-stocks'
+            message: new ProductStockMessage($this->main->getId(), $this->main->getEvent(), $command->getEvent()),
+            transport: 'products-stocks',
         );
 
-        return $Main;
+        return $this->main;
     }
+
+
+
+//    public function OLDhandle(
+//        CompletedProductStockDTO $command,
+//    ): string|ProductStock
+//    {
+//
+//        return '';
+//
+//        /* Валидация DTO */
+//        $errors = $this->validator->validate($command);
+//
+//        if(count($errors) > 0)
+//        {
+//            /** Ошибка валидации */
+//            $uniqid = uniqid('', false);
+//            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
+//
+//            return $uniqid;
+//        }
+//
+//        if($command->getEvent())
+//        {
+//            $EventRepo = $this->entityManager->getRepository(ProductStockEvent::class)->find(
+//                $command->getEvent()
+//            );
+//
+//            if($EventRepo === null)
+//            {
+//                $uniqid = uniqid('', false);
+//                $errorsString = sprintf(
+//                    'Not found %s by id: %s',
+//                    ProductStockEvent::class,
+//                    $command->getEvent()
+//                );
+//                $this->logger->error($uniqid.': '.$errorsString);
+//
+//                return $uniqid;
+//            }
+//
+//
+//            $EventRepo->setEntity($command);
+//            $EventRepo->setEntityManager($this->entityManager);
+//            $Event = $EventRepo->cloneEntity();
+////            $this->entityManager->clear();
+////            $this->entityManager->persist($Event);
+//        }
+//        else
+//        {
+//            $uniqid = uniqid('', false);
+//            $errorsString = sprintf(
+//                'Not found %s by id: %s',
+//                ProductStockEvent::class,
+//                $command->getEvent()
+//            );
+//            $this->logger->error($uniqid.': '.$errorsString);
+//
+//            return $uniqid;
+//        }
+//
+//
+//        /* @var ProductStock $Main */
+//        if($Event->getMain())
+//        {
+//            $Main = $this->entityManager->getRepository(ProductStock::class)
+//                ->findOneBy(['event' => $command->getEvent()]);
+//
+//            if(empty($Main))
+//            {
+//                $uniqid = uniqid('', false);
+//                $errorsString = sprintf(
+//                    'Not found %s by event: %s',
+//                    ProductStock::class,
+//                    $command->getEvent()
+//                );
+//                $this->logger->error($uniqid.': '.$errorsString);
+//
+//                return $uniqid;
+//            }
+//        }
+//        else
+//        {
+//            $Main = new ProductStock();
+//            $this->entityManager->persist($Main);
+//            $Event->setMain($Main);
+//        }
+//
+//        /* присваиваем событие корню */
+//        $Main->setEvent($Event);
+//
+//        /**
+//         * Валидация Event
+//         */
+//
+//        $errors = $this->validator->validate($Event);
+//
+//        if(count($errors) > 0)
+//        {
+//            /** Ошибка валидации */
+//            $uniqid = uniqid('', false);
+//            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
+//
+//            return $uniqid;
+//        }
+//
+//
+//        /**
+//         * Валидация Main
+//         */
+//        $errors = $this->validator->validate($Main);
+//
+//        if(count($errors) > 0)
+//        {
+//            /** Ошибка валидации */
+//            $uniqid = uniqid('', false);
+//            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
+//
+//            return $uniqid;
+//        }
+//
+//        $this->entityManager->flush();
+//
+//        /* Отправляем событие в шину  */
+//        $this->messageDispatch->dispatch(
+//            message: new ProductStockMessage($Main->getId(), $Main->getEvent(), $command->getEvent()),
+//            transport: 'products-stocks'
+//        );
+//
+//        return $Main;
+//    }
 }

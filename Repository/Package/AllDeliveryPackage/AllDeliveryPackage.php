@@ -89,10 +89,10 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
         $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
 
-    public function search(SearchDTO $search) : self
+    public function search(SearchDTO $search): self
     {
-       $this->search = $search;
-       return $this;
+        $this->search = $search;
+        return $this;
     }
 
     public function filter(DeliveryPackageFilterDTO $filter): self
@@ -105,27 +105,27 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
     /** Метод возвращает пагинатор DeliveryPackage */
     public function fetchAllDeliveryPackageAssociative(UserProfileUid $profile): PaginatorInterface
     {
-        $qb = $this->DBALQueryBuilder
+        $dbal = $this->DBALQueryBuilder
             ->createQueryBuilder(self::class)
-            ->bindLocal()
-        ;
+            ->bindLocal();
 
-        $qb->addSelect('package.id AS package_id'); //->addGroupBy('package.id');
-        $qb->addSelect('package.event AS package_event'); //->addGroupBy('package.event');
-        $qb->from(DeliveryPackage::TABLE, 'package');
-
-
-        $qb->addSelect('package_event.status AS package_status'); //->addGroupBy('package_event.status');
-
-        $qb->join(
-            'package',
-            DeliveryPackageEvent::TABLE,
-            'package_event',
-            'package_event.id = package.event'
-        );
+        $dbal
+            ->addSelect('package.id AS package_id')
+            ->addSelect('package.event AS package_event')
+            ->from(DeliveryPackage::TABLE, 'package');
 
 
-        $qb->join(
+        $dbal
+            ->addSelect('package_event.status AS package_status')
+            ->join(
+                'package',
+                DeliveryPackageEvent::TABLE,
+                'package_event',
+                'package_event.id = package.event'
+            );
+
+
+        $dbal->join(
             'package',
             DeliveryPackageStocks::TABLE,
             'package_stocks',
@@ -133,7 +133,7 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
         );
 
 
-        $qb->join(
+        $dbal->join(
             'package_stocks',
             DeliveryPackageEvent::TABLE,
             'package_stocks_event',
@@ -141,36 +141,39 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
         );
 
 
-        /* Путевой лист */
-        $qb->addSelect('package_transport.date_package AS package_date'); //->addGroupBy('package_transport.date_package');
-        $qb->addSelect('package_transport.interval AS package_interval'); //->addGroupBy('package_transport.interval');
-
         $date = null;
 
         if($this->filter?->getDate())
         {
             $date = $this->filter->getDate()?->getTimestamp();
-            $qb->setParameter('date', $date);
+            $dbal->setParameter('date', $date);
         }
 
-        $qb->join(
-            'package',
-            DeliveryPackageTransport::TABLE,
-            'package_transport',
-            'package_transport.package = package.id '.($date ? ' AND package_transport.date_package = :date' : '')
-        );
+        /* Путевой лист */
+        $dbal
+            ->addSelect('package_transport.date_package AS package_date')
+            ->addSelect('package_transport.interval AS package_interval')
+            ->join(
+                'package',
+                DeliveryPackageTransport::TABLE,
+                'package_transport',
+                'package_transport.package = package.id '.($date ? ' AND package_transport.date_package = :date' : '')
+            );
 
 
         /** Складская заявка */
 
-        $qb->leftJoin(
-            'package_stocks',
-            ProductStock::TABLE,
-            'product_stocks',
-            'product_stocks.id = package_stocks.stock'
-        );
+        $dbal
+            ->addSelect('package_stocks.sort')
+            ->leftJoin(
+                'package_stocks',
+                ProductStock::TABLE,
+                'product_stocks',
+                'product_stocks.id = package_stocks.stock'
+            );
 
-        $qb->leftJoin(
+        $dbal
+            ->join(
             'product_stocks',
             ProductStockEvent::TABLE,
             'product_stocks_event',
@@ -178,7 +181,10 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
         );
 
 
-        $qb->leftJoin(
+
+
+
+        $dbal->leftJoin(
             'product_stocks_event',
             ProductStockOrder::TABLE,
             'product_stocks_order',
@@ -186,7 +192,7 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
         );
 
 
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'product_stocks_event',
             ProductStockMove::TABLE,
             'product_stocks_move',
@@ -194,32 +200,9 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
         );
 
 
-
-
-
-
-
-
         /** Пункт назначения при перемещении */
 
-//        $qb->leftJoin(
-//            'product_stocks_move',
-//            ContactsRegionCall::TABLE,
-//            'destination',
-//            'destination.const = product_stocks_move.destination AND EXISTS(SELECT 1 FROM '.ContactsRegion::TABLE.' WHERE event = destination.event)'
-//        );
-//
-//
-//        $qb->leftJoin(
-//            'destination',
-//            ContactsRegionCallTrans::TABLE,
-//            'destination_trans',
-//            'destination_trans.call = destination.id AND destination_trans.local = :local'
-//        );
-
-
-
-        $qb
+        $dbal
             //->addSelect('profile.id')
             ->leftJoin(
                 'product_stocks_move',
@@ -229,9 +212,11 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
             );
 
 
-        $qb
+        $dbal
             ->addSelect('destination_trans.username AS destination_name')
             ->addSelect('destination_trans.location AS destination_location')
+            ->addSelect('destination_trans.latitude AS destination_latitude')
+            ->addSelect('destination_trans.longitude AS destination_longitude')
             ->leftJoin(
                 'destination',
                 UserProfilePersonal::TABLE,
@@ -240,94 +225,98 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
             );
 
 
-
-
         /* Данные заказа */
 
-        //$qb->select('orders.id');
-        $qb->join(
+        //$dbal->addSelect('orders.id');
+        $dbal->leftJoin(
             'product_stocks_order',
             Order::TABLE,
             'orders',
             'orders.id = product_stocks_order.ord OR orders.id = product_stocks_move.ord'
         );
 
-        // $qb->addSelect('orders_event.status AS order_status'); //->addGroupBy('orders_event.status');
-        $qb->leftJoin(
+
+        // $dbal->addSelect('orders_event.status AS order_status'); //->addGroupBy('orders_event.status');
+        $dbal->leftJoin(
             'orders',
             OrderEvent::TABLE,
             'orders_event',
             'orders_event.id = orders.event'
         );
 
-        //$qb->addSelect('order_user.profile AS order_profile'); //->addGroupBy('order_user.profile');
-        $qb->leftJoin(
+        //$dbal->addSelect('order_user.profile AS order_profile'); //->addGroupBy('order_user.profile');
+        $dbal->leftJoin(
             'orders',
             OrderUser::TABLE,
             'order_user',
             'order_user.event = orders.event'
         );
 
-        //$qb->addSelect('order_delivery.latitude');
-        //$qb->addSelect('order_delivery.longitude');
-        $qb->leftJoin(
+
+
+
+        //$dbal->addSelect('order_delivery.latitude');
+        //$dbal->addSelect('order_delivery.longitude');
+        $dbal->leftJoin(
             'order_user',
             OrderDelivery::TABLE,
             'order_delivery',
             'order_delivery.usr = order_user.id'
         );
 
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'order_delivery',
             OrderDeliveryField::TABLE,
             'order_delivery_fields',
             'order_delivery_fields.delivery = order_delivery.id'
         );
 
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'order_delivery',
             DeliveryField::TABLE,
             'delivery_field',
             'delivery_field.id = order_delivery_fields.field'
         );
 
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'delivery_field',
             DeliveryFieldTrans::TABLE,
             'delivery_field_trans',
             'delivery_field_trans.field = delivery_field.id AND delivery_field_trans.local = :local'
         );
 
-        //$qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
+        //$dbal->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
 
 
-        //$qb->addSelect('order_move_event.status AS order_move_status'); //->addGroupBy('order_move_event.status');
+        //$dbal->addSelect('order_move_event.status AS order_move_status'); //->addGroupBy('order_move_event.status');
 
 
-        /*$qb->leftJoin(
+        /*$dbal->leftJoin(
             'destination',
             ContactsRegionCallTrans::TABLE,
             'destination_trans',
             'destination_trans.call = destination.id AND destination_trans.local = :local'
         );*/
 
-        $qb->join(
+        $dbal->join(
             'package_transport',
             DeliveryTransport::TABLE,
             'delivery_transport',
             'delivery_transport.id = package_transport.transport'
         );
 
-        $qb->addSelect('delivery_transport_event.number AS transport_number'); //->addGroupBy('delivery_transport_event.number');
-        $qb->join(
+        $dbal->addSelect('delivery_transport_event.number AS transport_number'); //->addGroupBy('delivery_transport_event.number');
+        $dbal->join(
             'delivery_transport',
             DeliveryTransportEvent::TABLE,
             'delivery_transport_event',
-            'delivery_transport_event.id = delivery_transport.event'
-        );
+            'delivery_transport_event.id = delivery_transport.event AND delivery_transport_event.profile = :profile'
+        )
+            ->setParameter('profile', $profile, UserProfileUid::TYPE);
 
-        $qb->addSelect('delivery_transport_trans.name AS transport_name'); //->addGroupBy('delivery_transport_trans.name');
-        $qb->join(
+
+        $dbal->addSelect('delivery_transport_trans.name AS transport_name'); //->addGroupBy('delivery_transport_trans.name');
+        $dbal->join(
             'delivery_transport',
             DeliveryTransportTrans::TABLE,
             'delivery_transport_trans',
@@ -335,54 +324,33 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
         );
 
 
+        //        //$dbal->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
+        //
+        //        $dbal->join(
+        //            'delivery_transport_event',
+        //            ContactsRegionCall::TABLE,
+        //            'warehouse',
+        //            'warehouse.const = delivery_transport_event.warehouse'
+        //        );
+        //
+        //        $dbal->join(
+        //            'warehouse',
+        //            ContactsRegion::TABLE,
+        //            'warehouse_region',
+        //            'warehouse_region.event = warehouse.event'
+        //        );
+        //
+        //        $dbal->addSelect('warehouse_trans.name AS warehouse_name'); //->addGroupBy('warehouse_trans.name');
+        //
+        //        $dbal->join(
+        //            'warehouse',
+        //            ContactsRegionCallTrans::TABLE,
+        //            'warehouse_trans',
+        //            'warehouse_trans.call = warehouse.id AND warehouse_trans.local = :local'
+        //        );
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//        //$qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
-//
-//        $qb->join(
-//            'delivery_transport_event',
-//            ContactsRegionCall::TABLE,
-//            'warehouse',
-//            'warehouse.const = delivery_transport_event.warehouse'
-//        );
-//
-//        $qb->join(
-//            'warehouse',
-//            ContactsRegion::TABLE,
-//            'warehouse_region',
-//            'warehouse_region.event = warehouse.event'
-//        );
-//
-//        $qb->addSelect('warehouse_trans.name AS warehouse_name'); //->addGroupBy('warehouse_trans.name');
-//
-//        $qb->join(
-//            'warehouse',
-//            ContactsRegionCallTrans::TABLE,
-//            'warehouse_trans',
-//            'warehouse_trans.call = warehouse.id AND warehouse_trans.local = :local'
-//        );
-
-
-
-
-
-
-        $qb
+        $dbal
             //->addSelect('profile.id')
             ->join(
                 'delivery_transport_event',
@@ -392,7 +360,7 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
             );
 
 
-        $qb
+        $dbal
             ->addSelect('warehouse_trans.username AS warehouse_name')
             ->addSelect('warehouse_trans.location AS warehouse_location')
             ->join(
@@ -403,29 +371,27 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
             );
 
 
-
-
-
-
-
-
-        $qb->addSelect(
+        $dbal->addSelect(
             "JSON_AGG
             ( DISTINCT
                 
                     JSONB_BUILD_OBJECT
                     (
+                    
+                        '0', package_stocks.sort,
+                        'package_sort', package_stocks.sort,
                        
                        /* Информация о доставке  */
                        
                         'package_order_fields', JSONB_BUILD_OBJECT
                         ( 
-                            'package_sort', package_stocks.sort,
-                        
+           
                             'order_field_name', delivery_field_trans.name,
                             'order_field_type', delivery_field.type,
                             'order_field_value', order_delivery_fields.value
                         ), 
+                        
+                        
                         
                         'stock_id', package_stocks.stock,
                         
@@ -436,7 +402,7 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
                         
                         
                          
-                        'destination', destination.id,
+                        'destination', destination.event,
                         'stocks_status', product_stocks_event.status,
                         'stocks_comment', product_stocks_event.comment
                     )
@@ -444,14 +410,15 @@ final class AllDeliveryPackage implements AllDeliveryPackageInterface
 			AS package_orders"
         );
 
-        $qb->addOrderBy('package_transport.date_package');
-        $qb->addOrderBy('package_transport.interval', 'DESC');
+        $dbal->addOrderBy('package_transport.date_package');
+        $dbal->addOrderBy('package_transport.interval', 'DESC');
+        $dbal->addOrderBy('package_stocks.sort', 'DESC');
 
-        $qb->allGroupByExclude();
+        $dbal->allGroupByExclude();
 
 
-        //dd($qb->fetchAllAssociative());
+        //dump($dbal->fetchAllAssociative());
 
-        return $this->paginator->fetchAllAssociative($qb);
+        return $this->paginator->fetchAllAssociative($dbal);
     }
 }

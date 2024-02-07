@@ -25,159 +25,199 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\UseCase\Admin\Package\NewEdit;
 
+use BaksDev\Core\Entity\AbstractHandler;
 use BaksDev\Core\Messenger\MessageDispatchInterface;
 use BaksDev\DeliveryTransport\Entity\Package\DeliveryPackage;
 use BaksDev\DeliveryTransport\Entity\Package\Event\DeliveryPackageEvent;
 use BaksDev\DeliveryTransport\Messenger\Package\DeliveryPackageMessage;
 use Doctrine\ORM\EntityManagerInterface;
+use DomainException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-final class DeliveryPackageHandler
+final class DeliveryPackageHandler extends AbstractHandler
 {
-    private EntityManagerInterface $entityManager;
+//    private EntityManagerInterface $entityManager;
+//
+//    private ValidatorInterface $validator;
+//
+//    private LoggerInterface $logger;
+//
+//    private MessageDispatchInterface $messageDispatch;
+//
+//    public function __construct(
+//        EntityManagerInterface $entityManager,
+//        ValidatorInterface $validator,
+//        LoggerInterface $logger,
+//        MessageDispatchInterface $messageDispatch
+//    )
+//    {
+//        $this->entityManager = $entityManager;
+//        $this->validator = $validator;
+//        $this->logger = $logger;
+//        $this->messageDispatch = $messageDispatch;
+//    }
 
-    private ValidatorInterface $validator;
 
-    private LoggerInterface $logger;
-
-    private MessageDispatchInterface $messageDispatch;
-
-    public function __construct(
-        EntityManagerInterface $entityManager,
-        ValidatorInterface $validator,
-        LoggerInterface $logger,
-        MessageDispatchInterface $messageDispatch
-    )
-    {
-        $this->entityManager = $entityManager;
-        $this->validator = $validator;
-        $this->logger = $logger;
-        $this->messageDispatch = $messageDispatch;
-    }
-
-    /** @see DeliveryPackage */
     public function handle(
         DeliveryPackageDTO $command,
     ): string|DeliveryPackage
     {
-        /**
-         *  Валидация DeliveryPackageDTO.
-         */
-        $errors = $this->validator->validate($command);
+        /** Валидация  $command */
+        $this->validatorCollection->add($command);
 
-        if(count($errors) > 0)
+        $this->main = new DeliveryPackage();
+        $this->event = new DeliveryPackageEvent();
+
+        try
         {
-            /** Ошибка валидации */
-            $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
-
-            return $uniqid;
+            $command->getEvent() ? $this->preUpdate($command, true) : $this->prePersist($command);
+        }
+        catch(DomainException $errorUniqid)
+        {
+            return $errorUniqid->getMessage();
         }
 
-        if($command->getEvent())
+        /** Валидация всех объектов */
+        if($this->validatorCollection->isInvalid())
         {
-            $EventRepo = $this->entityManager->getRepository(DeliveryPackageEvent::class)->find(
-                $command->getEvent()
-            );
-
-            if($EventRepo === null)
-            {
-                $uniqid = uniqid('', false);
-                $errorsString = sprintf(
-                    'Not found %s by id: %s',
-                    DeliveryPackageEvent::class,
-                    $command->getEvent()
-                );
-                $this->logger->error($uniqid.': '.$errorsString);
-
-                return $uniqid;
-            }
-
-            $EventRepo->setEntity($command);
-            $EventRepo->setEntityManager($this->entityManager);
-            $Event = $EventRepo->cloneEntity();
-        }
-        else
-        {
-            $Event = new DeliveryPackageEvent();
-            $Event->setEntity($command);
-            $this->entityManager->persist($Event);
-        }
-
-//        $this->entityManager->clear();
-//        $this->entityManager->persist($Event);
-
-
-
-        /* @var DeliveryPackage $Main */
-        if($Event->getMain())
-        {
-            $Main = $this->entityManager->getRepository(DeliveryPackage::class)
-                ->findOneBy(['event' => $command->getEvent()]);
-
-            if(empty($Main))
-            {
-                $uniqid = uniqid('', false);
-                $errorsString = sprintf(
-                    'Not found %s by event: %s',
-                    DeliveryPackage::class,
-                    $command->getEvent()
-                );
-                $this->logger->error($uniqid.': '.$errorsString);
-
-                return $uniqid;
-            }
-        }
-        else
-        {
-            $Main = new DeliveryPackage();
-            $this->entityManager->persist($Main);
-            $Event->setMain($Main);
-        }
-
-        /* присваиваем событие корню */
-        $Main->setEvent($Event);
-
-
-        /**
-         * Валидация Event
-         */
-
-        $errors = $this->validator->validate($Event);
-
-        if(count($errors) > 0)
-        {
-            /** Ошибка валидации */
-            $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
-
-            return $uniqid;
-        }
-
-        /**
-         * Валидация Main.
-         */
-        $errors = $this->validator->validate($Main);
-
-        if(count($errors) > 0)
-        {
-            /** Ошибка валидации */
-            $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
-
-            return $uniqid;
+            return $this->validatorCollection->getErrorUniqid();
         }
 
         $this->entityManager->flush();
 
+
         /* Отправляем сообщение в шину */
         $this->messageDispatch->dispatch(
-            message: new DeliveryPackageMessage($Main->getId(), $Main->getEvent(), $command->getEvent()),
+            message: new DeliveryPackageMessage($this->main->getId(), $this->main->getEvent(), $command->getEvent()),
             transport: 'delivery-transport'
         );
 
-        // 'delivery_package_high'
-        return $Main;
+        return $this->main;
     }
+
+//    /** @see DeliveryPackage */
+//    public function _handle(
+//        DeliveryPackageDTO $command,
+//    ): string|DeliveryPackage
+//    {
+//        /**
+//         *  Валидация DeliveryPackageDTO.
+//         */
+//        $errors = $this->validator->validate($command);
+//
+//        if(count($errors) > 0)
+//        {
+//            /** Ошибка валидации */
+//            $uniqid = uniqid('', false);
+//            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
+//
+//            return $uniqid;
+//        }
+//
+//        if($command->getEvent())
+//        {
+//            $EventRepo = $this->entityManager->getRepository(DeliveryPackageEvent::class)->find(
+//                $command->getEvent()
+//            );
+//
+//            if($EventRepo === null)
+//            {
+//                $uniqid = uniqid('', false);
+//                $errorsString = sprintf(
+//                    'Not found %s by id: %s',
+//                    DeliveryPackageEvent::class,
+//                    $command->getEvent()
+//                );
+//                $this->logger->error($uniqid.': '.$errorsString);
+//
+//                return $uniqid;
+//            }
+//
+//            $EventRepo->setEntity($command);
+//            $EventRepo->setEntityManager($this->entityManager);
+//            $Event = $EventRepo->cloneEntity();
+//        }
+//        else
+//        {
+//            $Event = new DeliveryPackageEvent();
+//            $Event->setEntity($command);
+//            $this->entityManager->persist($Event);
+//        }
+//
+////        $this->entityManager->clear();
+////        $this->entityManager->persist($Event);
+//
+//
+//
+//        /* @var DeliveryPackage $Main */
+//        if($Event->getMain())
+//        {
+//            $Main = $this->entityManager->getRepository(DeliveryPackage::class)
+//                ->findOneBy(['event' => $command->getEvent()]);
+//
+//            if(empty($Main))
+//            {
+//                $uniqid = uniqid('', false);
+//                $errorsString = sprintf(
+//                    'Not found %s by event: %s',
+//                    DeliveryPackage::class,
+//                    $command->getEvent()
+//                );
+//                $this->logger->error($uniqid.': '.$errorsString);
+//
+//                return $uniqid;
+//            }
+//        }
+//        else
+//        {
+//            $Main = new DeliveryPackage();
+//            $this->entityManager->persist($Main);
+//            $Event->setMain($Main);
+//        }
+//
+//        /* присваиваем событие корню */
+//        $Main->setEvent($Event);
+//
+//
+//        /**
+//         * Валидация Event
+//         */
+//
+//        $errors = $this->validator->validate($Event);
+//
+//        if(count($errors) > 0)
+//        {
+//            /** Ошибка валидации */
+//            $uniqid = uniqid('', false);
+//            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
+//
+//            return $uniqid;
+//        }
+//
+//        /**
+//         * Валидация Main.
+//         */
+//        $errors = $this->validator->validate($Main);
+//
+//        if(count($errors) > 0)
+//        {
+//            /** Ошибка валидации */
+//            $uniqid = uniqid('', false);
+//            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
+//
+//            return $uniqid;
+//        }
+//
+//        $this->entityManager->flush();
+//
+//        /* Отправляем сообщение в шину */
+//        $this->messageDispatch->dispatch(
+//            message: new DeliveryPackageMessage($Main->getId(), $Main->getEvent(), $command->getEvent()),
+//            transport: 'delivery-transport'
+//        );
+//
+//        // 'delivery_package_high'
+//        return $Main;
+//    }
 }

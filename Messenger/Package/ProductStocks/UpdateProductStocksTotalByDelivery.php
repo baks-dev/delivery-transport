@@ -64,26 +64,35 @@ final class UpdateProductStocksTotalByDelivery
     }
 
     /**
-     * Обновляет складской резерв + наличие
+     * Обновляет складской резерв + наличие при изменении заявки на Delivery «Доставка»
      */
     public function __invoke(ProductStockMessage $message): void
     {
-        $ProductStockEvent = $this->entityManager->getRepository(ProductStockEvent::class)
+        $this->entityManager->clear();
+
+        $ProductStockEvent = $this->entityManager
+            ->getRepository(ProductStockEvent::class)
             ->find($message->getEvent());
 
+        if(!$ProductStockEvent)
+        {
+            return;
+        }
+
+
         // Если Статус складской заявки не является "ДОСТАВКА"
-        if(!$ProductStockEvent || !$ProductStockEvent->getStatus()->equals(new ProductStockStatusDelivery()))
+        if(!$ProductStockEvent || !$ProductStockEvent->getStatus()->equals(ProductStockStatusDelivery::class))
         {
             return;
         }
 
         // Получаем всю продукцию в заявке со статусом Delivery
-        $products = $this->productStocks->getProductsByProductStocksStatus($message->getId(), new ProductStockStatusDelivery());
+        $products = $this->productStocks->getProductsByProductStocksStatus($message->getId(), ProductStockStatusDelivery::class);
 
         if($products)
         {
             /** @var ProductStockProduct $product */
-            foreach($products as $product)
+            foreach($products as $key => $product)
             {
                 $ProductStockTotal = $this->entityManager
                     ->getRepository(ProductStockTotal::class)
@@ -113,7 +122,6 @@ final class UpdateProductStocksTotalByDelivery
                     throw new InvalidArgumentException('Ошибка при обновлении складских остатков');
                 }
 
-
                 if(
                     $ProductStockTotal->getTotal() < $product->getTotal() ||
                     $ProductStockTotal->getReserve() < $product->getTotal()
@@ -142,7 +150,7 @@ final class UpdateProductStocksTotalByDelivery
                 $ProductStockTotal->subTotal($product->getTotal());
                 $ProductStockTotal->subReserve($product->getTotal());
 
-                $this->logger->info('Перевели баланс продукции со склада на баланс транспорта (Доставка)',
+                $this->logger->info('Перевели баланс продукции '.$key.' со склада на баланс транспорта (Доставка)',
                     [
                         __FILE__.':'.__LINE__,
                         'profile' => $ProductStockEvent->getProfile(),

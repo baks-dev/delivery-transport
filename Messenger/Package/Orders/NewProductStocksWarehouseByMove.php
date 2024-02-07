@@ -58,7 +58,8 @@ final class NewProductStocksWarehouseByMove
         EntityManagerInterface $entityManager,
         LoggerInterface $deliveryTransportLogger,
         WarehouseProductStockHandler $WarehouseProductStockHandler,
-    ) {
+    )
+    {
 
         $this->entityManager = $entityManager;
         $this->WarehouseProductStockHandler = $WarehouseProductStockHandler;
@@ -67,36 +68,58 @@ final class NewProductStocksWarehouseByMove
     }
 
     /**
-     * Создаем приход на склад при перемещении продукции между складами когда выполняется заявка (Completed)
+     * Создаем приход на склад при перемещении продукции между складами по заказу когда заявка Completed «Выдан по месту назначения»
      */
     public function __invoke(ProductStockMessage $message): void
     {
         $ProductStockEvent = $this->entityManager->getRepository(ProductStockEvent::class)
             ->find($message->getEvent());
 
-        // Если Статус складской заявки не является "Выдан по месту назначения"
-        if (!$ProductStockEvent || $ProductStockEvent->getStatus()->equals(new ProductStockStatusCompleted()) === false)
+        if(!$ProductStockEvent)
         {
             return;
         }
 
-        if ($ProductStockEvent->getMoveOrder())
+        // Если Статус складской заявки не является Completed «Выдан по месту назначения»
+        if($ProductStockEvent->getStatus()->equals(ProductStockStatusCompleted::class) === false)
         {
-            $User = $this->userByUserProfile->findUserByProfile($ProductStockEvent->getProfile());
+            $this->logger
+                ->notice('Не создаем приход: Статус складской заявки не является Completed «Выдан по месту назначения»',
+                    [__FILE__.':'.__LINE__]);
 
-            $WarehouseProductStockDTO = new WarehouseProductStockDTO($User);
-            $ProductStockEvent->getDto($WarehouseProductStockDTO);
+            return;
+        }
 
-            /** Присваиваем приходу - склад назначения */
-            $WarehouseProductStockDTO->setProfile($ProductStockEvent->getMove()->getDestination());
-            $this->WarehouseProductStockHandler->handle($WarehouseProductStockDTO);
+        if($ProductStockEvent->getMoveOrder() === null)
+        {
+            $this->logger
+                ->notice('Не создаем приход: Статус складской заявки является Completed «Выдан по месту назначения», но заявка не имеет заказ (перемещение не по заказу)',
+                    [__FILE__.':'.__LINE__]);
 
-            $this->logger->info('Создали заявку на приход при перемещении продукции',
+            return;
+        }
+
+        $this->logger
+            ->info('Создаем приход на склад при перемещении продукции между складами по заказу когда заявка Completed «Выдан по месту назначения»',
+                [__FILE__.':'.__LINE__]);
+
+
+        $User = $this->userByUserProfile->findUserByProfile($ProductStockEvent->getProfile());
+
+        $WarehouseProductStockDTO = new WarehouseProductStockDTO($User);
+        $ProductStockEvent->getDto($WarehouseProductStockDTO);
+
+        /** Присваиваем заявке - склад назначения */
+        $WarehouseProductStockDTO->setProfile($ProductStockEvent->getMove()?->getDestination());
+        $this->WarehouseProductStockHandler->handle($WarehouseProductStockDTO);
+
+        $this->logger
+            ->info('Создали приход на склад при перемещении продукции между складами по заказу когда заявка Completed «Выдан по месту назначения»',
                 [
                     __FILE__.':'.__LINE__,
-                    'profile' => $ProductStockEvent->getMove()->getDestination(),
+                    'profile' => $ProductStockEvent->getMove()?->getDestination(),
                 ]
             );
-        }
+
     }
 }

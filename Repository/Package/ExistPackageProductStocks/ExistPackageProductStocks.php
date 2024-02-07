@@ -29,6 +29,7 @@ use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\DeliveryTransport\Entity\Package\DeliveryPackage;
 use BaksDev\DeliveryTransport\Entity\Package\Stocks\DeliveryPackageStocks;
 use BaksDev\DeliveryTransport\Type\Package\Id\DeliveryPackageUid;
+use BaksDev\DeliveryTransport\Type\ProductStockStatus\ProductStockStatusCompleted;
 use BaksDev\DeliveryTransport\Type\ProductStockStatus\ProductStockStatusDelivery;
 use BaksDev\Products\Stocks\Entity\Event\ProductStockEvent;
 use BaksDev\Products\Stocks\Entity\ProductStock;
@@ -130,19 +131,14 @@ final class ExistPackageProductStocks implements ExistPackageProductStocksInterf
             'product_stock',
             ProductStockEvent::TABLE,
             'product_stock_event',
-            'product_stock_event.id = product_stock.event AND product_stock_event.status = :status'
-        )
-            ->setParameter('status', new ProductStockStatus(new ProductStockStatusDelivery()), ProductStockStatus::TYPE);
+            'product_stock_event.id = product_stock.event AND
+                product_stock_event.status != :completed  
+            '
+        );
 
+        $completed = new ProductStockStatus(ProductStockStatusCompleted::class);
+        $qbExist->setParameter('completed', $completed, ProductStockStatus::TYPE);
 
         return $qbExist->fetchExist();
-
-        //        $qb = $this->connection->createQueryBuilder();
-        //        $qb->select(sprintf('EXISTS(%s)', $qbExist->getSQL()));
-        //
-        //        $qb->setParameter('package', $package, DeliveryPackageUid::TYPE);
-        //        $qb->setParameter('status', new ProductStockStatus(new ProductStockStatusDelivery()), ProductStockStatus::TYPE);
-        //
-        //        return $qb->fetchOne();
     }
 }

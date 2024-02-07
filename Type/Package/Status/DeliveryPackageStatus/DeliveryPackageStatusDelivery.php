@@ -28,25 +28,20 @@ namespace BaksDev\DeliveryTransport\Type\Package\Status\DeliveryPackageStatus;
 use BaksDev\DeliveryTransport\Type\Package\Status\DeliveryPackageStatus\Collection\DeliveryPackageStatusInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
+/**
+ * Статус Delivery «Доставка (В пути)»
+ */
 #[AutoconfigureTag('baks.delivery.package.status')]
 class DeliveryPackageStatusDelivery implements DeliveryPackageStatusInterface
 {
-    /**
-     * Статус "В пути (доставка)".
-     */
+
     public const STATUS = 'delivery';
 
-    /**
-     * Возвращает значение (value).
-     */
     public function getValue(): string
     {
         return self::STATUS;
     }
 
-    /**
-     * Проверяет, относится ли статус к данному объекту
-     */
     public static function equals(string $status): bool
     {
         return self::STATUS === mb_strtolower($status);

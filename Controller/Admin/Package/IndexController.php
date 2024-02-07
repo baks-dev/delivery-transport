@@ -34,6 +34,7 @@ use BaksDev\DeliveryTransport\Forms\Package\Admin\DeliveryPackageFilterDTO;
 use BaksDev\DeliveryTransport\Forms\Package\Admin\DeliveryPackageFilterForm;
 use BaksDev\DeliveryTransport\Repository\Package\AllDeliveryPackage\AllDeliveryPackageInterface;
 use BaksDev\DeliveryTransport\Type\Package\Id\DeliveryPackageUid;
+use DateInterval;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -61,12 +62,32 @@ final class IndexController extends AbstractController
         $filter = new DeliveryPackageFilterDTO($request);
         $filterForm = $this->createForm(DeliveryPackageFilterForm::class, $filter);
         $filterForm->handleRequest($request);
-        
+
+        if($filterForm->isSubmitted())
+        {
+            if($filterForm->get('back')->isClicked())
+            {
+                $filter->setDate($filter->getDate()?->sub(new DateInterval('P1D')));
+                return $this->redirectToReferer();
+            }
+
+            if($filterForm->get('next')->isClicked())
+            {
+                $filter->setDate($filter->getDate()?->add(new DateInterval('P1D')));
+                return $this->redirectToReferer();
+            }
+        }
+
+
+
         // Получаем список
         $DeliveryPackage = $allDeliveryPackage
             ->search($search)
             ->filter($filter)
             ->fetchAllDeliveryPackageAssociative($this->getProfileUid());
+
+
+
 
         return $this->render(
             [

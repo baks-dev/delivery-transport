@@ -63,12 +63,12 @@ final class EditController extends AbstractController
 
             if($DeliveryTransport instanceof DeliveryTransport)
             {
-                $this->addFlash('success', 'admin.success.new', 'admin.delivery.transport');
+                $this->addFlash('page.new', 'success.new', 'delivery-transport.transport');
 
                 return $this->redirectToRoute('delivery-transport:admin.transport.index');
             }
 
-            $this->addFlash('danger', 'admin.danger.new', 'admin.delivery.transport', $DeliveryTransport);
+            $this->addFlash('page.new', 'danger.new', 'delivery-transport.transport', $DeliveryTransport);
 
             return $this->redirectToReferer();
         }

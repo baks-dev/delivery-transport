@@ -61,57 +61,79 @@ final class CompletedController extends AbstractController
         ExistPackageProductStocksInterface $existPackageProductStocks,
         CompletedPackageHandler $completedPackageHandler,
         ProductsByProductStocksInterface $productDetail,
-    ): Response {
+    ): Response
+    {
         /**
          * @var DeliveryProductStockDTO $DeliveryProductStockDTO
          */
-        $CompletedProductStockDTO = new CompletedProductStockDTO($ProductStock->getEvent(), $this->getProfileUid());
+        $CompletedProductStockDTO = new CompletedProductStockDTO(
+            $ProductStock->getEvent(),
+            $this->getProfileUid()
+        );
 
         // Форма
         $form = $this->createForm(CompletedProductStockForm::class, $CompletedProductStockDTO, [
-            'action' => $this->generateUrl('delivery-transport:admin.package.completed', ['id' => $ProductStock->getId()]),
-        ]);
+            'action' => $this->generateUrl(
+                'delivery-transport:admin.package.completed',
+                ['id' => $ProductStock->getId()]
+            )]);
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid() && $form->has('completed_package'))
+        if($form->isSubmitted() && $form->isValid() && $form->has('completed_package'))
         {
-            $ProductStockHandler = $CompletedProductStockHandler->handle($CompletedProductStockDTO);
+            $handle = $CompletedProductStockHandler->handle($CompletedProductStockDTO);
 
-            if ($ProductStockHandler instanceof ProductStock)
+            if($handle instanceof ProductStock)
             {
-                $this->addFlash('success', 'admin.success.completed', 'admin.delivery.completed');
+                $this->addFlash(
+                    'page.index',
+                    'success.completed',
+                    'delivery-transport.package'
+                );
 
                 /* Чистим кеш модуля */
-                $cache = new FilesystemAdapter('delivery-transport:');
+                $cache = new FilesystemAdapter('delivery-transport');
                 $cache->clear();
 
                 /** Получаем упаковку с данным заказом */
                 $DeliveryPackage = $packageByProductStocks->getDeliveryPackageByProductStock($ProductStock->getId());
 
-                if ($DeliveryPackage)
+                if($DeliveryPackage)
                 {
                     /* Проверяем, имеются ли еще не выполненные заявки в доставке */
-                    if (!$existPackageProductStocks->isExistStocksDeliveryPackage($DeliveryPackage?->getId()))
+                    if(!$existPackageProductStocks->isExistStocksDeliveryPackage($DeliveryPackage?->getId()))
                     {
                         /** Если все заказы выданы - меняем статус путевого листа на "ВЫПОЛНЕН"   */
                         $CompletedPackageDTO = new CompletedPackageDTO($DeliveryPackage->getEvent());
                         $CompletedPackageResult = $completedPackageHandler->handle($CompletedPackageDTO);
 
-                        if (!$CompletedPackageResult instanceof DeliveryPackage)
+                        if(!$CompletedPackageResult instanceof DeliveryPackage)
                         {
-                            $this->addFlash('danger', 'admin.danger.delivery', 'admin.delivery.package', $CompletedPackageResult);
+                            $this->addFlash(
+                                'page.index',
+                                'danger.delivery',
+                                'delivery-transport.package',
+                                $CompletedPackageResult);
                         }
                     }
                 }
 
-                return $this->redirectToRoute('delivery-transport:admin.package.index', ['package' => (string) $DeliveryPackage?->getId()], 200);
+                return $this->redirectToRoute('delivery-transport:admin.package.index',
+                    ['package' => (string) $DeliveryPackage?->getId()]);
             }
 
-            $this->addFlash('danger', 'admin.danger.completed', 'admin.delivery.package', $ProductStockHandler);
+            $this->addFlash(
+                'page.index',
+                'danger.completed',
+                'delivery-transport.package',
+                $handle);
 
             return $this->redirectToReferer();
         }
+
+
+        //dd($productDetail->fetchAllProductsByProductStocksAssociative($ProductStock->getId()));
 
         return $this->render(
             [

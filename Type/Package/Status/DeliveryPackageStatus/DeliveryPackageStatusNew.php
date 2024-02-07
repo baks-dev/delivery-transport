@@ -28,25 +28,19 @@ namespace BaksDev\DeliveryTransport\Type\Package\Status\DeliveryPackageStatus;
 use BaksDev\DeliveryTransport\Type\Package\Status\DeliveryPackageStatus\Collection\DeliveryPackageStatusInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
+/**
+ * Статус New «Новая поставка (комплектуется)»
+ */
 #[AutoconfigureTag('baks.delivery.package.status')]
 class DeliveryPackageStatusNew implements DeliveryPackageStatusInterface
 {
-    /**
-     * Статус "Новая поставка (комплектуется)".
-     */
     public const STATUS = 'new';
 
-    /**
-     * Возвращает значение (value).
-     */
     public function getValue(): string
     {
         return self::STATUS;
     }
 
-    /**
-     * Проверяет, относится ли статус к данному объекту
-     */
     public static function equals(string $status): bool
     {
         return self::STATUS === mb_strtolower($status);

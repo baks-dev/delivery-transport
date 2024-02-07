@@ -1,4 +1,4 @@
-{% trans_default_domain 'admin.delivery.transport' %}
+{% trans_default_domain 'delivery-transport.transport' %}
 
 <div class="modal-dialog modal-dialog-centered" style="max-width: 800px;">
     {{ form_start(form) }}
@@ -7,7 +7,7 @@
 
             <h5 class="modal-title">
                 {# Удалить транспорт доставки #}
-                {{ 'admin.form.header.delete'|trans }}
+                {{ 'form.header.delete'|trans }}
 
             </h5>
 
@@ -19,7 +19,7 @@
         <div class="modal-body">
             <h4>
                 {# Вы уверены, что желаете удалить транспорт #}
-                {{ 'admin.form.label.delete'|trans }} "{{ name }}"?
+                {{ 'form.label.delete'|trans }} "{{ name }}"?
 
             </h4>
             <br>

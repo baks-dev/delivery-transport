@@ -25,48 +25,38 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\UseCase\Admin\Package\PackageTransport;
 
+use BaksDev\Core\Entity\AbstractHandler;
 use BaksDev\DeliveryTransport\Entity\Package\DeliveryPackageTransport;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-final class DeliveryPackageTransportHandler
+final class DeliveryPackageTransportHandler extends AbstractHandler
 {
-    private EntityManagerInterface $entityManager;
+//    private EntityManagerInterface $entityManager;
+//
+//    private ValidatorInterface $validator;
+//
+//    private LoggerInterface $logger;
+//
+//    public function __construct(
+//        EntityManagerInterface $entityManager,
+//        ValidatorInterface $validator,
+//        LoggerInterface $logger,
+//    ) {
+//        $this->entityManager = $entityManager;
+//        $this->validator = $validator;
+//        $this->logger = $logger;
+//    }
 
-    private ValidatorInterface $validator;
 
-    private LoggerInterface $logger;
-
-    public function __construct(
-        EntityManagerInterface $entityManager,
-        ValidatorInterface $validator,
-        LoggerInterface $logger,
-    ) {
-        $this->entityManager = $entityManager;
-        $this->validator = $validator;
-        $this->logger = $logger;
-    }
-
-    /** @see DeliveryPackageTransport */
     public function handle(
         DeliveryPackageTransportDTO $command,
-        //?UploadedFile $cover = null
     ): string|DeliveryPackageTransport {
-        /**
-         *  Валидация DeliveryPackageTransportDTO.
-         */
-        $errors = $this->validator->validate($command);
 
-        if (count($errors) > 0)
-        {
-            /** Ошибка валидации */
-            $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
+        /** Валидация  $command */
+        $this->validatorCollection->add($command);
 
-            return $uniqid;
-        }
-        
         $this->entityManager->clear();
 
         $DeliveryPackageTransport = $this->entityManager->getRepository(DeliveryPackageTransport::class)
@@ -91,22 +81,81 @@ final class DeliveryPackageTransportHandler
 
         $DeliveryPackageTransport->setEntity($command);
 
-        /**
-         * Валидация DeliveryPackageTransport.
-         */
-        $errors = $this->validator->validate($DeliveryPackageTransport);
+        $this->validatorCollection->add($DeliveryPackageTransport);
 
-        if (count($errors) > 0)
+
+        /** Валидация всех объектов */
+        if($this->validatorCollection->isInvalid())
         {
-            /** Ошибка валидации */
-            $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
-
-            return $uniqid;
+            return $this->validatorCollection->getErrorUniqid();
         }
 
         $this->entityManager->flush();
 
         return $DeliveryPackageTransport;
     }
+
+
+
+//    /** @see DeliveryPackageTransport */
+//    public function _handle(
+//        DeliveryPackageTransportDTO $command,
+//        //?UploadedFile $cover = null
+//    ): string|DeliveryPackageTransport {
+//        /**
+//         *  Валидация DeliveryPackageTransportDTO.
+//         */
+//        $errors = $this->validator->validate($command);
+//
+//        if (count($errors) > 0)
+//        {
+//            /** Ошибка валидации */
+//            $uniqid = uniqid('', false);
+//            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
+//
+//            return $uniqid;
+//        }
+//
+//        $this->entityManager->clear();
+//
+//        $DeliveryPackageTransport = $this->entityManager->getRepository(DeliveryPackageTransport::class)
+//            ->findOneBy(
+//                [
+//                    'package' => $command->getPackage(),
+//                    'transport' => $command->getTransport(),
+//                    'date' => $command->getDate()
+//                ]
+//            );
+//
+//        if (empty($DeliveryPackageTransport))
+//        {
+//            $DeliveryPackageTransport = new DeliveryPackageTransport(
+//                $command->getPackage(),
+//                $command->getTransport(),
+//                $command->getDate()
+//            );
+//
+//            $this->entityManager->persist($DeliveryPackageTransport);
+//        }
+//
+//        $DeliveryPackageTransport->setEntity($command);
+//
+//        /**
+//         * Валидация DeliveryPackageTransport.
+//         */
+//        $errors = $this->validator->validate($DeliveryPackageTransport);
+//
+//        if (count($errors) > 0)
+//        {
+//            /** Ошибка валидации */
+//            $uniqid = uniqid('', false);
+//            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
+//
+//            return $uniqid;
+//        }
+//
+//        $this->entityManager->flush();
+//
+//        return $DeliveryPackageTransport;
+//    }
 }

@@ -28,11 +28,13 @@ namespace BaksDev\DeliveryTransport\Type\ProductStockStatus;
 use BaksDev\Products\Stocks\Type\Status\ProductStockStatus\Collection\ProductStockStatusInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-
+/**
+ * Статус Completed «Выдан по месту назначения»
+ */
 #[AutoconfigureTag('baks.product.stock.status')]
 class ProductStockStatusCompleted implements ProductStockStatusInterface
 {
-    /** Статус "ВЫДАНА КЛИЕНТУ" */
+
     public const STATUS = 'completed';
 
     /** Возвращает значение (value) */
@@ -41,11 +43,11 @@ class ProductStockStatusCompleted implements ProductStockStatusInterface
         return self::STATUS;
     }
 
-    /**
-     * Проверяет, относится ли статус к данному объекту
-     */
-    public static function equals(string $status): bool
-    {
-        return self::STATUS === $status;
-    }
+//    /**
+//     * Проверяет, относится ли статус к данному объекту
+//     */
+//    public static function equals(string $status): bool
+//    {
+//        return self::STATUS === $status;
+//    }
 }
