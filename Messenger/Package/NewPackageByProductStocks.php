@@ -315,8 +315,8 @@ final class NewPackageByProductStocks
             $interval = new DateInterval('P1D');
             $date = $date->add($interval);
 
-            dump('Пробуем погрузку '.$deliveryDay);
-            dump($date);
+            //dump('Пробуем погрузку '.$deliveryDay);
+            //dump($date);
 
             if($deliveryDay > 30)
             {
@@ -340,8 +340,8 @@ final class NewPackageByProductStocks
              */
             foreach($DeliveryTransportProfile as $keyTransport => $DeliveryTransportUid)
             {
-                dump('Получаем путевой лист ');
-                dump($date);
+                //dump('Получаем путевой лист ');
+                //dump($date);
 
                 $DeliveryPackageTransportDTO = new DeliveryPackageTransportDTO();
 
@@ -428,7 +428,7 @@ final class NewPackageByProductStocks
                         if($DeliveryPackageTransportDTO->getSize() > $maxSize || $DeliveryPackageTransportDTO->getCarrying() > $maxCarrying)
                         {
 
-                            dump('Заказ больше не входит в поставку транспорта. Пробуем другой транспорт');
+                            //dump('Заказ больше не входит в поставку транспорта. Пробуем другой транспорт');
                             $this->logger->info('Не добавляем в путевой лист складскую заявку: Заказ не входит в поставку транспорта. Ищем другой транспорт', [__FILE__.':'.__LINE__]);
 
                             unset($DeliveryTransportProfile[$keyTransport]);

@@ -215,9 +215,9 @@ final class DivideController extends AbstractController
                         ['date' => $date->getTimestamp(), 'transport' => $DeliveryTransportUid]
                     );
 
-                    dump('Получаем транспорт');
-                    dump($date);
-                    dump($date->getTimestamp());
+                    //dump('Получаем транспорт');
+                    //dump($date);
+                    //dump($date->getTimestamp());
 
 
                     $DeliveryPackageDTO = new DeliveryPackageDTO();
@@ -318,8 +318,8 @@ final class DivideController extends AbstractController
 
 
                             //
-                            //                            dump($DeliveryPackageTransportDTO->getSize());
-                            //                            dump($DeliveryPackageTransportDTO->getCarrying());
+                            //                            //dump($DeliveryPackageTransportDTO->getSize());
+                            //                            //dump($DeliveryPackageTransportDTO->getCarrying());
                             //
                             //
 
@@ -327,8 +327,8 @@ final class DivideController extends AbstractController
                             $DeliveryPackageTransportDTO->addSize($parameter['size']);
                             $DeliveryPackageTransportDTO->addCarrying($parameter['weight']);
 
-                           // dump($DeliveryPackageTransportDTO->getSize() > $maxSize);
-                           // dump($DeliveryPackageTransportDTO->getCarrying() > $maxCarrying);
+                           // //dump($DeliveryPackageTransportDTO->getSize() > $maxSize);
+                           // //dump($DeliveryPackageTransportDTO->getCarrying() > $maxCarrying);
 
 
 

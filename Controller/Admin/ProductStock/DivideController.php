@@ -182,8 +182,8 @@ final class DivideController extends AbstractController
                 $interval = new DateInterval('P1D');
                 $date = $date->add($interval);
 
-                dump('Пробуем погрузку '.$deliveryDay);
-                dump($date);
+//                dump('Пробуем погрузку '.$deliveryDay);
+//                dump($date);
 
                 if($deliveryDay > 30)
                 {
@@ -204,8 +204,8 @@ final class DivideController extends AbstractController
                  */
                 foreach($DeliveryTransportProfile as $keyTransport => $DeliveryTransportUid)
                 {
-                    dump('Получаем путевой лист ');
-                    dump($date);
+//                    dump('Получаем путевой лист ');
+//                    dump($date);
 
 
                     $DeliveryPackageTransportDTO = new DeliveryPackageTransportDTO();
@@ -266,7 +266,7 @@ final class DivideController extends AbstractController
                     // обрываем упаковку поставки если продукции нет
                     if($DivideProductStockDTO->getProduct()->isEmpty())
                     {
-                        dump('Больше нет продукции для упаковки');
+                        //dump('Больше нет продукции для упаковки');
                         break 2;
                     }
 
@@ -316,7 +316,7 @@ final class DivideController extends AbstractController
                             /* Если продукт больше не помещается в транспорт - сохраняем новую заявку и создаем следующую и продуем добавить в другой транспорт */
                             if($DeliveryPackageTransportDTO->getSize() > $maxSize || $DeliveryPackageTransportDTO->getCarrying() > $maxCarrying)
                             {
-                                dump('Заказ больше не входит в поставку транспорта. Пробуем другой транспорт');
+                                //dump('Заказ больше не входит в поставку транспорта. Пробуем другой транспорт');
 
                                 unset($DeliveryTransportProfile[$keyTransport]);
 
