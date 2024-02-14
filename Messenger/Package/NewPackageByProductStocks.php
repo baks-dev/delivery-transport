@@ -395,7 +395,7 @@ final class NewPackageByProductStocks
 
                 /* Ограничения по объему и грузоподъемности */
                 $maxCarrying = $DeliveryTransportUid->getCarrying()->getValue() * 100; // грузоподъемность
-                $maxSize = $DeliveryTransportUid->getSize(); // объем
+                $maxSize = $DeliveryTransportUid->getSize() * 1000; // объем см3 переводим в мм3
 
 
                 /* Добавляем по очереди товары в заказе в транспорт */

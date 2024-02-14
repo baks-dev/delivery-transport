@@ -32,7 +32,7 @@
             }) }}"
                data-bs-toggle="modal"
                data-bs-target="#modal"
-               class="pe-3 modal-link"
+               class="pe-3 modal-link disabled"
             >
                 <div class="icon rounded-3 bg-contain lazy p-1" style="width: 50px; height: 50px;"
                      data-bg="{{ image_path }}">
@@ -48,7 +48,7 @@
                     variation: item.product_variation_const,
                     modification: item.product_modification_const
                 }) }}"
-                   class="text-decoration-none mb-1 modal-link fw-bolder text-muted"
+                   class="text-decoration-none mb-1 modal-link disabled fw-bolder text-muted"
                    data-bs-toggle="modal"
                    data-bs-target="#modal"
                    title="Параметры упаковки">
@@ -106,11 +106,12 @@
 
         {% if item.product_parameter_size %}
 
-            {% if item.product_parameter_size > 10 %}
-                {{ (item.product_parameter_size / 10) }} см3
+            {#{{ dump(item.product_parameter_size) }}#}
 
-            {% elseif item.product_parameter_size > 1000 %}
-                {{ (item.product_parameter_size / 1000) }} м3
+            {% if item.product_parameter_size > 1000000 %}
+                {{ (item.product_parameter_size / 1000000000) }} м3
+            {% elseif item.product_parameter_size > 10 %}
+                {{ (item.product_parameter_size / 1000) }} см3
             {% else %}
                 {{ item.product_parameter_size }} мм3
             {% endif %}

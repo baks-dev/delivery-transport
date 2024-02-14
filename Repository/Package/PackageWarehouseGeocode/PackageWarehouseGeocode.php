@@ -50,7 +50,7 @@ final class PackageWarehouseGeocode implements PackageWarehouseGeocodeInterface
         $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
 
-    public function fetchPackageWarehouseGeocodeAssociative(DeliveryPackageUid $package): ?array
+    public function fetchPackageWarehouseGeocodeAssociative(DeliveryPackageUid $package): array|false
     {
         $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 

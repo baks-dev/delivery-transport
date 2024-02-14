@@ -98,7 +98,7 @@ class DeliveryPackageProductParameter extends EntityState
      * Высота, см
      */
     #[Assert\NotBlank]
-    #[Assert\Range(min: 1, max: 300)]
+    #[Assert\Range(min: 1, max: 32767)]
     #[ORM\Column(type: Types::SMALLINT)]
     private int $height;
 

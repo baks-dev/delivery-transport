@@ -119,7 +119,7 @@
         {% if orders.stocks_status == 'extradition' %}
 
             <a href="{{ path('delivery-transport:admin.package.delivery', { id : orders.stock_id }) }}"
-               class="btn btn-warning modal-link text-nowrap"
+               class="btn btn-warning modal-link disabled text-nowrap"
                data-bs-toggle="modal"
                data-bs-target="#modal"
                title="Погрузка заказа"
@@ -133,7 +133,7 @@
             {% if package_status != 'delivery' %}
 
                 <button
-                        class="btn btn-success modal-link text-nowrap opacity-25"
+                        class="btn btn-success modal-link disabled text-nowrap opacity-25"
                         data-bs-toggle="tooltip"
                         data-bs-placement="bottom"
                         data-bs-delay='{"show":600,"hide":100}'
@@ -143,7 +143,7 @@
                 </button>
             {% else %}
                 <a href="{{ path('delivery-transport:admin.package.completed', { id : orders.stock_id }) }}"
-                   class="btn btn-success modal-link text-nowrap"
+                   class="btn btn-success modal-link disabled text-nowrap"
                    data-bs-toggle="modal"
                    data-bs-target="#modal"
                    title="Выдать заказ"
@@ -159,7 +159,7 @@
         {% elseif orders.order_move_status == 'extradition' %}
 
             <a href="{{ path('delivery-transport:admin.package.delivery', { id : orders.order_move_id }) }}"
-               class="btn btn-warning modal-link text-nowrap"
+               class="btn btn-warning modal-link disabled text-nowrap"
                data-bs-toggle="modal"
                data-bs-target="#modal"
                title="Погрузка заявки перемещение"
@@ -198,7 +198,7 @@
         {% else %}
 
             <button
-                    class="btn btn-danger modal-link text-nowrap opacity-25"
+                    class="btn btn-danger modal-link disabled text-nowrap opacity-25"
                     data-bs-toggle="tooltip"
                     data-bs-placement="bottom"
                     data-bs-delay='{"show":600,"hide":100}'

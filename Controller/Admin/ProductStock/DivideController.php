@@ -260,7 +260,7 @@ final class DivideController extends AbstractController
 
                     /* Ограничения по объему и грузоподъемности */
                     $maxCarrying = $DeliveryTransportUid->getCarrying()->getValue() * 100; // грузоподъемность
-                    $maxSize = $DeliveryTransportUid->getSize(); // объем
+                    $maxSize = $DeliveryTransportUid->getSize() * 1000; // объем см3 переводим в мм3
 
 
                     // обрываем упаковку поставки если продукции нет

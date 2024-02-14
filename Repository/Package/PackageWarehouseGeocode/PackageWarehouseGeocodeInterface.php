@@ -27,5 +27,5 @@ use BaksDev\DeliveryTransport\Type\Package\Id\DeliveryPackageUid;
 
 interface PackageWarehouseGeocodeInterface
 {
-    public function fetchPackageWarehouseGeocodeAssociative(DeliveryPackageUid $package): ?array;
+    public function fetchPackageWarehouseGeocodeAssociative(DeliveryPackageUid $package): array|false;
 }
