@@ -1,8 +1,18 @@
 {# Пользовательское меню #}
 
+{% set identifier = item.id %}
+{% if item.product_offer_const is not null %}
+    {% set identifier = item.product_offer_const %}
+{% endif %}
+{% if item.product_variation_const is not null %}
+    {% set identifier = item.product_variation_const %}
+{% endif %}
+{% if item.product_modification_const is not null %}
+    {% set identifier = item.product_modification_const %}
+{% endif %}
 
 <button class="btn btn-link btn-sm p-0"
-        id="usecase-{{ item.event }}"
+        id="usecase-{{ identifier }}"
         data-bs-container="body"
         data-bs-toggle="popover"
         data-bs-placement="right"
@@ -12,7 +22,7 @@
          fill="currentColor" class="text-muted"
          viewBox="0 0 16 16">
         <path fill-rule="evenodd"
-              d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+              d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
     </svg>
 </button>
 
@@ -21,11 +31,11 @@
 <label>
     <input class="form-check-input ms-3 p-2" type="checkbox"
             {# onchange=checkedItem(); #}
-           value="{{ item.event }}">
+           value="{{ identifier }}">
 </label>
 
 
-<div id="usecase-{{ item.event }}-content" class="d-none">
+<div id="usecase-{{ identifier }}-content" class="d-none">
     <ul class="leader list-group list-group-flush ">
 
         {# Изменить параметры #}
@@ -38,7 +48,7 @@
                     variation: item.product_variation_const,
                     modification: item.product_modification_const
                 }) }}"
-                   class="text-decoration-none text-dark w-100 modal-link disabled"
+                   class="text-decoration-none text-dark w-100 modal-link"
                    data-bs-toggle="modal"
                    data-bs-target="#modal"
                    title="Изменить параметры упаковки">
@@ -48,22 +58,6 @@
 
         {% endif %}
 
-        <li class="list-group-item d-flex justify-content-between bg-transparent border-0 text-truncate rounded-5">
-            <a href="{{ path('delivery-transport:admin.parameter.edit', {
-                product : item.id,
-                offer: item.product_offer_const,
-                variation: item.product_variation_const,
-                modification: item.product_modification_const
-            }) }}"
-               class="text-decoration-none mb-1 modal-link disabled fw-bolder text-muted"
-               data-bs-toggle="modal"
-               data-bs-target="#modal"
-               title="Параметры упаковки">
-                Параметры упаковки
-            </a>
-        </li>
-
-
         {# Редактировать #}
         {% if  is_granted('ROLE_PRODUCT_EDIT') or is_granted('ROLE_ADMIN') %}
 
@@ -71,15 +65,11 @@
                 <a href="{{ path('products-product:admin.newedit.edit', {id: item.event }) }}"
                    class="text-decoration-none text-dark w-100"
                    title="{{ 'btn.edit'|trans({}, 'core.btn') }}">
-                    Редактировать продукт
+                    Редактирвоать продукт
                 </a>
             </li>
 
         {% endif %}
 
-
     </ul>
 </div>
-
-
-
