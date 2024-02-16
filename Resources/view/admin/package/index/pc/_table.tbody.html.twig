@@ -1,8 +1,6 @@
 {% trans_default_domain 'admin.product.stock' %}
 
 <tr>
-    {# {{ dump(orders) }} #}
-
 
     {% if package_status != 'completed' %}
         {# Порядок погрузки #}
@@ -72,18 +70,9 @@
                 </div>
 
 
-                <a href="https://yandex.ru/maps/?pt={{ item.destination_longitude }},{{ item.destination_latitude }}&z=18&l=map" class="text-decoration-none"
+                <a href="https://yandex.ru/maps/?pt={{ item.destination_longitude }},{{ item.destination_latitude }}&z=18&l=map"
+                   class="text-decoration-none"
                    target="_blank">{{ item.destination_location }}</a></div>
-
-
-
-            {# {{ orders.destination|call_twig_func('contacts_region_type') }} #}
-
-            {# {{ user_profile(orders.destination) }} #}
-
-            {# {{ orders.destination_name }}
-			{{ orders.destination_location }} #}
-
 
         {% else %}
             {{ orders.package_order_fields.order_field_value|call_twig_func(orders.package_order_fields.order_field_type) }}
@@ -95,11 +84,11 @@
 
     <td class="ps-5">
         <div class="ms-3">
-            
+
             {% if orders.destination %}
                 <span class="ms-3 badge text-bg-danger">Перемещение</span>
 
-                {#{{ user_profile(orders.destination) }}#}
+                {# {{ user_profile(orders.destination) }} #}
 
             {% else %}
 

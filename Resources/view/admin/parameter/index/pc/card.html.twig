@@ -106,12 +106,12 @@
 
         {% if item.product_parameter_size %}
 
-            {#{{ dump(item.product_parameter_size) }}#}
-
             {% if item.product_parameter_size > 1000000 %}
                 {{ (item.product_parameter_size / 1000000000) }} м3
+
             {% elseif item.product_parameter_size > 10 %}
                 {{ (item.product_parameter_size / 1000) }} см3
+
             {% else %}
                 {{ item.product_parameter_size }} мм3
             {% endif %}
