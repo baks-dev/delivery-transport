@@ -356,6 +356,7 @@ final class AllProductParameter implements AllProductParameterInterface
             
         ');
 
+        $qb->addOrderBy('product_parameter.id', 'DESC');
 
         if($this->search?->getQuery())
         {
@@ -411,7 +412,7 @@ final class AllProductParameter implements AllProductParameterInterface
                 ->addSearchLike('product_offer_modification.article')
                 ->addSearchLike('product_offer_variation.article');
 
-            $qb->orderBy('product.event', 'DESC');
+            $qb->addOrderBy('product.event', 'DESC');
 
         }
 

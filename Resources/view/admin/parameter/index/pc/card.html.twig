@@ -107,13 +107,14 @@
         {% if item.product_parameter_size %}
 
             {% if item.product_parameter_size > 1000000 %}
-                {{ (item.product_parameter_size / 1000000000) }} м3
+                {{ (item.product_parameter_size / 1000000000)|round(3) }} м3
 
             {% elseif item.product_parameter_size > 10 %}
-                {{ (item.product_parameter_size / 1000) }} см3
+                {{ (item.product_parameter_size / 1000)|round(1) }} см3
 
             {% else %}
-                {{ item.product_parameter_size }} мм3
+                {{ item.product_parameter_size|round(1) }} мм3
+
             {% endif %}
 
         {% else %}
