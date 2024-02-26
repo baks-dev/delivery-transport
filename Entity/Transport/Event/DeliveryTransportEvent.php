@@ -29,6 +29,7 @@ use BaksDev\Contacts\Region\Type\Call\Const\ContactsRegionCallConst;
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\DeliveryTransport\Entity\Transport\DeliveryTransport;
+use BaksDev\DeliveryTransport\Entity\Transport\Driver\DeliveryTransportDriver;
 use BaksDev\DeliveryTransport\Entity\Transport\Modify\DeliveryTransportModify;
 use BaksDev\DeliveryTransport\Entity\Transport\Parameter\DeliveryTransportParameter;
 use BaksDev\DeliveryTransport\Entity\Transport\Region\DeliveryTransportRegion;
@@ -94,12 +95,16 @@ class DeliveryTransportEvent extends EntityEvent
     #[Assert\Valid]
     #[ORM\OneToOne(mappedBy: 'event', targetEntity: DeliveryTransportParameter::class, cascade: ['all'])]
     private DeliveryTransportParameter $parameter;
-    
+
     /** Регион обслуживания */
     #[Assert\Valid]
     #[ORM\OneToOne(mappedBy: 'event', targetEntity: DeliveryTransportRegion::class, cascade: ['all'])]
     private DeliveryTransportRegion $region;
 
+    /** Водители */
+    #[Assert\Valid]
+    #[ORM\OneToMany(mappedBy: 'event', targetEntity: DeliveryTransportDriver::class, cascade: ['all'])]
+    private Collection $driver;
 
     public function __construct()
     {
@@ -137,7 +142,8 @@ class DeliveryTransportEvent extends EntityEvent
     {
         $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
 
-        if ($dto instanceof DeliveryTransportEventInterface) {
+        if($dto instanceof DeliveryTransportEventInterface)
+        {
             return parent::getDto($dto);
         }
 
@@ -146,7 +152,7 @@ class DeliveryTransportEvent extends EntityEvent
 
     public function setEntity($dto): mixed
     {
-        if ($dto instanceof DeliveryTransportEventInterface || $dto instanceof self)
+        if($dto instanceof DeliveryTransportEventInterface || $dto instanceof self)
         {
             return parent::setEntity($dto);
         }
@@ -155,20 +161,19 @@ class DeliveryTransportEvent extends EntityEvent
     }
 
 
+    public function getNameByLocale(Locale $locale): ?string
+    {
+        $name = null;
 
-	public function getNameByLocale(Locale $locale) : ?string
-	{
-		$name = null;
-		
-		/** @var ${MainClass}Trans $trans */
-		foreach($this->translate as $trans)
-		{
-			if($name = $trans->name($locale))
-			{
-				break;
-			}
-		}
-		
-		return $name;
-	}
+        /** @var ${MainClass}Trans $trans */
+        foreach($this->translate as $trans)
+        {
+            if($name = $trans->name($locale))
+            {
+                break;
+            }
+        }
+
+        return $name;
+    }
 }

@@ -32,6 +32,8 @@ use BaksDev\DeliveryTransport\Type\Package\Status\DeliveryPackageStatus;
 use BaksDev\DeliveryTransport\Type\Package\Status\DeliveryPackageStatusType;
 use BaksDev\DeliveryTransport\Type\ProductParameter\Weight\Kilogram\Kilogram;
 use BaksDev\DeliveryTransport\Type\ProductParameter\Weight\Kilogram\KilogramType;
+use BaksDev\DeliveryTransport\Type\Transport\Driver\DeliveryTransportDriverType;
+use BaksDev\DeliveryTransport\Type\Transport\Driver\DeliveryTransportDriverUid;
 use BaksDev\DeliveryTransport\Type\Transport\Event\DeliveryTransportEventType;
 use BaksDev\DeliveryTransport\Type\Transport\Event\DeliveryTransportEventUid;
 use BaksDev\DeliveryTransport\Type\Transport\Id\DeliveryTransportType;

@@ -119,6 +119,18 @@ final class DeliveryTransportForm extends AbstractType
             'prototype_name' => '__delivery_translate__',
         ]);
 
+
+        $builder->add('driver', CollectionType::class, [
+            'entry_type' => Driver\DeliveryTransportDriverForm::class,
+            'entry_options' => ['label' => false],
+            'label' => false,
+            'by_reference' => false,
+            'allow_delete' => true,
+            'allow_add' => true,
+            'prototype_name' => '__delivery_driver__',
+        ]);
+
+
         /*
          * Параметры автомобиля.
          */

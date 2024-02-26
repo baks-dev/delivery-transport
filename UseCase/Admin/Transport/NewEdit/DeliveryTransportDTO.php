@@ -83,7 +83,14 @@ final class DeliveryTransportDTO implements DeliveryTransportEventInterface
 
 
     /** Вспомогательные свойства */
-    private  UserUid $usr;
+    private UserUid $usr;
+
+
+    /**
+     * Водители
+     */
+    #[Assert\Valid]
+    private ArrayCollection $driver;
 
 
     public function __construct(User|UserUid $usr)
@@ -91,6 +98,8 @@ final class DeliveryTransportDTO implements DeliveryTransportEventInterface
         $this->usr = $usr instanceof User ? $usr->getId() : $usr;
 
         $this->translate = new ArrayCollection();
+        $this->driver = new ArrayCollection();
+
         $this->parameter = new  Parameter\DeliveryTransportParameterDTO();
         $this->region = new  Region\DeliveryTransportRegionDTO();
     }
@@ -137,7 +146,7 @@ final class DeliveryTransportDTO implements DeliveryTransportEventInterface
     public function getTranslate(): ArrayCollection
     {
         /* Вычисляем расхождение и добавляем неопределенные локали */
-        foreach (Locale::diffLocale($this->translate) as $locale)
+        foreach(Locale::diffLocale($this->translate) as $locale)
         {
             $DeliveryTransportTransDTO = new Trans\DeliveryTransportTransDTO;
             $DeliveryTransportTransDTO->setLocal($locale);
@@ -154,7 +163,7 @@ final class DeliveryTransportDTO implements DeliveryTransportEventInterface
             return;
         }
 
-        if (!$this->translate->contains($trans))
+        if(!$this->translate->contains($trans))
         {
             $this->translate->add($trans);
         }
@@ -163,6 +172,46 @@ final class DeliveryTransportDTO implements DeliveryTransportEventInterface
     public function removeTranslate(Trans\DeliveryTransportTransDTO $trans): void
     {
         $this->translate->removeElement($trans);
+    }
+
+    /**
+     * Driver
+     */
+    public function getDriver(): ArrayCollection
+    {
+        if($this->driver->isEmpty())
+        {
+            $DeliveryTransportDriverDTO = new Driver\DeliveryTransportDriverDTO();
+            $this->driver->add($DeliveryTransportDriverDTO);
+        }
+
+        return $this->driver;
+    }
+
+    public function setDriver(ArrayCollection $driver): self
+    {
+        $this->driver = $driver;
+        return $this;
+    }
+
+    public function addDriver(Driver\DeliveryTransportDriverDTO $driver): self
+    {
+
+        $filter = $this->driver->filter(function(Driver\DeliveryTransportDriverDTO $element) use ($driver) {
+            return $element->getProfile() === $driver->getProfile();
+        });
+
+        if($filter->isEmpty())
+        {
+            $this->driver->add($driver);
+        }
+
+        return $this;
+    }
+
+    public function removeDriver(Driver\DeliveryTransportDriverDTO $driver): void
+    {
+        $this->driver->removeElement($driver);
     }
 
     /**
