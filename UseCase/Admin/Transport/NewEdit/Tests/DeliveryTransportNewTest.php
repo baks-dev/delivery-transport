@@ -36,6 +36,7 @@ use BaksDev\DeliveryTransport\Type\ProductParameter\Weight\Kilogram\Kilogram;
 use BaksDev\DeliveryTransport\Type\Transport\Id\DeliveryTransportUid;
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\DeliveryTransportDTO;
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\DeliveryTransportHandler;
+use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Driver\DeliveryTransportDriverDTO;
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Trans\DeliveryTransportTransDTO;
 use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
@@ -147,6 +148,16 @@ final class DeliveryTransportNewTest extends KernelTestCase
 
         $DeliveryTransportDTO->addTranslate($DeliveryTransportTransDTO);
         self::assertTrue($DeliveryTransportDTO->getTranslate()->contains($DeliveryTransportTransDTO));
+
+
+
+        $DeliveryTransportDrivers = $DeliveryTransportDTO->getDriver();
+
+        /** @var DeliveryTransportDriverDTO $DeliveryTransportDriverDTO */
+        $DeliveryTransportDriverDTO = $DeliveryTransportDrivers->current();
+        $DeliveryTransportDriverDTO->setProfile($DriverUserProfileUid = new UserProfileUid());
+        self::assertSame($DriverUserProfileUid, $DeliveryTransportDriverDTO->getProfile());
+
 
         /** PERSIST */
 
