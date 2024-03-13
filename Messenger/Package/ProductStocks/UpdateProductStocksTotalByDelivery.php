@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\DeliveryTransport\Messenger\Package\ProductStocks;
 
 use BaksDev\Centrifugo\Server\Publish\CentrifugoPublishInterface;
+use BaksDev\Core\Messenger\MessageDispatchInterface;
 use BaksDev\DeliveryTransport\Type\OrderStatus\OrderStatusDelivery;
 use BaksDev\DeliveryTransport\Type\ProductStockStatus\ProductStockStatusDelivery;
 use BaksDev\Orders\Order\Repository\CurrentOrderEvent\CurrentOrderEventInterface;
@@ -36,6 +37,7 @@ use BaksDev\Products\Stocks\Entity\Event\ProductStockEvent;
 use BaksDev\Products\Stocks\Entity\Products\ProductStockProduct;
 use BaksDev\Products\Stocks\Entity\ProductStockTotal;
 use BaksDev\Products\Stocks\Messenger\ProductStockMessage;
+use BaksDev\Products\Stocks\Messenger\Stocks\SubProductStocksTotal\SubProductStocksTotalMessage;
 use BaksDev\Products\Stocks\Repository\ProductStocksById\ProductStocksByIdInterface;
 use BaksDev\Users\Profile\UserProfile\Repository\UserByUserProfile\UserByUserProfileInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -51,16 +53,19 @@ final class UpdateProductStocksTotalByDelivery
     private EntityManagerInterface $entityManager;
 
     private LoggerInterface $logger;
+    private MessageDispatchInterface $messageDispatch;
 
     public function __construct(
         ProductStocksByIdInterface $productStocks,
         EntityManagerInterface $entityManager,
         LoggerInterface $deliveryTransportLogger,
+        MessageDispatchInterface $messageDispatch
     )
     {
         $this->productStocks = $productStocks;
         $this->entityManager = $entityManager;
         $this->logger = $deliveryTransportLogger;
+        $this->messageDispatch = $messageDispatch;
     }
 
     /**
@@ -146,9 +151,23 @@ final class UpdateProductStocksTotalByDelivery
 
                 }
 
+
                 /** Снимаем резерв и наличие со склада (переход на баланс транспорта доставки) */
-                $ProductStockTotal->subTotal($product->getTotal());
-                $ProductStockTotal->subReserve($product->getTotal());
+                for($i = 1; $i <= $product->getTotal(); $i++)
+                {
+                    $SubProductStocksTotalMessage = new SubProductStocksTotalMessage(
+                        $ProductStockEvent->getProfile(),
+                        $product->getProduct(),
+                        $product->getOffer(),
+                        $product->getVariation(),
+                        $product->getModification()
+                    );
+
+                    $this->messageDispatch->dispatch($SubProductStocksTotalMessage, transport: 'products-stocks');
+                }
+
+                //$ProductStockTotal->subTotal($product->getTotal());
+                //$ProductStockTotal->subReserve($product->getTotal());
 
                 $this->logger->info('Перевели баланс продукции '.$key.' со склада на баланс транспорта (Доставка)',
                     [
