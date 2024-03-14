@@ -39,5 +39,7 @@ return static function (FrameworkConfig $framework) {
     ;
 
     $messenger->transport('failed-delivery-transport')
-        ->dsn('%env(MESSENGER_TRANSPORT_DSN)%');
+        ->dsn('%env(MESSENGER_TRANSPORT_DSN)%')
+        ->options(['queue_name' => 'failed-delivery-transport'])
+    ;
 };
