@@ -87,7 +87,9 @@ final class NewPackageByProductStocks
     private ProductStocksNewByOrderInterface $productStocksNewByOrder;
 
     private MessageDispatchInterface $messageDispatch;
+
     private UserProfileGpsInterface $userProfileGps;
+
     private ExistPackageProductStocksInterface $existPackageProductStocks;
 
     public function __construct(
