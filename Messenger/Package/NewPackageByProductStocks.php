@@ -140,6 +140,8 @@ final class NewPackageByProductStocks
      */
     public function __invoke(ProductStockMessage $message): void
     {
+        $isConsumer = $this->messageDispatch->isConsumer('products-stocks');
+
         /* Получаем статус заявки */
         /** @var ProductStockEvent $ProductStockEvent */
         $ProductStockEvent = $this->entityManager
@@ -234,7 +236,19 @@ final class NewPackageByProductStocks
 
             if(!$OrderGps)
             {
-                throw new DomainException(sprintf('Склад назначения при перемещении ID: %s не имеет геоданных', $destinationProfile));
+                $msg = 'Склад назначения (профиль) при перемещении не имеет геоданных';
+
+                $this->logger->critical($msg, [
+                    __FILE__.':'.__LINE__,
+                    'destination' => (string) $destinationProfile
+                ]);
+
+                if($isConsumer)
+                {
+                    throw new DomainException($msg);
+                }
+
+                return;
             }
         }
 
@@ -256,7 +270,19 @@ final class NewPackageByProductStocks
 
         if(!$UserProfileGps)
         {
-            throw new DomainException(sprintf('Профиль склада ID: %s не имеет геоданных', $ProductStockEvent->getProfile()));
+            $msg = 'Профиль склада не имеет геоданных';
+
+            $this->logger->critical($msg, [
+                __FILE__.':'.__LINE__,
+                'profile' => (string) $ProductStockEvent->getProfile()
+            ]);
+
+            if($isConsumer)
+            {
+                throw new DomainException($msg);
+            }
+
+            return;
         }
 
         $profileDistance = $this->geocodeDistance
@@ -283,7 +309,14 @@ final class NewPackageByProductStocks
 
         if(!$DeliveryTransportRegion)
         {
-            throw new DomainException(sprintf('Не добавляем в путевой лист складскую заявку: За складом ID: %s не закреплено ни одного транспорта', $ProductStockEvent->getProfile()));
+            $msg = 'Не добавляем в путевой лист складскую заявку: За складом (профилем) не закреплено ни одного транспорта';
+
+            $this->logger->critical($msg, [
+                __FILE__.':'.__LINE__,
+                'profile' => (string) $ProductStockEvent->getProfile()
+            ]);
+
+            return;
         }
 
         /***
@@ -378,7 +411,11 @@ final class NewPackageByProductStocks
 
                             $DeliveryPackageEvent = $this->entityManager->getRepository(DeliveryPackageEvent::class)
                                 ->find($DeliveryPackage->getEvent());
-                            $this->entityManager->remove($DeliveryPackageEvent);
+
+                            if($DeliveryPackageEvent)
+                            {
+                                $this->entityManager->remove($DeliveryPackageEvent);
+                            }
 
                             throw new DomainException(sprintf('Ошибка %s при создании поставки', $DeliveryPackageTransport));
                         }
