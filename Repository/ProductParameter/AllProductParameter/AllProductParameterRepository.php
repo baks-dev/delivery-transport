@@ -38,7 +38,7 @@ use BaksDev\Products\Product\Entity;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
 
-final class AllProductParameter implements AllProductParameterInterface
+final class AllProductParameterRepository implements AllProductParameterInterface
 {
 
     private PaginatorInterface $paginator;

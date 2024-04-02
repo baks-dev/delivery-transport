@@ -40,7 +40,7 @@ use BaksDev\Products\Stocks\Entity\Products\ProductStockProduct;
 use BaksDev\Products\Stocks\Type\Event\ProductStockEventUid;
 use Doctrine\DBAL\Connection;
 
-final class PackageOrderProducts implements PackageOrderProductsInterface
+final class PackageOrderProductsRepository implements PackageOrderProductsInterface
 {
     private Connection $connection;
 

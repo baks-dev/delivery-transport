@@ -36,7 +36,7 @@ use BaksDev\Products\Stocks\Entity\ProductStock;
 use BaksDev\Products\Stocks\Type\Status\ProductStockStatus;
 use Doctrine\DBAL\Connection;
 
-final class ExistPackageProductStocks implements ExistPackageProductStocksInterface
+final class ExistPackageProductStocksRepository implements ExistPackageProductStocksInterface
 {
     //    private Connection $connection;
     //

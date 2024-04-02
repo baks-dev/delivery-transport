@@ -59,21 +59,21 @@ class DeliveryPackageEvent extends EntityEvent
     private ?DeliveryPackageUid $main = null;
 
     /** Модификатор */
-    #[ORM\OneToOne(mappedBy: 'event', targetEntity: DeliveryPackageModify::class, cascade: ['all'])]
+    #[ORM\OneToOne(targetEntity: DeliveryPackageModify::class, mappedBy: 'event', cascade: ['all'])]
     private DeliveryPackageModify $modify;
 
 
 
 //    /** Заказы в поставке */
-//    #[ORM\OneToMany(mappedBy: 'event', targetEntity: DeliveryPackageOrder::class, cascade: ['all'])]
+//    #[ORM\OneToMany(targetEntity: DeliveryPackageOrder::class, mappedBy: 'event', cascade: ['all'])]
 //    private Collection $ord;
     
 //    /** Заявки для перемещения */
-//    #[ORM\OneToMany(mappedBy: 'event', targetEntity: DeliveryPackageMove::class, cascade: ['all'])]
+//    #[ORM\OneToMany(targetEntity: DeliveryPackageMove::class, mappedBy: 'event', cascade: ['all'])]
 //    private Collection $move;
 
     /** Заявки для перемещения */
-    #[ORM\OneToMany(mappedBy: 'event', targetEntity: DeliveryPackageStocks::class, cascade: ['all'])]
+    #[ORM\OneToMany(targetEntity: DeliveryPackageStocks::class, mappedBy: 'event', cascade: ['all'])]
     private Collection $stock;
 
 

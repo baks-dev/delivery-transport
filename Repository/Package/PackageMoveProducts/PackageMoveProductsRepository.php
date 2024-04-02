@@ -30,7 +30,7 @@ use BaksDev\Products\Stocks\Entity\Products\ProductStockProduct;
 use BaksDev\Products\Stocks\Type\Event\ProductStockEventUid;
 use Doctrine\DBAL\Connection;
 
-final class PackageMoveProducts implements PackageMoveProductsInterface
+final class PackageMoveProductsRepository implements PackageMoveProductsInterface
 {
 
     private Connection $connection;

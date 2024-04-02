@@ -37,7 +37,7 @@ use BaksDev\Users\Profile\UserProfile\Entity\Personal\UserProfilePersonal;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
 use Doctrine\DBAL\Connection;
 
-final class PackageWarehouseGeocode implements PackageWarehouseGeocodeInterface
+final class PackageWarehouseGeocodeRepository implements PackageWarehouseGeocodeInterface
 {
 
     private DBALQueryBuilder $DBALQueryBuilder;

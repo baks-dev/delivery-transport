@@ -23,40 +23,41 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\DeliveryTransport\Repository\Package\ExistStockPackage;
+namespace BaksDev\DeliveryTransport\Repository\Package\PackageByProductStocks;
 
+use BaksDev\DeliveryTransport\Entity\Package\DeliveryPackage;
 use BaksDev\DeliveryTransport\Entity\Package\Stocks\DeliveryPackageStocks;
 use BaksDev\Products\Stocks\Type\Id\ProductStockUid;
-use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManagerInterface;
 
-final class ExistStockPackage implements ExistStockPackageInterface
+final class PackageByProductStocksRepository implements PackageByProductStocksInterface
 {
+    private EntityManagerInterface $entityManager;
 
-    private Connection $connection;
-
-    public function __construct(
-        Connection $connection,
-    )
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->connection = $connection;
+        $this->entityManager = $entityManager;
     }
 
     /**
-     * Метод проверяет, добавлена ли заявка в поставку
+     * Метод получает объект поставки, в которой находится складская заявка.
      */
-    public function isExistStockPackage(ProductStockUid $stock): bool
+    public function getDeliveryPackageByProductStock(ProductStockUid $stock): ?DeliveryPackage
     {
-        $qbExist = $this->connection->createQueryBuilder();
+        $qb = $this->entityManager->createQueryBuilder();
 
-        $qbExist->select('1');
-        $qbExist->from(DeliveryPackageStocks::TABLE, 'package');
-        $qbExist->where('package.stock = :stock');
-
-        $qb = $this->connection->createQueryBuilder();
-        $qb->select(sprintf('EXISTS(%s)', $qbExist->getSQL()));
-
+        $qb->select('package');
+        $qb->from(DeliveryPackageStocks::class, 'package_stock');
+        $qb->where('package_stock.stock = :stock');
         $qb->setParameter('stock', $stock, ProductStockUid::TYPE);
 
-        return $qb->fetchOne();
+        $qb->join(
+            DeliveryPackage::class,
+            'package',
+            'WITH',
+            'package.event = package_stock.event'
+        );
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }

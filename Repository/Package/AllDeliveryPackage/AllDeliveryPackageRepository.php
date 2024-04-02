@@ -60,7 +60,7 @@ use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final class AllDeliveryPackage implements AllDeliveryPackageInterface
+final class AllDeliveryPackageRepository implements AllDeliveryPackageInterface
 {
 
     private PaginatorInterface $paginator;

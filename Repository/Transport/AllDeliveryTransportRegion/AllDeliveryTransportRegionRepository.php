@@ -31,7 +31,7 @@ use BaksDev\DeliveryTransport\Entity\Transport as DeliveryTransportEntity;
 use BaksDev\DeliveryTransport\Type\Transport\Id\DeliveryTransportUid;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
-final class AllDeliveryTransportRegion implements AllDeliveryTransportRegionInterface
+final class AllDeliveryTransportRegionRepository implements AllDeliveryTransportRegionInterface
 {
 
 

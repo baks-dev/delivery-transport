@@ -36,7 +36,7 @@ use BaksDev\Users\Profile\UserProfile\Entity\Personal\UserProfilePersonal;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
-final class AllDeliveryTransport implements AllDeliveryTransportInterface
+final class AllDeliveryTransportRepository implements AllDeliveryTransportInterface
 {
 
     private PaginatorInterface $paginator;

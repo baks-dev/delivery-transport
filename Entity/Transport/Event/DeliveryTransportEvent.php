@@ -83,27 +83,27 @@ class DeliveryTransportEvent extends EntityEvent
     private ?UserProfileUid $profile = null;
 
     /** Модификатор */
-    #[ORM\OneToOne(mappedBy: 'event', targetEntity: DeliveryTransportModify::class, cascade: ['all'])]
+    #[ORM\OneToOne(targetEntity: DeliveryTransportModify::class, mappedBy: 'event', cascade: ['all'])]
     private DeliveryTransportModify $modify;
 
     /** Перевод */
     #[Assert\Valid]
-    #[ORM\OneToMany(mappedBy: 'event', targetEntity: DeliveryTransportTrans::class, cascade: ['all'])]
+    #[ORM\OneToMany(targetEntity: DeliveryTransportTrans::class, mappedBy: 'event', cascade: ['all'])]
     private Collection $translate;
 
     /** Параметры автомобиля */
     #[Assert\Valid]
-    #[ORM\OneToOne(mappedBy: 'event', targetEntity: DeliveryTransportParameter::class, cascade: ['all'])]
+    #[ORM\OneToOne(targetEntity: DeliveryTransportParameter::class, mappedBy: 'event', cascade: ['all'])]
     private DeliveryTransportParameter $parameter;
 
     /** Регион обслуживания */
     #[Assert\Valid]
-    #[ORM\OneToOne(mappedBy: 'event', targetEntity: DeliveryTransportRegion::class, cascade: ['all'])]
+    #[ORM\OneToOne(targetEntity: DeliveryTransportRegion::class, mappedBy: 'event', cascade: ['all'])]
     private DeliveryTransportRegion $region;
 
     /** Водители */
     #[Assert\Valid]
-    #[ORM\OneToMany(mappedBy: 'event', targetEntity: DeliveryTransportDriver::class, cascade: ['all'])]
+    #[ORM\OneToMany(targetEntity: DeliveryTransportDriver::class, mappedBy: 'event', cascade: ['all'])]
     private Collection $driver;
 
     public function __construct()
