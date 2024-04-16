@@ -37,8 +37,8 @@ use BaksDev\DeliveryTransport\UseCase\Admin\Transport\Delete\DeliveryTransportDe
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\Delete\DeliveryTransportDeleteHandler;
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\DeliveryTransportDTO;
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Tests\DeliveryTransportEditTest;
-use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
-use BaksDev\Products\Category\Type\Section\Field\Id\ProductCategorySectionFieldUid;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
+use BaksDev\Products\Category\Type\Section\Field\Id\CategoryProductSectionFieldUid;
 use BaksDev\Users\User\Type\Id\UserUid;
 use BaksDev\Wildberries\Products\Entity\Barcode\Event\WbBarcodeEvent;
 use BaksDev\Wildberries\Products\Entity\Settings\Event\WbProductSettingsEvent;

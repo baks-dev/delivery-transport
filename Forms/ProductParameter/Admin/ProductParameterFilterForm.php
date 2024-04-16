@@ -24,7 +24,7 @@
 namespace BaksDev\DeliveryTransport\Forms\ProductParameter\Admin;
 
 use BaksDev\Products\Category\Repository\CategoryChoice\CategoryChoiceInterface;
-use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -51,10 +51,10 @@ final class ProductParameterFilterForm extends AbstractType
     {
         $builder->add('category', ChoiceType::class, [
             'choices' => $this->categoryChoice->getCategoryCollection(),
-            'choice_value' => function (?ProductCategoryUid $category) {
+            'choice_value' => function (?CategoryProductUid $category) {
                 return $category?->getValue();
             },
-            'choice_label' => function (ProductCategoryUid $category) {
+            'choice_label' => function (CategoryProductUid $category) {
                 return $category->getOptions();
             },
             'label' => false,

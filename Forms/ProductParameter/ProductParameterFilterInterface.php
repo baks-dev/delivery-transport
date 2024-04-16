@@ -17,10 +17,10 @@
  */
 namespace BaksDev\DeliveryTransport\Forms\ProductParameter;
 
-use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 
 interface ProductParameterFilterInterface
 {
-	public function getCategory() : ?ProductCategoryUid;
+	public function getCategory() : ?CategoryProductUid;
 
 }

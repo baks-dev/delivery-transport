@@ -29,13 +29,26 @@ use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Services\Paginator\PaginatorInterface;
 use BaksDev\DeliveryTransport\Entity\ProductParameter\DeliveryPackageProductParameter;
-use BaksDev\DeliveryTransport\Forms\ProductParameter\ProductParameterFilterInterface;
 use BaksDev\Elastic\Api\Index\ElasticGetIndex;
-use BaksDev\Elastic\BaksDevElasticBundle;
-use BaksDev\Products\Category\Entity as CategoryEntity;
-use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
-use BaksDev\Products\Product\Entity;
+use BaksDev\Products\Category\Entity\CategoryProduct;
+use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
+use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
+use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
+use BaksDev\Products\Category\Entity\Trans\CategoryProductTrans;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
+use BaksDev\Products\Product\Entity\Category\ProductCategory;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity\Info\ProductInfo;
+use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
+use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPrice;
+use BaksDev\Products\Product\Entity\Offers\ProductOffer;
+use BaksDev\Products\Product\Entity\Offers\Variation\Image\ProductVariationImage;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
+use BaksDev\Products\Product\Entity\Offers\Variation\Price\ProductVariationPrice;
+use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
+use BaksDev\Products\Product\Entity\Photo\ProductPhoto;
+use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
 
 final class AllProductParameterRepository implements AllProductParameterInterface
@@ -88,11 +101,11 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         $qb->select('product.id');
         $qb->addSelect('product.event');
 
-        $qb->from(Entity\Product::class, 'product');
+        $qb->from(Product::class, 'product');
 
         $qb->join(
             'product',
-            Entity\Event\ProductEvent::class,
+            ProductEvent::class,
             'product_event',
             'product_event.id = product.event'
         );
@@ -101,7 +114,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
             ->addSelect('product_trans.name AS product_name')
             ->leftJoin(
                 'product_event',
-                Entity\Trans\ProductTrans::class,
+                ProductTrans::class,
                 'product_trans',
                 'product_trans.event = product_event.id AND product_trans.local = :local'
             );
@@ -112,7 +125,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
 
         $qb->leftJoin(
             'product_event',
-            Entity\Info\ProductInfo::class,
+            ProductInfo::class,
             'product_info',
             'product_info.product = product.id'
         );
@@ -126,7 +139,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
             ->addSelect('product_offer.postfix as product_offer_postfix')
             ->leftJoin(
                 'product_event',
-                Entity\Offers\ProductOffer::class,
+                ProductOffer::class,
                 'product_offer',
                 'product_offer.event = product_event.id'
             );
@@ -141,7 +154,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         /* Цена торгового предложения */
         $qb->leftJoin(
             'product_offer',
-            Entity\Offers\Price\ProductOfferPrice::class,
+            ProductOfferPrice::class,
             'product_offer_price',
             'product_offer_price.offer = product_offer.id'
         );
@@ -151,7 +164,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
             ->addSelect('category_offer.reference as product_offer_reference')
             ->leftJoin(
                 'product_offer',
-                CategoryEntity\Offers\ProductCategoryOffers::class,
+                CategoryProductOffers::class,
                 'category_offer',
                 'category_offer.id = product_offer.category_offer'
             );
@@ -164,7 +177,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
             ->addSelect('product_offer_variation.postfix as product_variation_postfix')
             ->leftJoin(
                 'product_offer',
-                Entity\Offers\Variation\ProductVariation::class,
+                ProductVariation::class,
                 'product_offer_variation',
                 'product_offer_variation.offer = product_offer.id'
             );
@@ -180,7 +193,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         /* Цена множественного варианта */
         $qb->leftJoin(
             'category_offer_variation',
-            Entity\Offers\Variation\Price\ProductVariationPrice::class,
+            ProductVariationPrice::class,
             'product_variation_price',
             'product_variation_price.variation = product_offer_variation.id'
         );
@@ -189,7 +202,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         $qb->addSelect('category_offer_variation.reference as product_variation_reference');
         $qb->leftJoin(
             'product_offer_variation',
-            CategoryEntity\Offers\Variation\ProductCategoryVariation::TABLE,
+            CategoryProductVariation::TABLE,
             'category_offer_variation',
             'category_offer_variation.id = product_offer_variation.category_variation'
         );
@@ -201,7 +214,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
             ->addSelect('product_offer_modification.postfix as product_modification_postfix')
             ->leftJoin(
                 'product_offer_variation',
-                Entity\Offers\Variation\Modification\ProductModification::class,
+                ProductModification::class,
                 'product_offer_modification',
                 'product_offer_modification.variation = product_offer_variation.id '
             );
@@ -218,7 +231,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         $qb->addSelect('category_offer_modification.reference as product_modification_reference');
         $qb->leftJoin(
             'product_offer_modification',
-            CategoryEntity\Offers\Variation\Modification\ProductCategoryModification::class,
+            CategoryProductModification::class,
             'category_offer_modification',
             'category_offer_modification.id = product_offer_modification.category_modification'
         );
@@ -243,21 +256,21 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
 
         $qb->leftJoin(
             'product_event',
-            Entity\Photo\ProductPhoto::class,
+            ProductPhoto::class,
             'product_photo',
             'product_photo.event = product_event.id AND product_photo.root = true'
         );
 
         $qb->leftJoin(
             'product_offer',
-            Entity\Offers\Variation\Image\ProductVariationImage::class,
+            ProductVariationImage::class,
             'product_offer_variation_image',
             'product_offer_variation_image.variation = product_offer_variation.id AND product_offer_variation_image.root = true'
         );
 
         $qb->leftJoin(
             'product_offer',
-            Entity\Offers\Image\ProductOfferImage::class,
+            ProductOfferImage::class,
             'product_offer_images',
             'product_offer_images.offer = product_offer.id AND product_offer_images.root = true'
         );
@@ -266,11 +279,11 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
             "
 			CASE
 			   WHEN product_offer_variation_image.name IS NOT NULL THEN
-					CONCAT ( '/upload/".Entity\Offers\Variation\Image\ProductVariationImage::TABLE."' , '/', product_offer_variation_image.name)
+					CONCAT ( '/upload/".ProductVariationImage::TABLE."' , '/', product_offer_variation_image.name)
 			   WHEN product_offer_images.name IS NOT NULL THEN
-					CONCAT ( '/upload/".Entity\Offers\Image\ProductOfferImage::TABLE."' , '/', product_offer_images.name)
+					CONCAT ( '/upload/".ProductOfferImage::TABLE."' , '/', product_offer_images.name)
 			   WHEN product_photo.name IS NOT NULL THEN
-					CONCAT ( '/upload/".Entity\Photo\ProductPhoto::TABLE."' , '/', product_photo.name)
+					CONCAT ( '/upload/".ProductPhoto::TABLE."' , '/', product_photo.name)
 			   ELSE NULL
 			END AS product_image
 		"
@@ -305,7 +318,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         /* Категория */
         $qb->join(
             'product_event',
-            Entity\Category\ProductCategory::class,
+            ProductCategory::class,
             'product_event_category',
             'product_event_category.event = product_event.id AND product_event_category.root = true'
         );
@@ -313,12 +326,12 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         if($this->filter?->getCategory())
         {
             $qb->andWhere('product_event_category.category = :category');
-            $qb->setParameter('category', $this->filter->getCategory(), ProductCategoryUid::TYPE);
+            $qb->setParameter('category', $this->filter->getCategory(), CategoryProductUid::TYPE);
         }
 
         $qb->join(
             'product_event_category',
-            CategoryEntity\ProductCategory::class,
+            CategoryProduct::class,
             'category',
             'category.id = product_event_category.category'
         );
@@ -327,7 +340,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
 
         $qb->leftJoin(
             'category',
-            CategoryEntity\Trans\ProductCategoryTrans::class,
+            CategoryProductTrans::class,
             'category_trans',
             'category_trans.event = category.event AND category_trans.local = :local'
         );
@@ -383,7 +396,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
                 }
 
                 /** Поиск по продукции */
-                $result = $this->elasticGetIndex->handle(Entity\Product::class, $this->search->getQuery(), 1);
+                $result = $this->elasticGetIndex->handle(Product::class, $this->search->getQuery(), 1);
 
                 $counter = $result['hits']['total']['value'];
 

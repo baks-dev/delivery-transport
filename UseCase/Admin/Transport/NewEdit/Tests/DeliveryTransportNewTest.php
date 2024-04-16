@@ -38,7 +38,7 @@ use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\DeliveryTransportD
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\DeliveryTransportHandler;
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Driver\DeliveryTransportDriverDTO;
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Trans\DeliveryTransportTransDTO;
-use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use BaksDev\Users\User\Type\Id\UserUid;
 use BaksDev\Wildberries\Products\Entity\Cards\WbProductCard;

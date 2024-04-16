@@ -24,7 +24,7 @@
 namespace BaksDev\DeliveryTransport\Forms\ProductParameter\Admin;
 
 use BaksDev\DeliveryTransport\Forms\ProductParameter\ProductParameterFilterInterface;
-use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use Symfony\Component\HttpFoundation\Request;
 
 final class ProductParameterFilterDTO implements ProductParameterFilterInterface
@@ -40,11 +40,11 @@ final class ProductParameterFilterDTO implements ProductParameterFilterInterface
 	
 	
 	/** Категория */
-	private ?ProductCategoryUid $category = null;
+	private ?CategoryProductUid $category = null;
 
 
 	
-	public function setCategory(ProductCategoryUid|string|null $category) : void
+	public function setCategory(CategoryProductUid|string|null $category) : void
 	{
 		if($category === null)
 		{
@@ -53,14 +53,14 @@ final class ProductParameterFilterDTO implements ProductParameterFilterInterface
 
         if(is_string($category))
         {
-            $category = new ProductCategoryUid($category);
+            $category = new CategoryProductUid($category);
         }
 
 		$this->category = $category;
 	}
 	
 	
-	public function getCategory() : ?ProductCategoryUid
+	public function getCategory() : ?CategoryProductUid
 	{
 		return $this->category ?: $this->request->getSession()->get(self::category);
 	}
