@@ -414,10 +414,8 @@ final class AllDeliveryPackageRepository implements AllDeliveryPackageInterface
         $dbal->addOrderBy('package_transport.interval', 'DESC');
         $dbal->addOrderBy('package_stocks.sort', 'DESC');
 
+
         $dbal->allGroupByExclude();
-
-
-        //dump($dbal->fetchAllAssociative());
 
         return $this->paginator->fetchAllAssociative($dbal);
     }
