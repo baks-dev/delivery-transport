@@ -29,7 +29,7 @@ use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\DeliveryTransport\Entity\Package\DeliveryPackage;
 use BaksDev\DeliveryTransport\Entity\Package\Stocks\DeliveryPackageStocks;
 use BaksDev\DeliveryTransport\Type\Package\Id\DeliveryPackageUid;
-use BaksDev\DeliveryTransport\Type\ProductStockStatus\ProductStockStatusCompleted;
+use BaksDev\Products\Stocks\Type\Status\ProductStockStatus\ProductStockStatusCompleted;
 use BaksDev\DeliveryTransport\Type\ProductStockStatus\ProductStockStatusDelivery;
 use BaksDev\Products\Stocks\Entity\Event\ProductStockEvent;
 use BaksDev\Products\Stocks\Entity\ProductStock;

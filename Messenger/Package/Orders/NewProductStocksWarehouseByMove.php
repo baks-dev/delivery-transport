@@ -26,7 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\DeliveryTransport\Messenger\Package\Orders;
 
 use BaksDev\Centrifugo\Server\Publish\CentrifugoPublishInterface;
-use BaksDev\DeliveryTransport\Type\ProductStockStatus\ProductStockStatusCompleted;
+use BaksDev\Products\Stocks\Type\Status\ProductStockStatus\ProductStockStatusCompleted;
 use BaksDev\Orders\Order\Repository\CurrentOrderEvent\CurrentOrderEventInterface;
 use BaksDev\Orders\Order\Type\Status\OrderStatus;
 use BaksDev\Orders\Order\UseCase\Admin\Status\OrderStatusDTO;

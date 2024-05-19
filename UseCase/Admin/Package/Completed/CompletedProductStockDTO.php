@@ -21,10 +21,11 @@ declare(strict_types=1);
 namespace BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed;
 
 use BaksDev\Core\Type\UidType\Uid;
-use BaksDev\DeliveryTransport\Type\ProductStockStatus\ProductStockStatusCompleted;
+
 use BaksDev\Products\Stocks\Entity\Event\ProductStockEventInterface;
 use BaksDev\Products\Stocks\Type\Event\ProductStockEventUid;
 use BaksDev\Products\Stocks\Type\Status\ProductStockStatus;
+use BaksDev\Products\Stocks\Type\Status\ProductStockStatus\ProductStockStatusCompleted;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -48,7 +49,7 @@ final class CompletedProductStockDTO implements ProductStockEventInterface
 
     public function __construct(ProductStockEventUid $id, UserProfileUid $profile)
     {
-        $this->status = new ProductStockStatus(new ProductStockStatusCompleted());
+        $this->status = new ProductStockStatus(ProductStockStatusCompleted::class);
         $this->id = $id;
         $this->profile = $profile;
     }
