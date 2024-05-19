@@ -73,6 +73,9 @@ final class PackageSortByDistance
     public function __invoke(DeliveryPackageMessage $message): void
     {
 
+        /** TODO: */
+        return;
+
         /** Определяем геолокацию склада погрузки (начальную точку) */
         $DeliveryPackageUid = $message->getId();
         $geoWarehouse = $this->packageWarehouseGeocode->fetchPackageWarehouseGeocodeAssociative($DeliveryPackageUid);

@@ -81,6 +81,9 @@ final class UpdateOrderStatusByDelivery
     public function __invoke(ProductStockMessage $message): void
     {
 
+        /** TODO: */
+        return;
+
         $ProductStockEvent = $this->entityManager->getRepository(ProductStockEvent::class)
             ->find($message->getEvent());
 

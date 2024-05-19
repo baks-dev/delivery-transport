@@ -140,6 +140,10 @@ final class NewPackageByProductStocks
      */
     public function __invoke(ProductStockMessage $message): void
     {
+
+        /** TODO: */
+        return;
+
         $isConsumer = $this->messageDispatch->isConsumer('products-stocks');
 
         /* Получаем статус заявки */

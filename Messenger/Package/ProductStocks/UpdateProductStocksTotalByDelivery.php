@@ -73,6 +73,9 @@ final class UpdateProductStocksTotalByDelivery
      */
     public function __invoke(ProductStockMessage $message): void
     {
+        /** TODO: */
+        return;
+
         $this->entityManager->clear();
 
         $ProductStockEvent = $this->entityManager

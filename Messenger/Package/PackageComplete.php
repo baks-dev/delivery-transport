@@ -90,6 +90,10 @@ final class PackageComplete
      */
     public function __invoke(ProductStockMessage $message): void
     {
+
+        /** TODO: */
+        return;
+
         /** Получаем упаковку с данным заказом */
         $DeliveryPackage = $this->packageByProductStocks
             ->getDeliveryPackageByProductStock($message->getId());

@@ -138,6 +138,9 @@ final class PackageByProductStocksIncoming
     public function __invoke(ProductStockMessage $message): void
     {
 
+        /** TODO: */
+        return;
+
         /** @var ProductStockEvent $ProductStockEvent */
         $ProductStockEvent = $this->entityManager
             ->getRepository(ProductStockEvent::class)
