@@ -35,7 +35,7 @@ use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Stocks\Entity\ProductStockTotal;
-use BaksDev\Products\Stocks\Messenger\Stocks\SubProductStocksTotal\SubProductStocksTotalMessage;
+use BaksDev\Products\Stocks\Messenger\Stocks\SubProductStocksTotal\SubProductStocksTotalAndReserveMessage;
 use BaksDev\Products\Stocks\Repository\ProductWarehouseByOrder\ProductWarehouseByOrderInterface;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Doctrine\ORM\EntityManagerInterface;
@@ -179,7 +179,7 @@ final class SubReserveProductStocksTotalByOrderDelivery
         /** Снимаем резерв и остаток продукции на складе */
         for($i = 1; $i <= $product->getTotal(); $i++)
         {
-            $SubProductStocksTotalMessage = new SubProductStocksTotalMessage(
+            $SubProductStocksTotalMessage = new SubProductStocksTotalAndReserveMessage(
                 $profile,
                 $ProductUid,
                 $ProductOfferConst,

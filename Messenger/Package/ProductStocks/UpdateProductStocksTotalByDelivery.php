@@ -37,7 +37,7 @@ use BaksDev\Products\Stocks\Entity\Event\ProductStockEvent;
 use BaksDev\Products\Stocks\Entity\Products\ProductStockProduct;
 use BaksDev\Products\Stocks\Entity\ProductStockTotal;
 use BaksDev\Products\Stocks\Messenger\ProductStockMessage;
-use BaksDev\Products\Stocks\Messenger\Stocks\SubProductStocksTotal\SubProductStocksTotalMessage;
+use BaksDev\Products\Stocks\Messenger\Stocks\SubProductStocksTotal\SubProductStocksTotalAndReserveMessage;
 use BaksDev\Products\Stocks\Repository\ProductStocksById\ProductStocksByIdInterface;
 use BaksDev\Users\Profile\UserProfile\Repository\UserByUserProfile\UserByUserProfileInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -158,7 +158,7 @@ final class UpdateProductStocksTotalByDelivery
                 /** Снимаем резерв и наличие со склада (переход на баланс транспорта доставки) */
                 for($i = 1; $i <= $product->getTotal(); $i++)
                 {
-                    $SubProductStocksTotalMessage = new SubProductStocksTotalMessage(
+                    $SubProductStocksTotalMessage = new SubProductStocksTotalAndReserveMessage(
                         $ProductStockEvent->getProfile(),
                         $product->getProduct(),
                         $product->getOffer(),
