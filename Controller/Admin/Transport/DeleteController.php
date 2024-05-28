@@ -60,6 +60,8 @@ final class DeleteController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid() && $form->has('delivery_transport_delete'))
         {
+            $this->refreshTokenForm($form);
+
             $DeliveryTransport = $DeliveryTransportDeleteHandler->handle($DeliveryTransportDeleteDTO);
 
             if($DeliveryTransport instanceof DeliveryTransport)

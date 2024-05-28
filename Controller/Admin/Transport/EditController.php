@@ -59,6 +59,8 @@ final class EditController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid() && $form->has('delivery_transport'))
         {
+            $this->refreshTokenForm($form);
+            
             $DeliveryTransport = $DeliveryTransportHandler->handle($DeliveryTransportDTO);
 
             if($DeliveryTransport instanceof DeliveryTransport)

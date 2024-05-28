@@ -76,6 +76,8 @@ final class DeliveryController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid() && $form->has('delivery_package'))
         {
+            $this->refreshTokenForm($form);
+
             $ProductStock = $DeliveryProductStockHandler->handle($DeliveryProductStockDTO);
 
             if($ProductStock instanceof ProductStock)

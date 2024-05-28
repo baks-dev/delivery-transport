@@ -100,6 +100,7 @@ final class EditController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid() && $form->has('product_stock_parameter'))
         {
+            $this->refreshTokenForm($form);
 
             $handle = $DeliveryPackageProductParameterHandler->handle($DeliveryPackageProductParameterDTO);
 

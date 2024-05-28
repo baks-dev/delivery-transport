@@ -121,6 +121,8 @@ final class DivideController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid() && $form->has('divide'))
         {
+            $this->refreshTokenForm($form);
+
             /* Если заявка на перемещение */
             if($ProductStockEvent->getMove())
             {
