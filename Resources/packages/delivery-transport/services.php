@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,8 @@
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use BaksDev\DeliveryTransport\BaksDevDeliveryTransportBundle;
+
 return static function (ContainerConfigurator $configurator) {
     $services = $configurator->services()
         ->defaults()
@@ -30,27 +32,26 @@ return static function (ContainerConfigurator $configurator) {
         ->autoconfigure()
     ;
 
-    $NAMESPACE = 'BaksDev\DeliveryTransport\\';
+    $NAMESPACE = BaksDevDeliveryTransportBundle::NAMESPACE;
+    $PATH = BaksDevDeliveryTransportBundle::PATH;
 
-    $MODULE = substr(__DIR__, 0, strpos(__DIR__, "Resources"));
-
-    $services->load($NAMESPACE, $MODULE)
+    $services->load($NAMESPACE, $PATH)
         ->exclude([
-            $MODULE.'{Entity,Resources,Type}',
-            $MODULE.'**/*Message.php',
-            $MODULE.'**/*DTO.php',
+            $PATH.'{Entity,Resources,Type}',
+            $PATH.'**/*Message.php',
+            $PATH.'**/*DTO.php',
         ])
     ;
 
 
     /** Статусы заказа */
-    $services->load($NAMESPACE.'Type\OrderStatus\\', $MODULE.'Type/OrderStatus');
+    $services->load($NAMESPACE.'Type\OrderStatus\\', $PATH.'Type/OrderStatus');
 
     /** Статусы складской заявки */
-    $services->load($NAMESPACE.'Type\ProductStockStatus\\', $MODULE.'Type/ProductStockStatus');
+    $services->load($NAMESPACE.'Type\ProductStockStatus\\', $PATH.'Type/ProductStockStatus');
 
     /** Статусы погрузки */
-    $services->load($NAMESPACE.'Type\Package\Status\DeliveryPackageStatus\\', $MODULE.'Type/Package/Status/DeliveryPackageStatus');
+    $services->load($NAMESPACE.'Type\Package\Status\DeliveryPackageStatus\\', $PATH.'Type/Package/Status/DeliveryPackageStatus');
 
 
 };

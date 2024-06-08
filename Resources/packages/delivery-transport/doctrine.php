@@ -24,6 +24,7 @@
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 
+use BaksDev\DeliveryTransport\BaksDevDeliveryTransportBundle;
 use BaksDev\DeliveryTransport\Type\Package\Event\DeliveryPackageEventType;
 use BaksDev\DeliveryTransport\Type\Package\Event\DeliveryPackageEventUid;
 use BaksDev\DeliveryTransport\Type\Package\Id\DeliveryPackageType;
@@ -63,11 +64,9 @@ return static function (ContainerConfigurator $container, DoctrineConfig $doctri
 
     $emDefault = $doctrine->orm()->entityManager('default')->autoMapping(true);
 
-    $MODULE = substr(__DIR__, 0, strpos(__DIR__, "Resources"));
-
     $emDefault->mapping('delivery-transport:')
         ->type('attribute')
-        ->dir($MODULE.'Entity')
+        ->dir(BaksDevDeliveryTransportBundle::PATH.'Entity')
         ->isBundle(false)
         ->prefix('BaksDev\DeliveryTransport\Entity')
         ->alias('delivery-transport:');
