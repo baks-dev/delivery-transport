@@ -26,8 +26,8 @@ return static function (FrameworkConfig $framework) {
 
     $messenger
         ->transport('delivery-transport')
-        ->dsn('%env(MESSENGER_TRANSPORT_DSN)%')
-        ->options(['queue_name' => 'delivery-transport'])
+        ->dsn('redis://%env(REDIS_PASSWORD)%@%env(REDIS_HOST)%:%env(REDIS_PORT)%?auto_setup=true')
+        ->options(['stream' => 'delivery-transport'])
         ->failureTransport('failed-delivery-transport')
         ->retryStrategy()
         ->maxRetries(3)
@@ -38,7 +38,9 @@ return static function (FrameworkConfig $framework) {
 
     ;
 
-    $messenger->transport('failed-delivery-transport')
+    $failure = $framework->messenger();
+
+    $failure->transport('failed-delivery-transport')
         ->dsn('%env(MESSENGER_TRANSPORT_DSN)%')
         ->options(['queue_name' => 'failed-delivery-transport'])
     ;
