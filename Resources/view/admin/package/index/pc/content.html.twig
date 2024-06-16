@@ -21,6 +21,7 @@
                 {% if filter.date.vars.data|date('d.m.Y') != date('now')|date('d.m.Y') %}
 
                     <span class="badge text-bg-danger pointer"
+                          role="tooltip"
                           data-bs-toggle="tooltip"
                           data-bs-placement="bottom"
                           data-bs-delay='{"show":600,"hide":100}'
@@ -183,6 +184,7 @@
                             {% else %}
 
                                 <span class="badge text-bg-warning me-3"
+                                      role="tooltip"
                                       data-bs-toggle="tooltip"
                                       data-bs-placement="bottom"
                                       data-bs-delay='{"show":600,"hide":100}'
@@ -202,6 +204,7 @@
                         {# Дата путевого листа #}
                         {% if item.package_date|date('d.m.Y') != date('now')|date('d.m.Y') %}
                             <span class="text-danger pointer"
+                                  role="tooltip"
                                   data-bs-toggle="tooltip"
                                   data-bs-placement="bottom"
                                   data-bs-delay='{"show":600,"hide":100}'
@@ -236,6 +239,7 @@
                     <div>
                         <a href="{{ path('delivery-transport:admin.package.navigator', { id : item.package_id }) }}"
                            class="btn btn-primary text-nowrap"
+                           role="tooltip"
                            data-bs-toggle="tooltip"
                            data-bs-placement="bottom"
                            data-bs-delay='{"show":600,"hide":100}'

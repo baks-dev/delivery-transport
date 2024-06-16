@@ -20,6 +20,7 @@
             {% if is_granted(ROLE~'_NEW') or is_granted('ROLE_ADMIN') %}
                 <a href="{{ path('delivery-transport:admin.transport.newedit.new') }}"
                    class="btn btn-primary fw-bolder"
+                   role="tooltip"
                    data-bs-toggle="tooltip"
                    data-bs-placement="bottom"
                    data-bs-delay='{"show":600,"hide":100}'
