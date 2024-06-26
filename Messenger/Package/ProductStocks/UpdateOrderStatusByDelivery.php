@@ -64,8 +64,7 @@ final class UpdateOrderStatusByDelivery
         OrderStatusHandler $OrderStatusHandler,
         CentrifugoPublishInterface $CentrifugoPublish,
         LoggerInterface $deliveryTransportLogger,
-    )
-    {
+    ) {
         //$this->productStocks = $productStocks;
         $this->entityManager = $entityManager;
         $this->currentOrderEvent = $currentOrderEvent;
@@ -92,22 +91,25 @@ final class UpdateOrderStatusByDelivery
             !$ProductStockEvent ||
             $ProductStockEvent->getMoveOrder() ||
             $ProductStockEvent->getStatus()->equals(new ProductStockStatusDelivery()) === false
-        )
-        {
+        ) {
             return;
         }
 
         /**
          * Получаем событие заказа.
          */
-        $OrderEvent = $this->currentOrderEvent->getCurrentOrderEvent($ProductStockEvent->getOrder());
+        $OrderEvent = $this->currentOrderEvent
+            ->order($ProductStockEvent->getOrder())
+            ->getCurrentOrderEvent();
 
         if($OrderEvent)
         {
             /** Обновляем статус заказа на "Доставка" (Delivery) */
             $OrderStatusDTO = new OrderStatusDTO(
                 OrderStatusDelivery::class,
-                $OrderEvent->getId(), $ProductStockEvent->getProfile());
+                $OrderEvent->getId(),
+                $ProductStockEvent->getProfile()
+            );
             $this->OrderStatusHandler->handle($OrderStatusDTO);
 
             // Отправляем сокет для скрытия заказа у других менеджеров
@@ -117,12 +119,14 @@ final class UpdateOrderStatusByDelivery
                 ->send('orders');
 
 
-            $this->logger->info('Обновили статус заказа на "Доставка" (Delivery)',
+            $this->logger->info(
+                'Обновили статус заказа на "Доставка" (Delivery)',
                 [
                     __FILE__.':'.__LINE__,
                     'order' => (string) $ProductStockEvent->getOrder(),
                     'profile' => (string) $ProductStockEvent->getProfile()
-                ]);
+                ]
+            );
 
         }
 

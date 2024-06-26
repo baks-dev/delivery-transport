@@ -86,8 +86,7 @@ final class DivideController extends AbstractController
         CurrentOrderEventInterface $currentOrderEvent,
         EditOrderHandler $OrderHandler,
         UserProfileGpsInterface $userProfileGps
-    ): Response
-    {
+    ): Response {
 
         $Order = null;
 
@@ -96,7 +95,9 @@ final class DivideController extends AbstractController
             /**
              * Получаем заказ.
              */
-            $Order = $currentOrderEvent->getCurrentOrderEvent($ProductStockEvent->getOrder());
+            $Order = $currentOrderEvent
+                ->order($ProductStockEvent->getOrder())
+                ->getCurrentOrderEvent();
         }
 
 
@@ -131,7 +132,7 @@ final class DivideController extends AbstractController
             }
 
             /* Если заявка на заказ */
-            else if($ProductStockEvent->getOrder())
+            elseif($ProductStockEvent->getOrder())
             {
                 /** Получаем геоданные пункта назначения складской заявки */
                 $OrderGps = $orderDelivery->fetchProductStocksGps($ProductStockEvent->getId());
@@ -184,8 +185,8 @@ final class DivideController extends AbstractController
                 $interval = new DateInterval('P1D');
                 $date = $date->add($interval);
 
-//                dump('Пробуем погрузку '.$deliveryDay);
-//                dump($date);
+                //                dump('Пробуем погрузку '.$deliveryDay);
+                //                dump($date);
 
                 if($deliveryDay > 30)
                 {
@@ -206,8 +207,8 @@ final class DivideController extends AbstractController
                  */
                 foreach($DeliveryTransportProfile as $keyTransport => $DeliveryTransportUid)
                 {
-//                    dump('Получаем путевой лист ');
-//                    dump($date);
+                    //                    dump('Получаем путевой лист ');
+                    //                    dump($date);
 
 
                     $DeliveryPackageTransportDTO = new DeliveryPackageTransportDTO();
@@ -348,7 +349,7 @@ final class DivideController extends AbstractController
 
 
                             /** Ищем в массиве такой продукт */
-                            $getPackageProduct = ($PackageProducts[$deliveryDay][(string) $DeliveryPackage->getId()])->filter(function(
+                            $getPackageProduct = ($PackageProducts[$deliveryDay][(string) $DeliveryPackage->getId()])->filter(function (
                                 DivideProductStockProductDTO $element
                             ) use ($product) {
 
@@ -546,7 +547,7 @@ final class DivideController extends AbstractController
                         foreach($packageProductCollection as $product)
                         {
                             $containsProducts = $NewPackageProductStockDTO->getProduct()
-                                ->filter(function(DivideProductStockProductDTO $element) use ($product) {
+                                ->filter(function (DivideProductStockProductDTO $element) use ($product) {
                                     return
                                         $element->getProduct()->equals($product->getProduct()) &&
                                         $element->getOffer()?->equals($product->getOffer()) &&
@@ -584,9 +585,6 @@ final class DivideController extends AbstractController
                     }
                 }
             }
-
-
-
 
 
             /* Удаляем основной заказ */
