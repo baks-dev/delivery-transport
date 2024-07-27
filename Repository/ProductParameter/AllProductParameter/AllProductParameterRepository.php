@@ -48,12 +48,12 @@ use BaksDev\Products\Product\Entity\Offers\Variation\Price\ProductVariationPrice
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Photo\ProductPhoto;
 use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
 
 final class AllProductParameterRepository implements AllProductParameterInterface
 {
-
     private PaginatorInterface $paginator;
 
     private DBALQueryBuilder $DBALQueryBuilder;
@@ -67,8 +67,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         DBALQueryBuilder $DBALQueryBuilder,
         PaginatorInterface $paginator,
         ?ElasticGetIndex $elasticGetIndex = null
-    )
-    {
+    ) {
 
         $this->paginator = $paginator;
         $this->DBALQueryBuilder = $DBALQueryBuilder;
@@ -94,23 +93,23 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
      */
     public function fetchAllProductParameterAssociative(): PaginatorInterface
     {
-        $qb = $this->DBALQueryBuilder
+        $dbal = $this->DBALQueryBuilder
             ->createQueryBuilder(self::class)
             ->bindLocal();
 
-        $qb->select('product.id');
-        $qb->addSelect('product.event');
+        $dbal->select('product.id');
+        $dbal->addSelect('product.event');
 
-        $qb->from(Product::class, 'product');
+        $dbal->from(Product::class, 'product');
 
-        $qb->join(
+        $dbal->join(
             'product',
             ProductEvent::class,
             'product_event',
             'product_event.id = product.event'
         );
 
-        $qb
+        $dbal
             ->addSelect('product_trans.name AS product_name')
             ->leftJoin(
                 'product_event',
@@ -121,9 +120,9 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
 
         /* ProductInfo */
 
-        $qb->addSelect('product_info.url');
+        $dbal->addSelect('product_info.url');
 
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'product_event',
             ProductInfo::class,
             'product_info',
@@ -133,7 +132,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
 
         /* Торговое предложение */
 
-        $qb
+        $dbal
             ->addSelect('product_offer.value as product_offer_value')
             ->addSelect('product_offer.const as product_offer_const')
             ->addSelect('product_offer.postfix as product_offer_postfix')
@@ -146,13 +145,13 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
 
         if($this->filter?->getOffer())
         {
-            $qb->andWhere('product_offer.value = :offer');
-            $qb->setParameter('offer', $this->filter->getOffer());
+            $dbal->andWhere('product_offer.value = :offer');
+            $dbal->setParameter('offer', $this->filter->getOffer());
         }
 
 
         /* Цена торгового предложения */
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'product_offer',
             ProductOfferPrice::class,
             'product_offer_price',
@@ -160,7 +159,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         );
 
         /* Тип торгового предложения */
-        $qb
+        $dbal
             ->addSelect('category_offer.reference as product_offer_reference')
             ->leftJoin(
                 'product_offer',
@@ -171,7 +170,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
 
         /* Множественные варианты торгового предложения */
 
-        $qb
+        $dbal
             ->addSelect('product_offer_variation.value as product_variation_value')
             ->addSelect('product_offer_variation.const as product_variation_const')
             ->addSelect('product_offer_variation.postfix as product_variation_postfix')
@@ -185,13 +184,13 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
 
         if($this->filter?->getVariation())
         {
-            $qb->andWhere('product_offer_variation.value = :variation');
-            $qb->setParameter('variation', $this->filter->getVariation());
+            $dbal->andWhere('product_offer_variation.value = :variation');
+            $dbal->setParameter('variation', $this->filter->getVariation());
         }
 
 
         /* Цена множественного варианта */
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'category_offer_variation',
             ProductVariationPrice::class,
             'product_variation_price',
@@ -199,8 +198,8 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         );
 
         /* Тип множественного варианта торгового предложения */
-        $qb->addSelect('category_offer_variation.reference as product_variation_reference');
-        $qb->leftJoin(
+        $dbal->addSelect('category_offer_variation.reference as product_variation_reference');
+        $dbal->leftJoin(
             'product_offer_variation',
             CategoryProductVariation::TABLE,
             'category_offer_variation',
@@ -208,7 +207,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         );
 
         /* Модификация множественного варианта */
-        $qb
+        $dbal
             ->addSelect('product_offer_modification.value as product_modification_value')
             ->addSelect('product_offer_modification.const as product_modification_const')
             ->addSelect('product_offer_modification.postfix as product_modification_postfix')
@@ -222,14 +221,14 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
 
         if($this->filter?->getModification())
         {
-            $qb->andWhere('product_offer_modification.value = :modification');
-            $qb->setParameter('modification', $this->filter->getModification());
+            $dbal->andWhere('product_offer_modification.value = :modification');
+            $dbal->setParameter('modification', $this->filter->getModification());
         }
 
 
         /* Получаем тип модификации множественного варианта */
-        $qb->addSelect('category_offer_modification.reference as product_modification_reference');
-        $qb->leftJoin(
+        $dbal->addSelect('category_offer_modification.reference as product_modification_reference');
+        $dbal->leftJoin(
             'product_offer_modification',
             CategoryProductModification::class,
             'category_offer_modification',
@@ -240,7 +239,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         /* Артикул продукта */
 
 
-        $qb->addSelect(
+        $dbal->addSelect(
             '
 					CASE
 					   WHEN product_offer_modification.article IS NOT NULL THEN product_offer_modification.article
@@ -254,28 +253,28 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
 
         /* Фото продукта */
 
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'product_event',
             ProductPhoto::class,
             'product_photo',
             'product_photo.event = product_event.id AND product_photo.root = true'
         );
 
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'product_offer',
             ProductVariationImage::class,
             'product_offer_variation_image',
             'product_offer_variation_image.variation = product_offer_variation.id AND product_offer_variation_image.root = true'
         );
 
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'product_offer',
             ProductOfferImage::class,
             'product_offer_images',
             'product_offer_images.offer = product_offer.id AND product_offer_images.root = true'
         );
 
-        $qb->addSelect(
+        $dbal->addSelect(
             "
 			CASE
 			   WHEN product_offer_variation_image.name IS NOT NULL THEN
@@ -290,7 +289,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         );
 
         /* Флаг загрузки файла CDN */
-        $qb->addSelect('
+        $dbal->addSelect('
 			CASE
 			   WHEN product_offer_variation_image.name IS NOT NULL THEN
 					product_offer_variation_image.ext
@@ -303,7 +302,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
 		');
 
         /* Флаг загрузки файла CDN */
-        $qb->addSelect('
+        $dbal->addSelect('
 			CASE
 			   WHEN product_offer_variation_image.name IS NOT NULL THEN
 					product_offer_variation_image.cdn
@@ -316,7 +315,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
 		');
 
         /* Категория */
-        $qb->join(
+        $dbal->join(
             'product_event',
             ProductCategory::class,
             'product_event_category',
@@ -325,20 +324,20 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
 
         if($this->filter?->getCategory())
         {
-            $qb->andWhere('product_event_category.category = :category');
-            $qb->setParameter('category', $this->filter->getCategory(), CategoryProductUid::TYPE);
+            $dbal->andWhere('product_event_category.category = :category');
+            $dbal->setParameter('category', $this->filter->getCategory(), CategoryProductUid::TYPE);
         }
 
-        $qb->join(
+        $dbal->join(
             'product_event_category',
             CategoryProduct::class,
             'category',
             'category.id = product_event_category.category'
         );
 
-        $qb->addSelect('category_trans.name AS category_name');
+        $dbal->addSelect('category_trans.name AS category_name');
 
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'category',
             CategoryProductTrans::class,
             'category_trans',
@@ -347,18 +346,18 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
 
 
         /** Длина, см  */
-        $qb->addSelect('product_parameter.length AS product_parameter_length');
+        $dbal->addSelect('product_parameter.length AS product_parameter_length');
         /** Ширина, см */
-        $qb->addSelect('product_parameter.width AS product_parameter_width');
+        $dbal->addSelect('product_parameter.width AS product_parameter_width');
         /** Высота, см */
-        $qb->addSelect('product_parameter.height AS product_parameter_height');
+        $dbal->addSelect('product_parameter.height AS product_parameter_height');
         /** Вес, кг */
-        $qb->addSelect('product_parameter.weight AS product_parameter_weight');
+        $dbal->addSelect('product_parameter.weight AS product_parameter_weight');
         /** Объем, см3 */
-        $qb->addSelect('product_parameter.size AS product_parameter_size');
+        $dbal->addSelect('product_parameter.size AS product_parameter_size');
 
 
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'product_offer_modification',
             DeliveryPackageProductParameter::class,
             'product_parameter',
@@ -367,9 +366,35 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
             (product_parameter.variation IS NULL OR product_parameter.variation = product_offer_variation.const) AND
             (product_parameter.modification IS NULL OR product_parameter.modification = product_offer_modification.const)
             
-        ');
+        '
+        );
 
-        $qb->addOrderBy('product_parameter.id', 'DESC');
+
+        if($this->filter->getProperty())
+        {
+            $filterProperty = null;
+
+            /** @var ProductFilterPropertyDTO $property */
+            foreach($this->filter->getProperty() as $property)
+            {
+                if($property->getValue())
+                {
+                    $filterProperty = ['(product_property.field = :'.$property->getType().'_const AND product_property.value = :'.$property->getType().'_value )'];
+                    $dbal->setParameter($property->getType().'_const', $property->getConst());
+                    $dbal->setParameter($property->getType().'_value', $property->getValue());
+                }
+            }
+
+            $dbal->join(
+                'product',
+                ProductProperty::class,
+                'product_property',
+                'product_property.event = product.event '.($filterProperty ? ' AND '.implode(' AND ', $filterProperty) : '')
+            );
+        }
+
+
+        $dbal->addOrderBy('product_parameter.id', 'DESC');
 
         if($this->search?->getQuery())
         {
@@ -388,11 +413,11 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
                     /** Идентификаторы */
                     $data = array_column($result['hits']['hits'], "_source");
 
-                    $qb
+                    $dbal
                         ->createSearchQueryBuilder($this->search)
                         ->addSearchInArray('product_offer_modification.id', array_column($data, "id"));
 
-                    return $this->paginator->fetchAllAssociative($qb);
+                    return $this->paginator->fetchAllAssociative($dbal);
                 }
 
                 /** Поиск по продукции */
@@ -405,16 +430,16 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
                     /** Идентификаторы */
                     $data = array_column($result['hits']['hits'], "_source");
 
-                    $qb
+                    $dbal
                         ->createSearchQueryBuilder($this->search)
                         ->addSearchInArray('product.id', array_column($data, "id"));
 
-                    return $this->paginator->fetchAllAssociative($qb);
+                    return $this->paginator->fetchAllAssociative($dbal);
                 }
             }
 
 
-            $qb
+            $dbal
                 ->createSearchQueryBuilder($this->search)
                 ->addSearchEqualUid('account.id')
                 ->addSearchEqualUid('account.event')
@@ -425,12 +450,12 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
                 ->addSearchLike('product_offer_modification.article')
                 ->addSearchLike('product_offer_variation.article');
 
-            $qb->addOrderBy('product.event', 'DESC');
+            $dbal->addOrderBy('product.event', 'DESC');
 
         }
 
 
-        return $this->paginator->fetchAllAssociative($qb);
+        return $this->paginator->fetchAllAssociative($dbal);
 
     }
 }
