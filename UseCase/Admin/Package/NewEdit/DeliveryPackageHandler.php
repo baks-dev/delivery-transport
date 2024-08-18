@@ -110,7 +110,7 @@ final class DeliveryPackageHandler extends AbstractHandler
 //        {
 //            /** Ошибка валидации */
 //            $uniqid = uniqid('', false);
-//            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
+//            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [self::class.':'.__LINE__]);
 //
 //            return $uniqid;
 //        }
@@ -190,7 +190,7 @@ final class DeliveryPackageHandler extends AbstractHandler
 //        {
 //            /** Ошибка валидации */
 //            $uniqid = uniqid('', false);
-//            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
+//            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [self::class.':'.__LINE__]);
 //
 //            return $uniqid;
 //        }
@@ -204,7 +204,7 @@ final class DeliveryPackageHandler extends AbstractHandler
 //        {
 //            /** Ошибка валидации */
 //            $uniqid = uniqid('', false);
-//            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
+//            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [self::class.':'.__LINE__]);
 //
 //            return $uniqid;
 //        }

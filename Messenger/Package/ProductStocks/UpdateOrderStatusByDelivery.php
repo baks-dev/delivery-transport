@@ -122,7 +122,7 @@ final class UpdateOrderStatusByDelivery
             $this->logger->info(
                 'Обновили статус заказа на "Доставка" (Delivery)',
                 [
-                    __FILE__.':'.__LINE__,
+                    self::class.':'.__LINE__,
                     'order' => (string) $ProductStockEvent->getOrder(),
                     'profile' => (string) $ProductStockEvent->getProfile()
                 ]

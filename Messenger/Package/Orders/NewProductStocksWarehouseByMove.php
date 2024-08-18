@@ -89,7 +89,7 @@ final class NewProductStocksWarehouseByMove
         {
             $this->logger
                 ->notice('Не создаем приход: Статус складской заявки не является Completed «Выдан по месту назначения»',
-                    [__FILE__.':'.__LINE__]);
+                    [self::class.':'.__LINE__]);
 
             return;
         }
@@ -98,17 +98,19 @@ final class NewProductStocksWarehouseByMove
         {
             $this->logger
                 ->notice('Не создаем приход: Статус складской заявки является Completed «Выдан по месту назначения», но заявка не имеет заказ (перемещение не по заказу)',
-                    [__FILE__.':'.__LINE__]);
+                    [self::class.':'.__LINE__]);
 
             return;
         }
 
         $this->logger
             ->info('Создаем приход на склад при перемещении продукции между складами по заказу когда заявка Completed «Выдан по месту назначения»',
-                [__FILE__.':'.__LINE__]);
+                [self::class.':'.__LINE__]);
 
 
-        $User = $this->userByUserProfile->findUserByProfile($ProductStockEvent->getProfile());
+        $User = $this->userByUserProfile
+            ->withProfile($ProductStockEvent->getProfile())
+            ->findUser();
 
         $WarehouseProductStockDTO = new WarehouseProductStockDTO($User);
         $ProductStockEvent->getDto($WarehouseProductStockDTO);
@@ -120,7 +122,7 @@ final class NewProductStocksWarehouseByMove
         $this->logger
             ->info('Создали приход на склад при перемещении продукции между складами по заказу когда заявка Completed «Выдан по месту назначения»',
                 [
-                    __FILE__.':'.__LINE__,
+                    self::class.':'.__LINE__,
                     'profile' => $ProductStockEvent->getMove()?->getDestination(),
                 ]
             );

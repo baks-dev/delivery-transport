@@ -37,7 +37,6 @@ use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
 use Symfony\Component\Validator\Constraints as Assert;
 
-
 /* ProductParameters */
 
 #[ORM\Entity]

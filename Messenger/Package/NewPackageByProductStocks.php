@@ -160,7 +160,7 @@ final class NewPackageByProductStocks
 
         if(!$ProductStockEvent->getOrder())
         {
-            $this->logger->notice('Не добавляем в путевой лист складскую заявку: Складская заявка не имеет идентификатора заказа', [__FILE__.':'.__LINE__]);
+            $this->logger->notice('Не добавляем в путевой лист складскую заявку: Складская заявка не имеет идентификатора заказа', [self::class.':'.__LINE__]);
             return;
         }
 
@@ -180,7 +180,7 @@ final class NewPackageByProductStocks
         }
 
 
-        $this->logger->info('Добавляем складскую заявку в путевку.', [__FILE__.':'.__LINE__]);
+        $this->logger->info('Добавляем складскую заявку в путевку.', [self::class.':'.__LINE__]);
 
         /**
          * Если заявка "ПРИНИМАЕМ ПРИХОД НА СКЛАД" - пробуем закрыть путевой лист
@@ -227,7 +227,7 @@ final class NewPackageByProductStocks
          */
         if($this->existStockPackage->isExistStockPackage($message->getId()))
         {
-            $this->logger->warning('Не добавляем в путевой лист складскую заявку: Заявка уже имеется в поставке', [__FILE__.':'.__LINE__]);
+            $this->logger->warning('Не добавляем в путевой лист складскую заявку: Заявка уже имеется в поставке', [self::class.':'.__LINE__]);
             return;
         }
 
@@ -243,7 +243,7 @@ final class NewPackageByProductStocks
                 $msg = 'Склад назначения (профиль) при перемещении не имеет геоданных';
 
                 $this->logger->critical($msg, [
-                    __FILE__.':'.__LINE__,
+                    self::class.':'.__LINE__,
                     'destination' => (string) $destinationProfile
                 ]);
 
@@ -263,7 +263,7 @@ final class NewPackageByProductStocks
 
             if(!$OrderGps)
             {
-                $this->logger->warning('Не добавляем в путевой лист складскую заявку: В заявке отсутствуют геоданные пункта назначения. Возможно заявка является закупкой!', [__FILE__.':'.__LINE__]);
+                $this->logger->warning('Не добавляем в путевой лист складскую заявку: В заявке отсутствуют геоданные пункта назначения. Возможно заявка является закупкой!', [self::class.':'.__LINE__]);
                 return;
             }
         }
@@ -277,7 +277,7 @@ final class NewPackageByProductStocks
             $msg = 'Профиль склада не имеет геоданных';
 
             $this->logger->critical($msg, [
-                __FILE__.':'.__LINE__,
+                self::class.':'.__LINE__,
                 'profile' => (string) $ProductStockEvent->getProfile()
             ]);
 
@@ -299,7 +299,7 @@ final class NewPackageByProductStocks
         /* Если склад упаковки является адресом доставки (точность до 100 м) - не добавляем в путевой лист */
         if($profileDistance <= 0.1)
         {
-            $this->logger->info('Не добавляем в путевой лист складскую заявку: Заявка является пунктом самовывоза', [__FILE__.':'.__LINE__]);
+            $this->logger->info('Не добавляем в путевой лист складскую заявку: Заявка является пунктом самовывоза', [self::class.':'.__LINE__]);
             return;
         }
 
@@ -316,7 +316,7 @@ final class NewPackageByProductStocks
             $msg = 'Не добавляем в путевой лист складскую заявку: За складом (профилем) не закреплено ни одного транспорта';
 
             $this->logger->critical($msg, [
-                __FILE__.':'.__LINE__,
+                self::class.':'.__LINE__,
                 'profile' => (string) $ProductStockEvent->getProfile()
             ]);
 
@@ -365,7 +365,7 @@ final class NewPackageByProductStocks
 
                 $this->logger->critical(
                     sprintf('Не добавляем в путевой лист складскую заявку: Невозможно добавить заказ %s в поставку либо по размеру, либо по весу', $ProductStockEvent->getOrder()),
-                    [__FILE__.':'.__LINE__]
+                    [self::class.':'.__LINE__]
                 );
 
                 break;
@@ -459,12 +459,12 @@ final class NewPackageByProductStocks
 
                         $this->logger->debug(
                             sprintf('Добавили объем %s (в поставке %s при допустимом max %s)', $product['size'], $DeliveryPackageTransportDTO->getSize(), $maxSize),
-                            [__FILE__.':'.__LINE__]
+                            [self::class.':'.__LINE__]
                         );
 
                         $this->logger->debug(
                             sprintf('Добавили вес %s (в поставке %s при допустимом max %s)', $product['weight'], $DeliveryPackageTransportDTO->getCarrying(), $maxCarrying),
-                            [__FILE__.':'.__LINE__]
+                            [self::class.':'.__LINE__]
                         );
 
                         /* Если заказ превышает объем или грузоподъемность - пропускаем и продуем добавить в другой транспорт */
@@ -472,7 +472,7 @@ final class NewPackageByProductStocks
                         {
 
                             //dump('Заказ больше не входит в поставку транспорта. Пробуем другой транспорт');
-                            $this->logger->info('Не добавляем в путевой лист складскую заявку: Заказ не входит в поставку транспорта. Ищем другой транспорт', [__FILE__.':'.__LINE__]);
+                            $this->logger->info('Не добавляем в путевой лист складскую заявку: Заказ не входит в поставку транспорта. Ищем другой транспорт', [self::class.':'.__LINE__]);
 
                             unset($DeliveryTransportProfile[$keyTransport]);
 
@@ -531,7 +531,7 @@ final class NewPackageByProductStocks
                 $this->logger->info(
                     sprintf('Добавили складскую заявку в путевой лист на дату %s', $date->format('d.m.Y')),
                     [
-                        __FILE__.':'.__LINE__,
+                        self::class.':'.__LINE__,
                         'DeliveryTransportUid' => $DeliveryTransportUid
                     ]
                 );
@@ -541,6 +541,6 @@ final class NewPackageByProductStocks
             }
         }
 
-        $this->logger->info('Складская заявка успешно добавлена в путевку.', [__FILE__.':'.__LINE__]);
+        $this->logger->info('Складская заявка успешно добавлена в путевку.', [self::class.':'.__LINE__]);
     }
 }

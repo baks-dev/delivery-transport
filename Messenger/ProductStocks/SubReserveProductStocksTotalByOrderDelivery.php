@@ -98,7 +98,7 @@ final class SubReserveProductStocksTotalByOrderDelivery
             $this->logger
                 ->notice('Не снимаем резерв на складе: Статус заказа не Delivery «Доставка (погружен в транспорт)»',
                     [
-                        __FILE__.':'.__LINE__,
+                        self::class.':'.__LINE__,
                         'OrderUid' => (string) $message->getId(),
                         'event' => (string) $message->getEvent(),
                         'last' => (string) $message->getLast()
@@ -196,7 +196,7 @@ final class SubReserveProductStocksTotalByOrderDelivery
 
         $this->logger->info('Снимаем резерв и уменьшили количество на складе при «Доставка (погружен в транспорт)»',
             [
-                __FILE__.':'.__LINE__,
+                self::class.':'.__LINE__,
                 'profile' => (string) $profile,
                 'product' => (string) $ProductUid,
                 'offer_const' => (string) $ProductOfferConst,

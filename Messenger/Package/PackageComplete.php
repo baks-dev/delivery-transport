@@ -107,7 +107,7 @@ final class PackageComplete
 
             $this->logger->error('Сделали отметку о полном выполнение путевого листа',
                 [
-                    __FILE__.':'.__LINE__,
+                    self::class.':'.__LINE__,
                     'event' => $DeliveryPackage->getEvent()
                 ]
             );

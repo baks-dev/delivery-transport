@@ -138,6 +138,6 @@ final class PackageSortByDistance
 
         $this->entityManager->flush();
 
-        $this->logger->info('Обновили сортировку путевого листа', [__FILE__.':'.__LINE__]);
+        $this->logger->info('Обновили сортировку путевого листа', [self::class.':'.__LINE__]);
     }
 }

@@ -155,7 +155,7 @@ final class PackageByProductStocksIncoming
         {
             $this->logger
                 ->notice('Не создаем путевой лист: Складская заявка не является Статус Incoming «Приход на склад»',
-                    [__FILE__.':'.__LINE__, $message->getId(), $message->getEvent(), $message->getLast()]);
+                    [self::class.':'.__LINE__, $message->getId(), $message->getEvent(), $message->getLast()]);
 
             return;
         }
@@ -164,7 +164,7 @@ final class PackageByProductStocksIncoming
         {
             $this->logger
                 ->notice('Не создаем путевой лист: Складская заявка не является перемещением по заказу',
-                    [__FILE__.':'.__LINE__, $message->getId(), $message->getEvent(), $message->getLast()]);
+                    [self::class.':'.__LINE__, $message->getId(), $message->getEvent(), $message->getLast()]);
 
             return;
         }
@@ -173,7 +173,7 @@ final class PackageByProductStocksIncoming
         {
             $this->logger
                 ->notice('Не создаем путевой лист: Складская заявка на перемещение по заказу не имеет идентификатора целевого склада',
-                    [__FILE__.':'.__LINE__, $message->getId(), $message->getEvent(), $message->getLast()]);
+                    [self::class.':'.__LINE__, $message->getId(), $message->getEvent(), $message->getLast()]);
 
             return;
         }
@@ -181,7 +181,7 @@ final class PackageByProductStocksIncoming
 
         $this->logger
             ->info('Создаем путевой лист при поступлении на склад по заказу (Incoming «Приход на склад»)',
-                [__FILE__.':'.__LINE__, $message->getId(), $message->getEvent(), $message->getLast()]);
+                [self::class.':'.__LINE__, $message->getId(), $message->getEvent(), $message->getLast()]);
 
 
         /**
@@ -200,7 +200,7 @@ final class PackageByProductStocksIncoming
                 $this->completedPackageHandler->handle($CompletedPackageDTO);
 
                 $this->logger
-                    ->info('Закрыли путевой лист (Статус Completed «Все заказы в поставке выданы клиентам»)', [__FILE__.':'.__LINE__]);
+                    ->info('Закрыли путевой лист (Статус Completed «Все заказы в поставке выданы клиентам»)', [self::class.':'.__LINE__]);
 
                 return;
             }
@@ -250,7 +250,7 @@ final class PackageByProductStocksIncoming
     //        //        }
     //
     //
-    //        $this->logger->info('Добавляем складскую заявку в путевку.', [__FILE__.':'.__LINE__]);
+    //        $this->logger->info('Добавляем складскую заявку в путевку.', [self::class.':'.__LINE__]);
     //
     //
     //        /*
@@ -330,7 +330,7 @@ final class PackageByProductStocksIncoming
     //                {
     //                    $this->logger->info(
     //                        sprintf('На дату %s невозможно добавить поставку, пробуем на другую дату', $date->format('d.m.Y')),
-    //                        [__FILE__.':'.__LINE__]
+    //                        [self::class.':'.__LINE__]
     //                    );
     //                    break;
     //                }

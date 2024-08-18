@@ -118,7 +118,7 @@ final class UpdateProductStocksTotalByDelivery
                 {
                     $this->logger->error('Ошибка при обновлении складских остатков. Не удалось получить остаток продукции.',
                         [
-                            __FILE__.':'.__LINE__,
+                            self::class.':'.__LINE__,
                             'profile' => $ProductStockEvent->getProfile(),
                             'product' => $product->getProduct(),
                             'offer' => $product->getOffer(),
@@ -138,7 +138,7 @@ final class UpdateProductStocksTotalByDelivery
 
                     $this->logger->error('Ошибка при обновлении складских остатков. Не достаточно баланса на складе.',
                         [
-                            __FILE__.':'.__LINE__,
+                            self::class.':'.__LINE__,
                             'profile' => $ProductStockEvent->getProfile(),
                             'product' => $product->getProduct(),
                             'offer' => $product->getOffer(),
@@ -174,7 +174,7 @@ final class UpdateProductStocksTotalByDelivery
 
                 $this->logger->info('Перевели баланс продукции '.$key.' со склада на баланс транспорта (Доставка)',
                     [
-                        __FILE__.':'.__LINE__,
+                        self::class.':'.__LINE__,
                         'profile' => $ProductStockEvent->getProfile(),
                         'product' => $product->getProduct(),
                         'offer' => $product->getOffer(),

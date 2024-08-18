@@ -27,14 +27,14 @@ namespace BaksDev\DeliveryTransport\Type\Package\Status\DeliveryPackageStatus\Co
 
 use BaksDev\DeliveryTransport\Type\Package\Status\DeliveryPackageStatus;
 use InvalidArgumentException;
-use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 
 final class DeliveryPackageStatusCollection
 {
     private iterable $status;
 
-    public function __construct(#[TaggedIterator('baks.delivery.package.status')] iterable $status)
+    public function __construct(#[AutowireIterator('baks.delivery.package.status')] iterable $status)
     {
         $this->status = $status;
     }
