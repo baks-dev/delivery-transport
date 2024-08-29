@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\Type\Package\Status;
 
+use BaksDev\Auth\Telegram\Type\Status\AccountTelegramStatus;
 use BaksDev\DeliveryTransport\Type\Package\Status\DeliveryPackageStatus\Collection\DeliveryPackageStatusInterface;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\StringType;
@@ -35,7 +36,7 @@ final class DeliveryPackageStatusType extends Type
 {
     public function convertToDatabaseValue($value, AbstractPlatform $platform): string
     {
-        return (string) $value;
+        return (string) new DeliveryPackageStatus($value);
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform): ?DeliveryPackageStatus

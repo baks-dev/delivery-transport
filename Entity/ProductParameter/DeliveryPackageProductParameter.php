@@ -70,6 +70,8 @@ class DeliveryPackageProductParameter extends EntityState
     #[ORM\Column(type: ProductModificationConst::TYPE, nullable: true)]
     private ?ProductModificationConst $modification;
 
+
+
     /**
      * Вес, кг
      */
