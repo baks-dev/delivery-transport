@@ -29,14 +29,10 @@ use BaksDev\Centrifugo\Server\Publish\CentrifugoPublishInterface;
 use BaksDev\DeliveryTransport\Type\OrderStatus\OrderStatusDelivery;
 use BaksDev\DeliveryTransport\Type\ProductStockStatus\ProductStockStatusDelivery;
 use BaksDev\Orders\Order\Repository\CurrentOrderEvent\CurrentOrderEventInterface;
-use BaksDev\Orders\Order\Type\Status\OrderStatus;
 use BaksDev\Orders\Order\UseCase\Admin\Status\OrderStatusDTO;
 use BaksDev\Orders\Order\UseCase\Admin\Status\OrderStatusHandler;
 use BaksDev\Products\Stocks\Entity\Event\ProductStockEvent;
-use BaksDev\Products\Stocks\Entity\Products\ProductStockProduct;
-use BaksDev\Products\Stocks\Entity\ProductStockTotal;
 use BaksDev\Products\Stocks\Messenger\ProductStockMessage;
-use BaksDev\Products\Stocks\Repository\ProductStocksById\ProductStocksByIdInterface;
 use BaksDev\Users\Profile\UserProfile\Repository\UserByUserProfile\UserByUserProfileInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -45,31 +41,17 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler]
 final class UpdateOrderStatusByDelivery
 {
-    //private ProductStocksByIdInterface $productStocks;
-
-    private EntityManagerInterface $entityManager;
-
-    private CurrentOrderEventInterface $currentOrderEvent;
-
-    private OrderStatusHandler $OrderStatusHandler;
-
-    private CentrifugoPublishInterface $CentrifugoPublish;
-
-    private LoggerInterface $logger;
+    private readonly LoggerInterface $logger;
 
     public function __construct(
         //ProductStocksByIdInterface $productStocks,
-        EntityManagerInterface $entityManager,
-        CurrentOrderEventInterface $currentOrderEvent,
-        OrderStatusHandler $OrderStatusHandler,
-        CentrifugoPublishInterface $CentrifugoPublish,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly CurrentOrderEventInterface $currentOrderEvent,
+        private readonly OrderStatusHandler $OrderStatusHandler,
+        private readonly UserByUserProfileInterface $userByUserProfile,
+        private readonly CentrifugoPublishInterface $CentrifugoPublish,
         LoggerInterface $deliveryTransportLogger,
     ) {
-        //$this->productStocks = $productStocks;
-        $this->entityManager = $entityManager;
-        $this->currentOrderEvent = $currentOrderEvent;
-        $this->OrderStatusHandler = $OrderStatusHandler;
-        $this->CentrifugoPublish = $CentrifugoPublish;
         $this->logger = $deliveryTransportLogger;
 
     }
@@ -104,12 +86,19 @@ final class UpdateOrderStatusByDelivery
 
         if($OrderEvent)
         {
+
+            $User = $this->userByUserProfile
+                ->forProfile($ProductStockEvent->getProfile())
+                ->findUser();
+
             /** Обновляем статус заказа на "Доставка" (Delivery) */
             $OrderStatusDTO = new OrderStatusDTO(
                 OrderStatusDelivery::class,
                 $OrderEvent->getId(),
+                $User,
                 $ProductStockEvent->getProfile()
             );
+
             $this->OrderStatusHandler->handle($OrderStatusDTO);
 
             // Отправляем сокет для скрытия заказа у других менеджеров

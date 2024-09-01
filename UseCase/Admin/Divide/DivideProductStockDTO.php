@@ -18,7 +18,6 @@
 
 namespace BaksDev\DeliveryTransport\UseCase\Admin\Divide;
 
-use BaksDev\Contacts\Region\Type\Call\Const\ContactsRegionCallConst;
 use BaksDev\Core\Type\UidType\Uid;
 use BaksDev\DeliveryTransport\Type\ProductStockStatus\ProductStockStatusDivide;
 use BaksDev\Orders\Order\Entity\Event\OrderEventInterface;
@@ -26,6 +25,8 @@ use BaksDev\Products\Stocks\Entity\Event\ProductStockEventInterface;
 use BaksDev\Products\Stocks\Type\Event\ProductStockEventUid;
 use BaksDev\Products\Stocks\Type\Status\ProductStockStatus;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+use BaksDev\Users\User\Entity\User;
+use BaksDev\Users\User\Type\Id\UserUid;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -35,9 +36,17 @@ final class DivideProductStockDTO implements ProductStockEventInterface, OrderEv
     /** Идентификатор */
     private ?ProductStockEventUid $id = null;
 
-    /** Ответственное лицо (Профиль пользователя) */
+    /**
+     * Ответственное лицо (Профиль пользователя)
+     * @deprecated Переносится в Invariable
+     */
     #[Assert\Uuid]
     private ?UserProfileUid $profile = null;
+
+    /** Постоянная величина */
+    #[Assert\Valid]
+    private readonly Invariable\DivideOrderInvariableDTO $invariable;
+
 
     /** Статус заявки - УПАКОВКА */
     #[Assert\NotBlank]
@@ -49,15 +58,16 @@ final class DivideProductStockDTO implements ProductStockEventInterface, OrderEv
     #[Assert\Length(max: 36)]
     private string $number;
 
-//    /** Константа Целевого склада */
-//    #[Assert\NotBlank]
-//    #[Assert\Uuid]
-//    private ?ContactsRegionCallConst $warehouse = null;
 
-//    /** Константа склада назначения при перемещении */
-//    #[Assert\NotBlank]
-//    #[Assert\Uuid]
-//    private ?ContactsRegionCallConst $destination = null;
+    //    /** Константа Целевого склада */
+    //    #[Assert\NotBlank]
+    //    #[Assert\Uuid]
+    //    private ?ContactsRegionCallConst $warehouse = null;
+
+    //    /** Константа склада назначения при перемещении */
+    //    #[Assert\NotBlank]
+    //    #[Assert\Uuid]
+    //    private ?ContactsRegionCallConst $destination = null;
 
 
     /** Идентификатор заказа на сборку */
@@ -70,12 +80,16 @@ final class DivideProductStockDTO implements ProductStockEventInterface, OrderEv
     /** Комментарий */
     private ?string $comment = null;
 
-    public function __construct()
+    public function __construct(User|UserUid $user)
     {
         $this->status = new ProductStockStatus(new ProductStockStatusDivide());
         $this->product = new ArrayCollection();
         $this->number = number_format(microtime(true) * 100, 0, '.', '.');
         $this->ord = new Orders\DivideProductStockOrderDTO();
+
+        $user = $user instanceof User ? $user->getId() : $user;
+        $this->invariable = new Invariable\DivideOrderInvariableDTO();
+        $this->invariable->setUsr($user);
     }
 
     public function getEvent(): ?Uid
@@ -133,6 +147,10 @@ final class DivideProductStockDTO implements ProductStockEventInterface, OrderEv
 
     public function setProfile(?UserProfileUid $profile): void
     {
+        /** Присваиваем постоянную величину  */
+        $PackageOrderInvariable = $this->getInvariable();
+        $PackageOrderInvariable->setProfile($profile);
+
         $this->profile = $profile;
     }
 
@@ -153,16 +171,16 @@ final class DivideProductStockDTO implements ProductStockEventInterface, OrderEv
         $this->number = $number;
     }
 
-//    /** Константа Целевого склада */
-//    public function getWarehouse(): ?ContactsRegionCallConst
-//    {
-//        return $this->warehouse;
-//    }
-//
-//    public function setWarehouse(?ContactsRegionCallConst $warehouse): void
-//    {
-//        $this->warehouse = $warehouse;
-//    }
+    //    /** Константа Целевого склада */
+    //    public function getWarehouse(): ?ContactsRegionCallConst
+    //    {
+    //        return $this->warehouse;
+    //    }
+    //
+    //    public function setWarehouse(?ContactsRegionCallConst $warehouse): void
+    //    {
+    //        $this->warehouse = $warehouse;
+    //    }
 
 
     /** Идентификатор заказа на сборку */
@@ -178,5 +196,12 @@ final class DivideProductStockDTO implements ProductStockEventInterface, OrderEv
         $this->ord = $ord;
     }
 
+    /**
+     * Invariable
+     */
+    public function getInvariable(): Invariable\DivideOrderInvariableDTO
+    {
+        return $this->invariable;
+    }
 
 }

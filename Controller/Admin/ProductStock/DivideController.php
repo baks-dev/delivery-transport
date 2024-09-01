@@ -109,7 +109,7 @@ final class DivideController extends AbstractController
         /**
          * @var DivideProductStockDTO $DivideProductStockDTO
          */
-        $DivideProductStockDTO = new DivideProductStockDTO();
+        $DivideProductStockDTO = new DivideProductStockDTO($this->getUsr());
         $ProductStockEvent->getDto($DivideProductStockDTO);
 
 
@@ -526,7 +526,7 @@ final class DivideController extends AbstractController
                      * Создаем новую заявку на заказ
                      */
 
-                    $NewPackageProductStockDTO = new DivideProductStockDTO();
+                    $NewPackageProductStockDTO = new DivideProductStockDTO($this->getUsr());
                     $ProductStockEvent->getDto($NewPackageProductStockDTO);
 
                     $NewPackageProductStockDTO->resetId();

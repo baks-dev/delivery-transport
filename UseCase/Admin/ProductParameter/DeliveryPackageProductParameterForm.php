@@ -25,15 +25,9 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\UseCase\Admin\ProductParameter;
 
-
 use BaksDev\DeliveryTransport\Type\ProductParameter\Weight\Kilogram\Kilogram;
-use BaksDev\Products\Product\Type\Id\ProductUid;
-use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
-use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
-use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -42,77 +36,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class DeliveryPackageProductParameterForm extends AbstractType
 {
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        /**
-         * ID продукта.
-         */
-        $builder->add('product', HiddenType::class);
-
-
-        $builder->get('product')->addModelTransformer(
-            new CallbackTransformer(
-                function ($product) {
-                    return $product instanceof ProductUid ? $product->getValue() : $product;
-                },
-                function ($product) {
-                    return $product ? new ProductUid($product) : null;
-                }
-            )
-        );
-
-
-        /**
-         * Постоянный уникальный идентификатор ТП
-         */
-        $builder->add('offer', HiddenType::class, ['required' => false]);
-
-        $builder->get('offer')->addModelTransformer(
-            new CallbackTransformer(
-                function ($offer) {
-                    return $offer instanceof ProductOfferConst ? $offer->getValue() : $offer;
-                },
-                function ($offer) {
-                    return $offer ? new ProductOfferConst($offer) : null;
-                }
-            )
-        );
-
-
-        /**
-         * Постоянный уникальный идентификатор варианта.
-         */
-        $builder->add('variation', HiddenType::class, ['required' => false]);
-
-        $builder->get('variation')->addModelTransformer(
-            new CallbackTransformer(
-                function ($variation) {
-                    return $variation instanceof ProductVariationConst ? $variation->getValue() : $variation;
-                },
-                function ($variation) {
-                    return $variation ? new ProductVariationConst($variation) : null;
-                }
-            )
-        );
-
-
-        /**
-         * Постоянный уникальный идентификатор модификации.
-         */
-        $builder->add('modification', HiddenType::class, ['required' => false]);
-
-        $builder->get('modification')->addModelTransformer(
-            new CallbackTransformer(
-                function ($modification) {
-                    return $modification instanceof ProductModificationConst ? $modification->getValue() : $modification;
-                },
-                function ($modification) {
-                    return $modification ? new ProductModificationConst($modification) : null;
-                }
-            )
-        );
-
 
         /**
          * Вес, кг.
@@ -131,7 +56,6 @@ final class DeliveryPackageProductParameterForm extends AbstractType
         );
 
 
-
         /**
          * Длина (Глубина), см
          */
@@ -146,7 +70,7 @@ final class DeliveryPackageProductParameterForm extends AbstractType
          * Высота, см
          */
         $builder->add('height', IntegerType::class);
-        
+
 
         /* Сохранить ******************************************************/
         $builder->add(
