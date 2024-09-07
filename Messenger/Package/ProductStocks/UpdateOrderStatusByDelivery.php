@@ -81,8 +81,8 @@ final class UpdateOrderStatusByDelivery
          * Получаем событие заказа.
          */
         $OrderEvent = $this->currentOrderEvent
-            ->order($ProductStockEvent->getOrder())
-            ->getCurrentOrderEvent();
+            ->forOrder($ProductStockEvent->getOrder())
+            ->find();
 
         if($OrderEvent)
         {
