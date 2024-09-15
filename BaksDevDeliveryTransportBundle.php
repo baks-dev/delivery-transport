@@ -23,38 +23,38 @@ class BaksDevDeliveryTransportBundle extends AbstractBundle
 
     public const PATH = __DIR__.DIRECTORY_SEPARATOR;
 
-    public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
-    {
-        $services = $container->services()
-            ->defaults()
-            ->autowire()
-            ->autoconfigure();
-
-        $services->load(self::NAMESPACE, self::PATH)
-            ->exclude([
-                self::PATH.'{Entity,Resources,Type}',
-                self::PATH.'**/*Message.php',
-                self::PATH.'**/*DTO.php',
-            ]);
-
-        /** Статусы заказа */
-        $services->load(
-            self::NAMESPACE.'Type\OrderStatus\\',
-            self::PATH.'Type/OrderStatus'
-        );
-
-        /** Статусы складской заявки */
-        $services->load(
-            self::NAMESPACE.'Type\ProductStockStatus\\',
-            self::PATH.'Type/ProductStockStatus'
-        );
-
-        /** Статусы погрузки */
-        $services->load(
-            self::NAMESPACE.'Type\Package\Status\DeliveryPackageStatus\\',
-            self::PATH.'Type/Package/Status/DeliveryPackageStatus'
-        );
-
-    }
+//    public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
+//    {
+//        $services = $container->services()
+//            ->defaults()
+//            ->autowire()
+//            ->autoconfigure();
+//
+//        $services->load(self::NAMESPACE, self::PATH)
+//            ->exclude([
+//                self::PATH.'{Entity,Resources,Type}',
+//                self::PATH.'**/*Message.php',
+//                self::PATH.'**/*DTO.php',
+//            ]);
+//
+//        /** Статусы заказа */
+//        $services->load(
+//            self::NAMESPACE.'Type\OrderStatus\\',
+//            self::PATH.'Type/OrderStatus'
+//        );
+//
+//        /** Статусы складской заявки */
+//        $services->load(
+//            self::NAMESPACE.'Type\ProductStockStatus\\',
+//            self::PATH.'Type/ProductStockStatus'
+//        );
+//
+//        /** Статусы погрузки */
+//        $services->load(
+//            self::NAMESPACE.'Type\Package\Status\DeliveryPackageStatus\\',
+//            self::PATH.'Type/Package/Status/DeliveryPackageStatus'
+//        );
+//
+//    }
 
 }

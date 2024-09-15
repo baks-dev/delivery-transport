@@ -23,7 +23,6 @@
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-
 use BaksDev\DeliveryTransport\BaksDevDeliveryTransportBundle;
 use BaksDev\DeliveryTransport\Type\Package\Event\DeliveryPackageEventType;
 use BaksDev\DeliveryTransport\Type\Package\Event\DeliveryPackageEventUid;
@@ -46,8 +45,7 @@ return static function (ContainerConfigurator $container, DoctrineConfig $doctri
     $services = $container->services()
         ->defaults()
         ->autowire()
-        ->autoconfigure()
-    ;
+        ->autoconfigure();
 
     $doctrine->dbal()->type(DeliveryTransportUid::TYPE)->class(DeliveryTransportType::class);
     $doctrine->dbal()->type(DeliveryTransportEventUid::TYPE)->class(DeliveryTransportEventType::class);
@@ -59,7 +57,7 @@ return static function (ContainerConfigurator $container, DoctrineConfig $doctri
     $doctrine->dbal()->type(DeliveryPackageEventUid::TYPE)->class(DeliveryPackageEventType::class);
 
     $doctrine->dbal()->type(DeliveryPackageStatus::TYPE)->class(DeliveryPackageStatusType::class);
-    
+
     $doctrine->dbal()->type(Kilogram::TYPE)->class(KilogramType::class);
 
     $emDefault = $doctrine->orm()->entityManager('default')->autoMapping(true);
@@ -68,6 +66,6 @@ return static function (ContainerConfigurator $container, DoctrineConfig $doctri
         ->type('attribute')
         ->dir(BaksDevDeliveryTransportBundle::PATH.'Entity')
         ->isBundle(false)
-        ->prefix('BaksDev\DeliveryTransport\Entity')
+        ->prefix(BaksDevDeliveryTransportBundle::NAMESPACE.'\\Entity')
         ->alias('delivery-transport:');
 };

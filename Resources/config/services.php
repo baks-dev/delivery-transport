@@ -29,8 +29,7 @@ return static function (ContainerConfigurator $configurator) {
     $services = $configurator->services()
         ->defaults()
         ->autowire()
-        ->autoconfigure()
-    ;
+        ->autoconfigure();
 
     $NAMESPACE = BaksDevDeliveryTransportBundle::NAMESPACE;
     $PATH = BaksDevDeliveryTransportBundle::PATH;
@@ -38,20 +37,29 @@ return static function (ContainerConfigurator $configurator) {
     $services->load($NAMESPACE, $PATH)
         ->exclude([
             $PATH.'{Entity,Resources,Type}',
-            $PATH.'**/*Message.php',
-            $PATH.'**/*DTO.php',
-        ])
-    ;
+            $PATH.'**'.DIRECTORY_SEPARATOR.'*Message.php',
+            $PATH.'**'.DIRECTORY_SEPARATOR.'*DTO.php',
+            $PATH.'**'.DIRECTORY_SEPARATOR.'*Test.php',
+        ]);
 
 
     /** Статусы заказа */
-    $services->load($NAMESPACE.'Type\OrderStatus\\', $PATH.'Type/OrderStatus');
+    $services->load(
+        $NAMESPACE.'Type\OrderStatus\\',
+        $PATH.implode(DIRECTORY_SEPARATOR, ['Type', 'OrderStatus'])
+    );
 
     /** Статусы складской заявки */
-    $services->load($NAMESPACE.'Type\ProductStockStatus\\', $PATH.'Type/ProductStockStatus');
+    $services->load(
+        $NAMESPACE.'Type\ProductStockStatus\\',
+        $PATH.implode(DIRECTORY_SEPARATOR, ['Type', 'ProductStockStatus'])
+    );
 
     /** Статусы погрузки */
-    $services->load($NAMESPACE.'Type\Package\Status\DeliveryPackageStatus\\', $PATH.'Type/Package/Status/DeliveryPackageStatus');
+    $services->load(
+        $NAMESPACE.'Type\Package\Status\DeliveryPackageStatus\\',
+        $PATH.implode(DIRECTORY_SEPARATOR, ['Type', 'Package', 'Status', 'DeliveryPackageStatus'])
+    );
 
 
 };

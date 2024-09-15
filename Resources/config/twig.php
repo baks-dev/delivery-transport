@@ -24,15 +24,17 @@
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use BaksDev\DeliveryTransport\BaksDevDeliveryTransportBundle;
-use Symfony\Config\FrameworkConfig;
+use Symfony\Config\TwigConfig;
 
-return static function(FrameworkConfig $config) {
+return static function(TwigConfig $twig) {
 
-    $config
-        ->translator()
-        ->paths([BaksDevDeliveryTransportBundle::PATH.'Resources/translations/']);
+    $twig->path(
+        BaksDevDeliveryTransportBundle::PATH.implode(DIRECTORY_SEPARATOR, ['Resources', 'view', '']), // .'Resources/view',
+        'delivery-transport'
+    );
 
 };
+
 
 
 
