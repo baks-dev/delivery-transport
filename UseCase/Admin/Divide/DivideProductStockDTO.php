@@ -58,18 +58,6 @@ final class DivideProductStockDTO implements ProductStockEventInterface, OrderEv
     #[Assert\Length(max: 36)]
     private string $number;
 
-
-    //    /** Константа Целевого склада */
-    //    #[Assert\NotBlank]
-    //    #[Assert\Uuid]
-    //    private ?ContactsRegionCallConst $warehouse = null;
-
-    //    /** Константа склада назначения при перемещении */
-    //    #[Assert\NotBlank]
-    //    #[Assert\Uuid]
-    //    private ?ContactsRegionCallConst $destination = null;
-
-
     /** Идентификатор заказа на сборку */
     private Orders\DivideProductStockOrderDTO $ord;
 
@@ -80,16 +68,17 @@ final class DivideProductStockDTO implements ProductStockEventInterface, OrderEv
     /** Комментарий */
     private ?string $comment = null;
 
-    public function __construct(User|UserUid $user)
+    public function __construct(/*User|UserUid $user*/)
     {
         $this->status = new ProductStockStatus(new ProductStockStatusDivide());
         $this->product = new ArrayCollection();
         $this->number = number_format(microtime(true) * 100, 0, '.', '.');
         $this->ord = new Orders\DivideProductStockOrderDTO();
 
-        $user = $user instanceof User ? $user->getId() : $user;
         $this->invariable = new Invariable\DivideOrderInvariableDTO();
-        $this->invariable->setUsr($user);
+
+        //        $user = $user instanceof User ? $user->getId() : $user;
+        //        $this->invariable->setUsr($user);
     }
 
     public function getEvent(): ?Uid
@@ -139,12 +128,16 @@ final class DivideProductStockDTO implements ProductStockEventInterface, OrderEv
         $this->comment = $comment;
     }
 
-    /** Ответственное лицо (Профиль пользователя) */
+    /**
+     * Ответственное лицо (Профиль пользователя)
+     * @deprecated Переносится в Invariable
+     */
     public function getProfile(): ?UserProfileUid
     {
         return $this->profile;
     }
 
+    /** @deprecated Переносится в Invariable */
     public function setProfile(?UserProfileUid $profile): void
     {
         /** Присваиваем постоянную величину  */

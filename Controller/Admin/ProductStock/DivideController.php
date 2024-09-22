@@ -109,7 +109,7 @@ final class DivideController extends AbstractController
         /**
          * @var DivideProductStockDTO $DivideProductStockDTO
          */
-        $DivideProductStockDTO = new DivideProductStockDTO($this->getUsr());
+        $DivideProductStockDTO = new DivideProductStockDTO();
         $ProductStockEvent->getDto($DivideProductStockDTO);
 
 
@@ -526,12 +526,11 @@ final class DivideController extends AbstractController
                      * Создаем новую заявку на заказ
                      */
 
-                    $NewPackageProductStockDTO = new DivideProductStockDTO($this->getUsr());
+                    $NewPackageProductStockDTO = new DivideProductStockDTO();
                     $ProductStockEvent->getDto($NewPackageProductStockDTO);
 
                     $NewPackageProductStockDTO->resetId();
                     $NewPackageProductStockDTO->setProduct(new ArrayCollection());
-                    $NewPackageProductStockDTO->setProfile($this->getProfileUid());
                     $NewPackageProductStockDTO->setComment('Заявка разделена на несколько поставок');
                     $NewPackageProductStockDTO->setNumber($DivideProductStockDTO->getNumber());
 

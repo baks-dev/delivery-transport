@@ -95,7 +95,6 @@ final class UpdateOrderStatusByDelivery
             $OrderStatusDTO = new OrderStatusDTO(
                 OrderStatusDelivery::class,
                 $OrderEvent->getId(),
-                $User,
                 $ProductStockEvent->getProfile()
             );
 

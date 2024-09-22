@@ -18,15 +18,33 @@
 
 namespace BaksDev\DeliveryTransport\UseCase\Admin\Divide;
 
+use BaksDev\Users\Profile\UserProfile\Repository\UserProfileTokenStorage\UserProfileTokenStorageInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class DivideProductStockForm extends AbstractType
 {
+    public function __construct(private readonly UserProfileTokenStorageInterface $userProfileTokenStorage) {}
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
+
+            /** @var DivideProductStockDTO $DivideProductStockDTO */
+            $DivideProductStockDTO = $event->getData();
+
+            $DivideProductStockDTO->setProfile($this->userProfileTokenStorage->getProfile());
+
+            $DivideProductStockDTO
+                ->getInvariable()
+                ->setProfile($this->userProfileTokenStorage->getProfile())
+                ->setUsr($this->userProfileTokenStorage->getUser());
+        });
+
         // Сохранить
         $builder->add(
             'divide',
