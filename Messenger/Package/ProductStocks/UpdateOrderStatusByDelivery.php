@@ -82,7 +82,7 @@ final class UpdateOrderStatusByDelivery
          */
         $OrderEvent = $this->currentOrderEvent
             ->forOrder($ProductStockEvent->getOrder())
-            ->find();
+            ->execute();
 
         if($OrderEvent)
         {
