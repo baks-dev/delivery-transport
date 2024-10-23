@@ -46,7 +46,7 @@
 
             {# Пункт назанчания #}
             {% if current.destination %}
-                {#{{ current.destination|call_twig_func('contacts_region_type') }}#}
+                {# {{ current.destination|call_twig_func('contacts_region_type') }} #}
 
 
 
@@ -60,7 +60,8 @@
                     </div>
 
 
-                    <a href="https://yandex.ru/maps/?pt={{ current.destination_longitude }},{{ current.destination_latitude }}&z=18&l=map" class="text-decoration-none"
+                    <a href="https://yandex.ru/maps/?pt={{ current.destination_longitude }},{{ current.destination_latitude }}&z=18&l=map"
+                       class="text-decoration-none"
                        target="_blank">{{ current.destination_location }}</a></div>
 
 
@@ -94,7 +95,6 @@
                             {% set img_file = (img_host is empty ? '/image.' : '/small.') ~ product.product_image_ext %}
                             {% set image_path = img_host ~ img_dir ~ img_file %}
                         {% endif %}
-
 
 
                         <div class="rounded-circle bg-contain lazy p-1" style="width: 50px; height: 50px;"
@@ -132,15 +132,18 @@
                             <div class="text-muted small">
 
                                 {% if product.product_offer_value %}
-                                    {{ product.product_offer_name }} : <strong>{{ product.product_offer_value|call_twig_func(product.product_offer_reference) }}</strong>
+                                    {{ product.product_offer_name }} :
+                                    <strong>{{ product.product_offer_value|call_twig_func(product.product_offer_reference) }}</strong>
                                 {% endif %}
 
                                 {% if product.product_variation_value %}
-                                    , {{ product.product_variation_name }} : <strong>{{ product.product_variation_value|call_twig_func(product.product_variation_reference) }}</strong>
+                                    , {{ product.product_variation_name }} :
+                                    <strong>{{ product.product_variation_value|call_twig_func(product.product_variation_reference) }}</strong>
                                 {% endif %}
 
                                 {% if product.product_modification_value %}
-                                    , {{ product.product_modification_name }}: <strong>{{ product.product_modification_value|call_twig_func(product.product_modification_reference) }}</strong>
+                                    , {{ product.product_modification_name }}:
+                                    <strong>{{ product.product_modification_value|call_twig_func(product.product_modification_reference) }}</strong>
                                 {% endif %}
                             </div>
                         </div>

@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -27,13 +27,12 @@ namespace BaksDev\DeliveryTransport\Type\Package\Event;
 
 use App\Kernel;
 use BaksDev\Core\Type\UidType\Uid;
-use Symfony\Component\Uid\AbstractUid;
 
 
 final class DeliveryPackageEventUid extends Uid
 {
     public const TEST = '0188a997-3228-7c12-911f-384c9aa401bd';
-    
+
     public const TYPE = 'delivery_package_event';
 
 }

@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -25,25 +25,25 @@ namespace BaksDev\DeliveryTransport\Type\ProductParameter\Weight\Kilogram;
 
 final class Kilogram
 {
-	public const TYPE = 'kilogram_type';
-	
-	private int|float|null $value;
-	
-	
-	public function __construct(int|float|self|null $value)
-	{
-		if($value instanceof self)
-		{
-			$value = $value->getValue();
-		}
-		
-		$this->value = $value ? max(0, $value) : null;
-	}
-	
-	
-	public function getValue() : int|float|null
-	{
-		return $this->value;
-	}
-	
+    public const TYPE = 'kilogram_type';
+
+    private int|float|null $value;
+
+
+    public function __construct(int|float|self|null $value)
+    {
+        if($value instanceof self)
+        {
+            $value = $value->getValue();
+        }
+
+        $this->value = $value ? max(0, $value) : null;
+    }
+
+
+    public function getValue(): int|float|null
+    {
+        return $this->value;
+    }
+
 }

@@ -1,17 +1,17 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
- *
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -29,7 +29,6 @@ use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Type\Gps\GpsLatitude;
 use BaksDev\Core\Type\Gps\GpsLongitude;
 use BaksDev\Core\Type\Locale\Locale;
-use BaksDev\Core\Type\Locale\Locales\Ru;
 use BaksDev\DeliveryTransport\Entity\Transport\DeliveryTransport;
 use BaksDev\DeliveryTransport\Entity\Transport\Event\DeliveryTransportEvent;
 use BaksDev\DeliveryTransport\Type\ProductParameter\Weight\Kilogram\Kilogram;
@@ -38,11 +37,8 @@ use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\DeliveryTransportD
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\DeliveryTransportHandler;
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Driver\DeliveryTransportDriverDTO;
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Trans\DeliveryTransportTransDTO;
-use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use BaksDev\Users\User\Type\Id\UserUid;
-use BaksDev\Wildberries\Products\Entity\Cards\WbProductCard;
-use BaksDev\Wildberries\Products\Type\Cards\Id\WbCardUid;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
@@ -92,7 +88,7 @@ final class DeliveryTransportNewTest extends KernelTestCase
         self::assertEquals('123-45-64', $DeliveryTransportDTO->getNumber());
 
         $DeliveryTransportDTO->setActive(true);
-        self::assertTrue( $DeliveryTransportDTO->getActive());
+        self::assertTrue($DeliveryTransportDTO->getActive());
 
 
         $UserProfileUid = new UserProfileUid('0189edbf-fa77-7ad2-9197-1b10743c62f2');
@@ -150,7 +146,6 @@ final class DeliveryTransportNewTest extends KernelTestCase
         self::assertTrue($DeliveryTransportDTO->getTranslate()->contains($DeliveryTransportTransDTO));
 
 
-
         $DeliveryTransportDrivers = $DeliveryTransportDTO->getDriver();
 
         /** @var DeliveryTransportDriverDTO $DeliveryTransportDriverDTO */
@@ -167,7 +162,7 @@ final class DeliveryTransportNewTest extends KernelTestCase
         $DeliveryTransportHandler = self::getContainer()->get(DeliveryTransportHandler::class);
         $handle = $DeliveryTransportHandler->handle($DeliveryTransportDTO);
 
-        self::assertTrue(($handle instanceof  DeliveryTransport), $handle.': Ошибка DeliveryTransport');
+        self::assertTrue(($handle instanceof DeliveryTransport), $handle.': Ошибка DeliveryTransport');
 
     }
 
@@ -187,15 +182,14 @@ final class DeliveryTransportNewTest extends KernelTestCase
         $dbal
             ->from(DeliveryTransport::class, 'test')
             ->where('test.id = :id')
-            ->setParameter('id', DeliveryTransportUid::TEST)
-        ;
+            ->setParameter('id', DeliveryTransportUid::TEST);
 
         self::assertTrue($dbal->fetchExist());
 
-//
-//        /** @var EntityManagerInterface $em */
-//        $em = $container->get(EntityManagerInterface::class);
-//        $DeliveryTransport = $em->getRepository(DeliveryTransport::class)->find(DeliveryTransportUid::TEST);
-//        self::assertNotNull($DeliveryTransport);
+        //
+        //        /** @var EntityManagerInterface $em */
+        //        $em = $container->get(EntityManagerInterface::class);
+        //        $DeliveryTransport = $em->getRepository(DeliveryTransport::class)->find(DeliveryTransportUid::TEST);
+        //        self::assertNotNull($DeliveryTransport);
     }
 }

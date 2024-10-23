@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -24,38 +24,37 @@
 namespace BaksDev\DeliveryTransport\Type\ProductParameter\Weight\Kilogram;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Types\BigIntType;
 use Doctrine\DBAL\Types\Type;
 
 final class KilogramType extends Type
 {
-	
-	public function convertToDatabaseValue($value, AbstractPlatform $platform): int
-	{
-		return $value instanceof Kilogram ? $value->getValue() * 100 : $value * 100;
-	}
-	
-	
-	public function convertToPHPValue($value, AbstractPlatform $platform): ?Kilogram
-	{
-		return !empty($value) ? new Kilogram($value / 100) : null;
-	}
-	
-	
-	public function getName(): string
-	{
-		return Kilogram::TYPE;
-	}
-	
-	
-	public function requiresSQLCommentHint(AbstractPlatform $platform) : bool
-	{
-		return true;
-	}
+
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): int
+    {
+        return $value instanceof Kilogram ? $value->getValue() * 100 : $value * 100;
+    }
+
+
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?Kilogram
+    {
+        return !empty($value) ? new Kilogram($value / 100) : null;
+    }
+
+
+    public function getName(): string
+    {
+        return Kilogram::TYPE;
+    }
+
+
+    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
+    {
+        return true;
+    }
 
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getBigIntTypeDeclarationSQL($column);
     }
-	
+
 }

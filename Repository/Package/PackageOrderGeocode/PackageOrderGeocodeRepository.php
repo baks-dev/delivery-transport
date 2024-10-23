@@ -1,17 +1,17 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
- *
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,9 +25,6 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\Repository\Package\PackageOrderGeocode;
 
-use BaksDev\Contacts\Region\Entity\Call\ContactsRegionCall;
-use BaksDev\Contacts\Region\Entity\Call\Info\ContactsRegionCallInfo;
-use BaksDev\Contacts\Region\Entity\ContactsRegion;
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\DeliveryTransport\Entity\Package\Move\DeliveryPackageMove;
 use BaksDev\DeliveryTransport\Entity\Package\Stocks\DeliveryPackageStocks;
@@ -40,7 +37,6 @@ use BaksDev\Products\Stocks\Entity\Orders\ProductStockOrder;
 use BaksDev\Products\Stocks\Entity\ProductStock;
 use BaksDev\Users\Profile\UserProfile\Entity\Personal\UserProfilePersonal;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
-use Doctrine\DBAL\Connection;
 
 final class PackageOrderGeocodeRepository implements PackageOrderGeocodeInterface
 {
@@ -50,7 +46,8 @@ final class PackageOrderGeocodeRepository implements PackageOrderGeocodeInterfac
 
     public function __construct(
         DBALQueryBuilder $DBALQueryBuilder
-    ) {
+    )
+    {
 
         $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
@@ -61,10 +58,10 @@ final class PackageOrderGeocodeRepository implements PackageOrderGeocodeInterfac
     public function fetchAllPackageOrderGeocodeAssociative(DeliveryPackageEventUid $event): array|bool
     {
         /** Проверяем, существует ли перемещение по заказу */
-//        $dbalMoveNotExist = $this->connection->createQueryBuilder();
-//        $dbalMoveNotExist->select('1');
-//        $dbalMoveNotExist->from(ProductStockMove::TABLE, 'move');
-//        $dbalMoveNotExist->where('move.ord = order_package.ord');
+        //        $dbalMoveNotExist = $this->connection->createQueryBuilder();
+        //        $dbalMoveNotExist->select('1');
+        //        $dbalMoveNotExist->from(ProductStockMove::TABLE, 'move');
+        //        $dbalMoveNotExist->where('move.ord = order_package.ord');
 
         $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
@@ -101,7 +98,6 @@ final class PackageOrderGeocodeRepository implements PackageOrderGeocodeInterfac
         );
 
 
-
         $dbal->leftJoin(
             'product_stock_order',
             Order::TABLE,
@@ -115,7 +111,6 @@ final class PackageOrderGeocodeRepository implements PackageOrderGeocodeInterfac
             'order_user',
             'order_user.event = orders.event'
         );
-
 
 
         $dbal->leftJoin(
@@ -132,35 +127,33 @@ final class PackageOrderGeocodeRepository implements PackageOrderGeocodeInterfac
         $dbal
             //->addSelect('product_stock_move.destination')
             ->leftJoin(
-            'product_stock',
-            ProductStockMove::TABLE,
-            'product_stock_move',
-            'product_stock_move.event = product_stock.event'
-        );
+                'product_stock',
+                ProductStockMove::TABLE,
+                'product_stock_move',
+                'product_stock_move.event = product_stock.event'
+            );
 
 
-
-//        $dbal->leftJoin(
-//            'product_stock_move',
-//            ContactsRegionCall::TABLE,
-//            'call',
-//            'call.const = product_stock_move.destination'
-//        );
-//
-//        $dbal->leftJoin(
-//            'call',
-//            ContactsRegion::TABLE,
-//            'region',
-//            'region.event = call.event'
-//        );
-//
-//        $dbal->leftJoin(
-//            'call',
-//            ContactsRegionCallInfo::TABLE,
-//            'call_info',
-//            'call_info.call = call.id'
-//        );
-
+        //        $dbal->leftJoin(
+        //            'product_stock_move',
+        //            ContactsRegionCall::TABLE,
+        //            'call',
+        //            'call.const = product_stock_move.destination'
+        //        );
+        //
+        //        $dbal->leftJoin(
+        //            'call',
+        //            ContactsRegion::TABLE,
+        //            'region',
+        //            'region.event = call.event'
+        //        );
+        //
+        //        $dbal->leftJoin(
+        //            'call',
+        //            ContactsRegionCallInfo::TABLE,
+        //            'call_info',
+        //            'call_info.call = call.id'
+        //        );
 
 
         $dbal->leftJoin(
@@ -174,11 +167,11 @@ final class PackageOrderGeocodeRepository implements PackageOrderGeocodeInterfac
             ->addSelect('profile_destination_personal.latitude')
             ->addSelect('profile_destination_personal.longitude')
             ->leftJoin(
-            'profile_destination',
-            UserProfilePersonal::TABLE,
-            'profile_destination_personal',
-            'profile_destination_personal.event = profile_destination.event'
-        );
+                'profile_destination',
+                UserProfilePersonal::TABLE,
+                'profile_destination_personal',
+                'profile_destination_personal.event = profile_destination.event'
+            );
 
 
         $dbal->addSelect('CASE
@@ -199,50 +192,49 @@ final class PackageOrderGeocodeRepository implements PackageOrderGeocodeInterfac
         return $dbal->fetchAllAssociative();
 
 
-
         //$dbal->andWhere('NOT EXISTS ('.$dbalMoveNotExist->getSQL().')');
         //$dbal->andWhere('order_package.event = :event');
 
         /* Если перемещения ЕСТЬ - получаем геоданные склада */
-//        $dbalMoveExist = $this->connection->createQueryBuilder();
-//        $dbalMoveExist->select('1');
-//        $dbalMoveExist->from(ProductStockMove::TABLE, 'move');
-//        $dbalMoveExist->where('move.ord = order_package_move.ord');
-//
-//        $dbalMove = $this->connection->createQueryBuilder();
-//
-//        $dbalMove->from(DeliveryPackageMove::TABLE, 'order_package_move');
-//
-//        $dbalMove->select('order_package_move.ord AS id');
-//
-//        $dbalMove->join('order_package_move', ProductStockMove::TABLE, 'move', 'move.ord = order_package_move.ord');
-//
-//        $dbalMove->join('move', ContactsRegionCall::TABLE, 'call', 'call.const = move.destination');
-//
-//        $dbalMove->addSelect('call_info.latitude');
-//        $dbalMove->addSelect('call_info.longitude');
-//
-//        $dbalMove->join(
-//            'call',
-//            ContactsRegion::TABLE,
-//            'region',
-//            'region.event = call.event'
-//        );
-//
-//        $dbalMove->join(
-//            'call',
-//            ContactsRegionCallInfo::TABLE,
-//            'call_info',
-//            'call_info.call = call.id'
-//        );
-//
-//        $dbalMove->andWhere('EXISTS ('.$dbalMoveExist->getSQL().')');
-//        $dbalMove->andWhere('order_package_move.event = :event');
-//
-//        /** Выполняем результат запроса UNION */
-//        $dbal = $this->connection->prepare($dbal->getSQL().' UNION '.$dbalMove->getSQL().' ');
-//        $dbal->bindValue('event', $event, DeliveryPackageEventUid::TYPE);
-//
-//        return $dbal->executeQuery()->fetchAllAssociative();
+        //        $dbalMoveExist = $this->connection->createQueryBuilder();
+        //        $dbalMoveExist->select('1');
+        //        $dbalMoveExist->from(ProductStockMove::TABLE, 'move');
+        //        $dbalMoveExist->where('move.ord = order_package_move.ord');
+        //
+        //        $dbalMove = $this->connection->createQueryBuilder();
+        //
+        //        $dbalMove->from(DeliveryPackageMove::TABLE, 'order_package_move');
+        //
+        //        $dbalMove->select('order_package_move.ord AS id');
+        //
+        //        $dbalMove->join('order_package_move', ProductStockMove::TABLE, 'move', 'move.ord = order_package_move.ord');
+        //
+        //        $dbalMove->join('move', ContactsRegionCall::TABLE, 'call', 'call.const = move.destination');
+        //
+        //        $dbalMove->addSelect('call_info.latitude');
+        //        $dbalMove->addSelect('call_info.longitude');
+        //
+        //        $dbalMove->join(
+        //            'call',
+        //            ContactsRegion::TABLE,
+        //            'region',
+        //            'region.event = call.event'
+        //        );
+        //
+        //        $dbalMove->join(
+        //            'call',
+        //            ContactsRegionCallInfo::TABLE,
+        //            'call_info',
+        //            'call_info.call = call.id'
+        //        );
+        //
+        //        $dbalMove->andWhere('EXISTS ('.$dbalMoveExist->getSQL().')');
+        //        $dbalMove->andWhere('order_package_move.event = :event');
+        //
+        //        /** Выполняем результат запроса UNION */
+        //        $dbal = $this->connection->prepare($dbal->getSQL().' UNION '.$dbalMove->getSQL().' ');
+        //        $dbal->bindValue('event', $event, DeliveryPackageEventUid::TYPE);
+        //
+        //        return $dbal->executeQuery()->fetchAllAssociative();
     }
 }

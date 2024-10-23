@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -37,15 +37,7 @@ use BaksDev\DeliveryTransport\UseCase\Admin\Transport\Delete\DeliveryTransportDe
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\Delete\DeliveryTransportDeleteHandler;
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\DeliveryTransportDTO;
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Tests\DeliveryTransportEditTest;
-use BaksDev\Products\Category\Type\Id\CategoryProductUid;
-use BaksDev\Products\Category\Type\Section\Field\Id\CategoryProductSectionFieldUid;
 use BaksDev\Users\User\Type\Id\UserUid;
-use BaksDev\Wildberries\Products\Entity\Barcode\Event\WbBarcodeEvent;
-use BaksDev\Wildberries\Products\Entity\Settings\Event\WbProductSettingsEvent;
-use BaksDev\Wildberries\Products\Entity\Settings\WbProductSettings;
-use BaksDev\Wildberries\Products\UseCase\Settings\Delete\DeleteWbProductSettingsDTO;
-use BaksDev\Wildberries\Products\UseCase\Settings\Delete\DeleteWbProductSettingsHandler;
-use BaksDev\Wildberries\Products\UseCase\Settings\NewEdit\WbProductsSettingsDTO;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
@@ -57,8 +49,8 @@ use Symfony\Component\DependencyInjection\Attribute\When;
  * @depends BaksDev\DeliveryTransport\Controller\Admin\Transport\Tests\DeleteControllerTest::class
  * @depends BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Tests\DeliveryTransportEditTest::class
  *
- * @see DeliveryTransportEditTest
- * @see DeleteControllerTest
+ * @see     DeliveryTransportEditTest
+ * @see     DeleteControllerTest
  *
  */
 #[When(env: 'test')]
@@ -93,12 +85,11 @@ final class DeliveryTransportDeleteTest extends KernelTestCase
         $DeliveryTransportEvent = $qb->getQuery()->getOneOrNullResult();
 
 
-
         $DeliveryTransportDTO = new DeliveryTransportDTO(new UserUid());
         $DeliveryTransportEvent->getDto($DeliveryTransportDTO);
 
         self::assertEquals('890-64-45', $DeliveryTransportDTO->getNumber());
-        self::assertFalse( $DeliveryTransportDTO->getActive());
+        self::assertFalse($DeliveryTransportDTO->getActive());
 
 
         /** DeliveryTransportParameterDTO */
@@ -111,7 +102,6 @@ final class DeliveryTransportDeleteTest extends KernelTestCase
 
         $Kilogram = new Kilogram(200);
         self::assertEquals($Kilogram, $DeliveryTransportParameterDTO->getCarrying());
-
 
 
         /** DeliveryTransportRegionDTO */
@@ -131,7 +121,6 @@ final class DeliveryTransportDeleteTest extends KernelTestCase
         $DeliveryTransportTransDTO = $DeliveryTransportDTO->getTranslate()->current();
 
         self::assertEquals('DeliveryTransportNameEdit', $DeliveryTransportTransDTO->getName());
-
 
 
         /** DELETE */
@@ -174,7 +163,6 @@ final class DeliveryTransportDeleteTest extends KernelTestCase
         {
             $em->remove($remove);
         }
-
 
 
         $em->flush();

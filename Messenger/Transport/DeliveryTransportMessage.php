@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,6 @@ declare(strict_types=1);
 namespace BaksDev\DeliveryTransport\Messenger\Transport;
 
 
-
 use BaksDev\DeliveryTransport\Type\Transport\Event\DeliveryTransportEventUid;
 use BaksDev\DeliveryTransport\Type\Transport\Id\DeliveryTransportUid;
 
@@ -42,7 +41,11 @@ final class DeliveryTransportMessage
     /** Идентификатор предыдущего события */
     private ?DeliveryTransportEventUid $last;
 
-    public function __construct(DeliveryTransportUid $id, DeliveryTransportEventUid $event, ?DeliveryTransportEventUid $last = null)
+    public function __construct(
+        DeliveryTransportUid $id,
+        DeliveryTransportEventUid $event,
+        ?DeliveryTransportEventUid $last = null
+    )
     {
         $this->last = $last;
         $this->id = $id;
@@ -50,19 +53,19 @@ final class DeliveryTransportMessage
     }
 
     /** Идентификатор */
-    public function getId() : DeliveryTransportUid
+    public function getId(): DeliveryTransportUid
     {
         return $this->id;
     }
 
     /** Идентификатор события */
-    public function getEvent() : DeliveryTransportEventUid
+    public function getEvent(): DeliveryTransportEventUid
     {
         return $this->event;
     }
 
     /** Идентификатор предыдущего события */
-    public function getLast() : ?DeliveryTransportEventUid
+    public function getLast(): ?DeliveryTransportEventUid
     {
         return $this->last;
     }

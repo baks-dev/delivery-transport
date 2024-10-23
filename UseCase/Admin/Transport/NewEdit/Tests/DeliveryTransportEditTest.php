@@ -1,17 +1,17 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
- *
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -45,7 +45,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
  *
  * @depends BaksDev\DeliveryTransport\Controller\Admin\Transport\Tests\EditControllerTest::class
  *
- * @see EditControllerTest
+ * @see     EditControllerTest
  */
 #[When(env: 'test')]
 final class DeliveryTransportEditTest extends KernelTestCase
@@ -69,7 +69,7 @@ final class DeliveryTransportEditTest extends KernelTestCase
         self::assertEquals('123-45-64', $DeliveryTransportDTO->getNumber());
         $DeliveryTransportDTO->setNumber('890-64-45');
 
-        self::assertTrue( $DeliveryTransportDTO->getActive());
+        self::assertTrue($DeliveryTransportDTO->getActive());
         $DeliveryTransportDTO->setActive(false);
 
 
@@ -94,7 +94,6 @@ final class DeliveryTransportEditTest extends KernelTestCase
         $DeliveryTransportParameterDTO->setCarrying(new Kilogram(200));
 
 
-
         /** DeliveryTransportRegionDTO */
 
         $DeliveryTransportRegionDTO = $DeliveryTransportDTO->getRegion();
@@ -102,7 +101,6 @@ final class DeliveryTransportEditTest extends KernelTestCase
         $GpsLatitude = new GpsLatitude(GpsLatitude::TEST);
         self::assertEquals($GpsLatitude, $DeliveryTransportRegionDTO->getLatitude());
         $DeliveryTransportRegionDTO->setLatitude(new GpsLatitude(GpsLatitude::TEST.'9'));
-
 
 
         $GpsLongitude = new GpsLongitude(GpsLongitude::TEST);
@@ -129,7 +127,7 @@ final class DeliveryTransportEditTest extends KernelTestCase
         $DeliveryTransportHandler = self::getContainer()->get(DeliveryTransportHandler::class);
         $handle = $DeliveryTransportHandler->handle($DeliveryTransportDTO);
 
-        self::assertTrue(($handle instanceof  DeliveryTransport), $handle.': Ошибка DeliveryTransport');
+        self::assertTrue(($handle instanceof DeliveryTransport), $handle.': Ошибка DeliveryTransport');
 
         $em->clear();
         //$em->close();

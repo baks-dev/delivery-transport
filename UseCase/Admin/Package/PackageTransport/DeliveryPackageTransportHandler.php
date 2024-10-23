@@ -1,17 +1,17 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
- *
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -27,32 +27,30 @@ namespace BaksDev\DeliveryTransport\UseCase\Admin\Package\PackageTransport;
 
 use BaksDev\Core\Entity\AbstractHandler;
 use BaksDev\DeliveryTransport\Entity\Package\DeliveryPackageTransport;
-use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class DeliveryPackageTransportHandler extends AbstractHandler
 {
-//    private EntityManagerInterface $entityManager;
-//
-//    private ValidatorInterface $validator;
-//
-//    private LoggerInterface $logger;
-//
-//    public function __construct(
-//        EntityManagerInterface $entityManager,
-//        ValidatorInterface $validator,
-//        LoggerInterface $logger,
-//    ) {
-//        $this->entityManager = $entityManager;
-//        $this->validator = $validator;
-//        $this->logger = $logger;
-//    }
+    //    private EntityManagerInterface $entityManager;
+    //
+    //    private ValidatorInterface $validator;
+    //
+    //    private LoggerInterface $logger;
+    //
+    //    public function __construct(
+    //        EntityManagerInterface $entityManager,
+    //        ValidatorInterface $validator,
+    //        LoggerInterface $logger,
+    //    ) {
+    //        $this->entityManager = $entityManager;
+    //        $this->validator = $validator;
+    //        $this->logger = $logger;
+    //    }
 
 
     public function handle(
         DeliveryPackageTransportDTO $command,
-    ): string|DeliveryPackageTransport {
+    ): string|DeliveryPackageTransport
+    {
 
         /** Валидация  $command */
         $this->validatorCollection->add($command);
@@ -68,7 +66,7 @@ final class DeliveryPackageTransportHandler extends AbstractHandler
                 ]
             );
 
-        if (empty($DeliveryPackageTransport))
+        if(empty($DeliveryPackageTransport))
         {
             $DeliveryPackageTransport = new DeliveryPackageTransport(
                 $command->getPackage(),
@@ -97,65 +95,65 @@ final class DeliveryPackageTransportHandler extends AbstractHandler
 
 
 
-//    /** @see DeliveryPackageTransport */
-//    public function _handle(
-//        DeliveryPackageTransportDTO $command,
-//        //?UploadedFile $cover = null
-//    ): string|DeliveryPackageTransport {
-//        /**
-//         *  Валидация DeliveryPackageTransportDTO.
-//         */
-//        $errors = $this->validator->validate($command);
-//
-//        if (count($errors) > 0)
-//        {
-//            /** Ошибка валидации */
-//            $uniqid = uniqid('', false);
-//            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [self::class.':'.__LINE__]);
-//
-//            return $uniqid;
-//        }
-//
-//        $this->entityManager->clear();
-//
-//        $DeliveryPackageTransport = $this->entityManager->getRepository(DeliveryPackageTransport::class)
-//            ->findOneBy(
-//                [
-//                    'package' => $command->getPackage(),
-//                    'transport' => $command->getTransport(),
-//                    'date' => $command->getDate()
-//                ]
-//            );
-//
-//        if (empty($DeliveryPackageTransport))
-//        {
-//            $DeliveryPackageTransport = new DeliveryPackageTransport(
-//                $command->getPackage(),
-//                $command->getTransport(),
-//                $command->getDate()
-//            );
-//
-//            $this->entityManager->persist($DeliveryPackageTransport);
-//        }
-//
-//        $DeliveryPackageTransport->setEntity($command);
-//
-//        /**
-//         * Валидация DeliveryPackageTransport.
-//         */
-//        $errors = $this->validator->validate($DeliveryPackageTransport);
-//
-//        if (count($errors) > 0)
-//        {
-//            /** Ошибка валидации */
-//            $uniqid = uniqid('', false);
-//            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [self::class.':'.__LINE__]);
-//
-//            return $uniqid;
-//        }
-//
-//        $this->entityManager->flush();
-//
-//        return $DeliveryPackageTransport;
-//    }
+    //    /** @see DeliveryPackageTransport */
+    //    public function _handle(
+    //        DeliveryPackageTransportDTO $command,
+    //        //?UploadedFile $cover = null
+    //    ): string|DeliveryPackageTransport {
+    //        /**
+    //         *  Валидация DeliveryPackageTransportDTO.
+    //         */
+    //        $errors = $this->validator->validate($command);
+    //
+    //        if (count($errors) > 0)
+    //        {
+    //            /** Ошибка валидации */
+    //            $uniqid = uniqid('', false);
+    //            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [self::class.':'.__LINE__]);
+    //
+    //            return $uniqid;
+    //        }
+    //
+    //        $this->entityManager->clear();
+    //
+    //        $DeliveryPackageTransport = $this->entityManager->getRepository(DeliveryPackageTransport::class)
+    //            ->findOneBy(
+    //                [
+    //                    'package' => $command->getPackage(),
+    //                    'transport' => $command->getTransport(),
+    //                    'date' => $command->getDate()
+    //                ]
+    //            );
+    //
+    //        if (empty($DeliveryPackageTransport))
+    //        {
+    //            $DeliveryPackageTransport = new DeliveryPackageTransport(
+    //                $command->getPackage(),
+    //                $command->getTransport(),
+    //                $command->getDate()
+    //            );
+    //
+    //            $this->entityManager->persist($DeliveryPackageTransport);
+    //        }
+    //
+    //        $DeliveryPackageTransport->setEntity($command);
+    //
+    //        /**
+    //         * Валидация DeliveryPackageTransport.
+    //         */
+    //        $errors = $this->validator->validate($DeliveryPackageTransport);
+    //
+    //        if (count($errors) > 0)
+    //        {
+    //            /** Ошибка валидации */
+    //            $uniqid = uniqid('', false);
+    //            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [self::class.':'.__LINE__]);
+    //
+    //            return $uniqid;
+    //        }
+    //
+    //        $this->entityManager->flush();
+    //
+    //        return $DeliveryPackageTransport;
+    //    }
 }

@@ -2,23 +2,23 @@
 
 <div class="d-flex justify-content-between gap-3">
 
-	{# Регистрационный номер #}
-	{{ form_row(form.number, { label: 'form.label.number'|trans }) }}
+    {# Регистрационный номер #}
+    {{ form_row(form.number, { label: 'form.label.number'|trans }) }}
 
-	{# Грузоподъемность, кг. #}
-	{{ form_row(form.parameter.carrying, { label: 'form.label.carrying'|trans} ) }}
+    {# Грузоподъемность, кг. #}
+    {{ form_row(form.parameter.carrying, { label: 'form.label.carrying'|trans} ) }}
 
 </div>
 
-	{# склада, за которым закреплен транспорт #}
+{# склада, за которым закреплен транспорт #}
 	{{ form_row(form.profile, {
-		label: 'Закрепить за профилем', placeholder: 'Выберите профиль из списка...', attr: { 'data-select' : 'select2' }
-	}) }}
+        label: 'Закрепить за профилем', placeholder: 'Выберите профиль из списка...', attr: { 'data-select' : 'select2' }
+    }) }}
 
 <div class="d-flex justify-content-around pb-3 radio-buttons " data-buttons="true" style="clear: both;">
-	<label class="btn p-3 border-dotted rounded-3 w-100 {{ form.active.vars.data ? 'active' }}">
-		<div class="d-flex align-items-center">
-			<div class="flex-grow-1">
+    <label class="btn p-3 border-dotted rounded-3 w-100 {{ form.active.vars.data ? 'active' }}">
+        <div class="d-flex align-items-center">
+            <div class="flex-grow-1">
                 <span class="h5">
                     <div class="form-check d-flex align-items-center">
                         {{ form_widget(form.active, { label: false }) }}
@@ -27,7 +27,7 @@
                         </span>
                     </div>
                 </span>
-			</div>
-		</div>
-	</label>
+            </div>
+        </div>
+    </label>
 </div>

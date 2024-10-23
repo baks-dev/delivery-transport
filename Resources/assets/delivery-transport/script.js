@@ -1,16 +1,16 @@
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
- *
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,13 +22,16 @@
 
 let $addButton = document.getElementById('delivery_transport_form_add_driver');
 
-if ($addButton) {
+if($addButton)
+{
     /* Блок для новой коллекции */
     let $blockCollection = document.getElementById('delivery_transport_form-collection');
 
-    if ($blockCollection) {
+    if($blockCollection)
+    {
 
-        $addButton.addEventListener('click', function () {
+        $addButton.addEventListener('click', function()
+        {
 
             let $addButton = this;
             /* получаем прототип коллекции  */
@@ -36,7 +39,7 @@ if ($addButton) {
             let index = $addButton.dataset.index * 1;
 
             /* Замена '__name__' в HTML-коде прототипа
-            вместо этого будет число, основанное на том, сколько коллекций */
+             вместо этого будет число, основанное на том, сколько коллекций */
             newForm = newForm.replace(/__delivery_driver__/g, index);
 
             /* Вставляем новую коллекцию */
@@ -51,7 +54,7 @@ if ($addButton) {
             $blockCollection.append(div);
 
             /* применяем select2 */
-            new NiceSelect(div.querySelector('[data-select="select2"]'), { searchable: true });
+            new NiceSelect(div.querySelector('[data-select="select2"]'), {searchable: true});
 
 
             /* Добавить контактный номер телефона */
@@ -62,7 +65,7 @@ if ($addButton) {
             (div.querySelector('.del-item'))?.addEventListener('click', deleteItem);
 
 
-           // (div.querySelector('.del-item-call'))?.addEventListener('click', deleteCall);
+            // (div.querySelector('.del-item-call'))?.addEventListener('click', deleteCall);
 
 
             /* Увеличиваем data-index на 1 после вставки новой коллекции */
@@ -70,9 +73,6 @@ if ($addButton) {
 
             /* Плавная прокрутка к элементу */
             //div.scrollIntoView({block: "center", inline: "center", behavior: "smooth"});
-
-
-
 
 
         });
@@ -115,11 +115,13 @@ if ($addButton) {
 //     this.dataset.index = (index + 1).toString();
 // }
 
-document.querySelectorAll('.del-item').forEach(function (item) {
+document.querySelectorAll('.del-item').forEach(function(item)
+{
     item.addEventListener('click', deleteItem);
 });
 
-function deleteItem() {
+function deleteItem()
+{
 
     console.log(this.dataset.delete);
 

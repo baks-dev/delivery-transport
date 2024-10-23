@@ -1,17 +1,17 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
- *
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -42,7 +42,8 @@ final class DeliveryPackageModifyListener
     public function __construct(
         RequestStack $request,
         TokenStorageInterface $token,
-    ) {
+    )
+    {
         $this->request = $request;
         $this->token = $token;
     }
@@ -51,7 +52,8 @@ final class DeliveryPackageModifyListener
     {
         $token = $this->token->getToken();
 
-        if ($token) {
+        if($token)
+        {
 
             $data->setUsr($token->getUser());
 
@@ -64,7 +66,8 @@ final class DeliveryPackageModifyListener
         }
 
         // Если пользователь не из консоли
-        if ($this->request->getCurrentRequest()) {
+        if($this->request->getCurrentRequest())
+        {
             $data->upModifyAgent(
                 new IpAddress($this->request->getCurrentRequest()->getClientIp()), // Ip
                 $this->request->getCurrentRequest()->headers->get('User-Agent') // User-Agent
