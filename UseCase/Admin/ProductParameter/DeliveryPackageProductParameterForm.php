@@ -72,6 +72,12 @@ final class DeliveryPackageProductParameterForm extends AbstractType
         $builder->add('height', IntegerType::class);
 
 
+        /**
+         * Машиноместо
+         */
+        $builder->add('package', IntegerType::class, ['attr' => ['min' => 1]]);
+
+
         /* Сохранить ******************************************************/
         $builder->add(
             'product_stock_parameter',

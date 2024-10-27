@@ -99,10 +99,10 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
             ->createQueryBuilder(self::class)
             ->bindLocal();
 
-        $dbal->select('product.id');
-        $dbal->addSelect('product.event');
-
-        $dbal->from(Product::class, 'product');
+        $dbal
+            ->select('product.id')
+            ->addSelect('product.event')
+            ->from(Product::class, 'product');
 
         $dbal->join(
             'product',
@@ -122,14 +122,14 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
 
         /* ProductInfo */
 
-        $dbal->addSelect('product_info.url');
-
-        $dbal->leftJoin(
-            'product_event',
-            ProductInfo::class,
-            'product_info',
-            'product_info.product = product.id'
-        );
+        $dbal
+            ->addSelect('product_info.url')
+            ->leftJoin(
+                'product_event',
+                ProductInfo::class,
+                'product_info',
+                'product_info.product = product.id'
+            );
 
 
         /* Торговое предложение */
@@ -200,13 +200,14 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         );
 
         /* Тип множественного варианта торгового предложения */
-        $dbal->addSelect('category_offer_variation.reference as product_variation_reference');
-        $dbal->leftJoin(
-            'product_offer_variation',
-            CategoryProductVariation::TABLE,
-            'category_offer_variation',
-            'category_offer_variation.id = product_offer_variation.category_variation'
-        );
+        $dbal
+            ->addSelect('category_offer_variation.reference as product_variation_reference')
+            ->leftJoin(
+                'product_offer_variation',
+                CategoryProductVariation::TABLE,
+                'category_offer_variation',
+                'category_offer_variation.id = product_offer_variation.category_variation'
+            );
 
         /* Модификация множественного варианта */
         $dbal
@@ -229,13 +230,14 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
 
 
         /* Получаем тип модификации множественного варианта */
-        $dbal->addSelect('category_offer_modification.reference as product_modification_reference');
-        $dbal->leftJoin(
-            'product_offer_modification',
-            CategoryProductModification::class,
-            'category_offer_modification',
-            'category_offer_modification.id = product_offer_modification.category_modification'
-        );
+        $dbal
+            ->addSelect('category_offer_modification.reference as product_modification_reference')
+            ->leftJoin(
+                'product_offer_modification',
+                CategoryProductModification::class,
+                'category_offer_modification',
+                'category_offer_modification.id = product_offer_modification.category_modification'
+            );
 
 
         /* Артикул продукта */
@@ -347,29 +349,30 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         );
 
 
-        /** Длина, см  */
-        $dbal->addSelect('product_parameter.length AS product_parameter_length');
-        /** Ширина, см */
-        $dbal->addSelect('product_parameter.width AS product_parameter_width');
-        /** Высота, см */
-        $dbal->addSelect('product_parameter.height AS product_parameter_height');
-        /** Вес, кг */
-        $dbal->addSelect('product_parameter.weight AS product_parameter_weight');
-        /** Объем, см3 */
-        $dbal->addSelect('product_parameter.size AS product_parameter_size');
-
-
-        $dbal->leftJoin(
-            'product_offer_modification',
-            DeliveryPackageProductParameter::class,
-            'product_parameter',
-            'product_parameter.product = product.id AND 
+        $dbal
+            /** Длина, см  */
+            ->addSelect('product_parameter.length AS product_parameter_length')
+            /** Ширина, см */
+            ->addSelect('product_parameter.width AS product_parameter_width')
+            /** Высота, см */
+            ->addSelect('product_parameter.height AS product_parameter_height')
+            /** Вес, кг */
+            ->addSelect('product_parameter.weight AS product_parameter_weight')
+            /** Объем, см3 */
+            ->addSelect('product_parameter.size AS product_parameter_size')
+            /** Машиноместо */
+            ->addSelect('product_parameter.package AS product_parameter_package')
+            ->leftJoin(
+                'product_offer_modification',
+                DeliveryPackageProductParameter::class,
+                'product_parameter',
+                'product_parameter.product = product.id AND 
             (product_parameter.offer IS NULL OR product_parameter.offer = product_offer.const) AND
             (product_parameter.variation IS NULL OR product_parameter.variation = product_offer_variation.const) AND
             (product_parameter.modification IS NULL OR product_parameter.modification = product_offer_modification.const)
             
         '
-        );
+            );
 
         /**
          * Фильтр по свойства продукта

@@ -50,27 +50,22 @@ final class IndexController extends AbstractController
     {
         // Поиск
         $search = new SearchDTO();
-        $searchForm = $this->createForm(SearchForm::class, $search,
-            ['action' => $this->generateUrl('delivery-transport:admin.parameter.index')]
-        );
-        $searchForm->handleRequest($request);
 
-        //        // Фильтр
-        //        $filter = new ProductParameterFilterDTO($request);
-        //        $filterForm = $this->createForm(ProductParameterFilterForm::class, $filter);
-        //        $filterForm->handleRequest($request);
-
+        $searchForm = $this
+            ->createForm(SearchForm::class, $search,
+                ['action' => $this->generateUrl('delivery-transport:admin.parameter.index')]
+            )
+            ->handleRequest($request);
 
         /**
          * Фильтр продукции по ТП
          */
-        $filter = new ProductFilterDTO($request);
-        $filterForm = $this->createForm(ProductFilterForm::class, $filter, [
-            'action' => $this->generateUrl('delivery-transport:admin.parameter.index'),
-        ]);
+        $filter = new ProductFilterDTO();
 
-        $filterForm->handleRequest($request);
-        !$filterForm->isSubmitted() ?: $this->redirectToReferer();
+        $filterForm = $this
+            ->createForm(ProductFilterForm::class, $filter, [
+                'action' => $this->generateUrl('delivery-transport:admin.parameter.index'),
+            ])->handleRequest($request);
 
         // Получаем список
         $ProductParameter = $allProductParameter

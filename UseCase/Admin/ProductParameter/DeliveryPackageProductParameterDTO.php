@@ -89,6 +89,13 @@ final class DeliveryPackageProductParameterDTO implements DeliveryPackageProduct
     #[Assert\Range(min: 1)]
     private int $height;
 
+    /**
+     * Машиноместо
+     */
+    #[Assert\NotBlank]
+    #[Assert\Range(min: 1)]
+    private int $package = 1;
+
 
     /**
      * ID продукта.
@@ -209,5 +216,20 @@ final class DeliveryPackageProductParameterDTO implements DeliveryPackageProduct
     {
         $this->height = $height;
     }
+
+    /**
+     * Package
+     */
+    public function getPackage(): int
+    {
+        return $this->package;
+    }
+
+    public function setPackage(int $package): self
+    {
+        $this->package = $package;
+        return $this;
+    }
+
 
 }
