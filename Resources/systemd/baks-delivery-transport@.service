@@ -10,7 +10,7 @@
 # systemctl stop baks-delivery-transport@1.service
 
 [Unit]
-Description=Symfony messenger delivery-transport %i
+Description=delivery-transport
 StartLimitBurst=5
 StartLimitIntervalSec=0
 
