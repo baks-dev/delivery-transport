@@ -28,7 +28,7 @@ use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
-use BaksDev\Products\Stocks\Entity\Products\ProductStockProductInterface;
+use BaksDev\Products\Stocks\Entity\Stock\Products\ProductStockProductInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**

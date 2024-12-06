@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -43,7 +43,7 @@ use BaksDev\DeliveryTransport\UseCase\Admin\Package\NewEdit\Stocks\DeliveryPacka
 use BaksDev\DeliveryTransport\UseCase\Admin\Package\PackageTransport\DeliveryPackageTransportDTO;
 use BaksDev\DeliveryTransport\UseCase\Admin\Package\PackageTransport\DeliveryPackageTransportHandler;
 use BaksDev\Orders\Order\Repository\OrderDelivery\OrderDeliveryInterface;
-use BaksDev\Products\Stocks\Entity\Event\ProductStockEvent;
+use BaksDev\Products\Stocks\Entity\Stock\Event\ProductStockEvent;
 use BaksDev\Products\Stocks\Messenger\ProductStockMessage;
 use BaksDev\Products\Stocks\Repository\ExistProductStocksMoveOrder\ExistProductStocksMoveOrderInterface;
 use BaksDev\Products\Stocks\Repository\ProductStocksNewByOrder\ProductStocksNewByOrderInterface;

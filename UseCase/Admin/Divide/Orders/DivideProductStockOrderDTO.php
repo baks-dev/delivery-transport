@@ -26,7 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\DeliveryTransport\UseCase\Admin\Divide\Orders;
 
 use BaksDev\Orders\Order\Type\Id\OrderUid;
-use BaksDev\Products\Stocks\Entity\Orders\ProductStockOrderInterface;
+use BaksDev\Products\Stocks\Entity\Stock\Orders\ProductStockOrderInterface;
 
 /** @see ProductStockOrder */
 final class DivideProductStockOrderDTO implements ProductStockOrderInterface

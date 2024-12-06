@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -27,9 +27,9 @@ namespace BaksDev\DeliveryTransport\Messenger\Package\ProductStocks;
 
 use BaksDev\Core\Messenger\MessageDispatchInterface;
 use BaksDev\DeliveryTransport\Type\ProductStockStatus\ProductStockStatusDelivery;
-use BaksDev\Products\Stocks\Entity\Event\ProductStockEvent;
-use BaksDev\Products\Stocks\Entity\Products\ProductStockProduct;
-use BaksDev\Products\Stocks\Entity\ProductStockTotal;
+use BaksDev\Products\Stocks\Entity\Stock\Event\ProductStockEvent;
+use BaksDev\Products\Stocks\Entity\Stock\Products\ProductStockProduct;
+use BaksDev\Products\Stocks\Entity\Total\ProductStockTotal;
 use BaksDev\Products\Stocks\Messenger\ProductStockMessage;
 use BaksDev\Products\Stocks\Messenger\Stocks\SubProductStocksTotal\SubProductStocksTotalAndReserveMessage;
 use BaksDev\Products\Stocks\Repository\ProductStocksById\ProductStocksByIdInterface;

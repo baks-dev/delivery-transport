@@ -26,7 +26,7 @@ namespace BaksDev\DeliveryTransport\UseCase\Admin\Divide;
 use BaksDev\Core\Type\UidType\Uid;
 use BaksDev\DeliveryTransport\Type\ProductStockStatus\ProductStockStatusDivide;
 use BaksDev\Orders\Order\Entity\Event\OrderEventInterface;
-use BaksDev\Products\Stocks\Entity\Event\ProductStockEventInterface;
+use BaksDev\Products\Stocks\Entity\Stock\Event\ProductStockEventInterface;
 use BaksDev\Products\Stocks\Type\Event\ProductStockEventUid;
 use BaksDev\Products\Stocks\Type\Status\ProductStockStatus;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;

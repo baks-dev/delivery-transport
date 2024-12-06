@@ -30,8 +30,8 @@ use BaksDev\DeliveryTransport\Entity\Package\DeliveryPackage;
 use BaksDev\DeliveryTransport\Entity\Package\Stocks\DeliveryPackageStocks;
 use BaksDev\DeliveryTransport\Type\Package\Id\DeliveryPackageUid;
 use BaksDev\DeliveryTransport\Type\ProductStockStatus\ProductStockStatusDelivery;
-use BaksDev\Products\Stocks\Entity\Event\ProductStockEvent;
-use BaksDev\Products\Stocks\Entity\ProductStock;
+use BaksDev\Products\Stocks\Entity\Stock\Event\ProductStockEvent;
+use BaksDev\Products\Stocks\Entity\Stock\ProductStock;
 use BaksDev\Products\Stocks\Type\Status\ProductStockStatus;
 use BaksDev\Products\Stocks\Type\Status\ProductStockStatus\ProductStockStatusCompleted;
 

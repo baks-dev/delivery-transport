@@ -26,7 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed;
 
 use BaksDev\Core\Type\UidType\Uid;
-use BaksDev\Products\Stocks\Entity\Event\ProductStockEventInterface;
+use BaksDev\Products\Stocks\Entity\Stock\Event\ProductStockEventInterface;
 use BaksDev\Products\Stocks\Type\Event\ProductStockEventUid;
 use BaksDev\Products\Stocks\Type\Status\ProductStockStatus;
 use BaksDev\Products\Stocks\Type\Status\ProductStockStatus\ProductStockStatusCompleted;

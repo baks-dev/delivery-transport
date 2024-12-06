@@ -32,9 +32,9 @@ use BaksDev\DeliveryTransport\Type\Package\Event\DeliveryPackageEventUid;
 use BaksDev\Orders\Order\Entity\Order;
 use BaksDev\Orders\Order\Entity\User\Delivery\OrderDelivery;
 use BaksDev\Orders\Order\Entity\User\OrderUser;
-use BaksDev\Products\Stocks\Entity\Move\ProductStockMove;
-use BaksDev\Products\Stocks\Entity\Orders\ProductStockOrder;
-use BaksDev\Products\Stocks\Entity\ProductStock;
+use BaksDev\Products\Stocks\Entity\Stock\Move\ProductStockMove;
+use BaksDev\Products\Stocks\Entity\Stock\Orders\ProductStockOrder;
+use BaksDev\Products\Stocks\Entity\Stock\ProductStock;
 use BaksDev\Users\Profile\UserProfile\Entity\Personal\UserProfilePersonal;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
 

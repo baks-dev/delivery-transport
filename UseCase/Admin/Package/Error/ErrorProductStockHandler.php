@@ -26,8 +26,8 @@ declare(strict_types=1);
 namespace BaksDev\DeliveryTransport\UseCase\Admin\Package\Error;
 
 use BaksDev\Core\Entity\AbstractHandler;
-use BaksDev\Products\Stocks\Entity\Event\ProductStockEvent;
-use BaksDev\Products\Stocks\Entity\ProductStock;
+use BaksDev\Products\Stocks\Entity\Stock\Event\ProductStockEvent;
+use BaksDev\Products\Stocks\Entity\Stock\ProductStock;
 use DomainException;
 
 final class ErrorProductStockHandler extends AbstractHandler

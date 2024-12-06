@@ -23,7 +23,7 @@
 
 namespace BaksDev\DeliveryTransport\Controller\Admin\Package\Tests;
 
-use BaksDev\Products\Stocks\Entity\ProductStock;
+use BaksDev\Products\Stocks\Entity\Stock\ProductStock;
 use BaksDev\Products\Stocks\Type\Id\ProductStockUid;
 use BaksDev\Users\User\Tests\TestUserAccount;
 use Doctrine\ORM\EntityManagerInterface;

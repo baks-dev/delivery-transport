@@ -30,7 +30,7 @@ use BaksDev\DeliveryTransport\Repository\Package\ExistPackageProductStocks\Exist
 use BaksDev\DeliveryTransport\Repository\Package\PackageByProductStocks\PackageByProductStocksInterface;
 use BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed\CompletedPackageDTO;
 use BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed\CompletedPackageHandler;
-use BaksDev\Products\Stocks\Entity\Event\ProductStockEvent;
+use BaksDev\Products\Stocks\Entity\Stock\Event\ProductStockEvent;
 use BaksDev\Products\Stocks\Messenger\ProductStockMessage;
 use BaksDev\Products\Stocks\Repository\ProductStocksNewByOrder\ProductStocksNewByOrderInterface;
 use BaksDev\Products\Stocks\Type\Status\ProductStockStatus\ProductStockStatusIncoming;

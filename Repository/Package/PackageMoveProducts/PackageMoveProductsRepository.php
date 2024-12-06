@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\DeliveryTransport\Repository\Package\PackageMoveProducts;
 
 use BaksDev\DeliveryTransport\Entity\ProductParameter\DeliveryPackageProductParameter;
-use BaksDev\Products\Stocks\Entity\Products\ProductStockProduct;
+use BaksDev\Products\Stocks\Entity\Stock\Products\ProductStockProduct;
 use BaksDev\Products\Stocks\Type\Event\ProductStockEventUid;
 use Doctrine\DBAL\Connection;
 
