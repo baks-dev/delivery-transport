@@ -25,7 +25,7 @@ namespace BaksDev\DeliveryTransport\Type\ProductParameter\Weight\Kilogram;
 
 final class Kilogram
 {
-    public const TYPE = 'kilogram_type';
+    public const string TYPE = 'kilogram_type';
 
     private int|float|null $value;
 

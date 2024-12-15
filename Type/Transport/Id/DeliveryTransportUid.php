@@ -31,9 +31,9 @@ use Symfony\Component\Uid\AbstractUid;
 
 final class DeliveryTransportUid extends Uid
 {
-    public const TEST = '0188a997-f5a5-7c49-bc0d-ab94fbe0f83d';
+    public const string TEST = '0188a997-f5a5-7c49-bc0d-ab94fbe0f83d';
 
-    public const TYPE = 'delivery_auto';
+    public const string TYPE = 'delivery_auto';
 
     private mixed $attr;
 

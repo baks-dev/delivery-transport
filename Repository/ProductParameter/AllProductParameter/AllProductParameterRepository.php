@@ -204,7 +204,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
             ->addSelect('category_offer_variation.reference as product_variation_reference')
             ->leftJoin(
                 'product_offer_variation',
-                CategoryProductVariation::TABLE,
+                CategoryProductVariation::class,
                 'category_offer_variation',
                 'category_offer_variation.id = product_offer_variation.category_variation'
             );

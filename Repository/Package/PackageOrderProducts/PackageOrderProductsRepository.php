@@ -25,8 +25,12 @@ declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\Repository\Package\PackageOrderProducts;
 
+use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\DeliveryTransport\Entity\ProductParameter\DeliveryPackageProductParameter;
-use BaksDev\Orders\Order\Entity as EntityOrder;
+use BaksDev\Orders\Order\Entity\Event\OrderEvent;
+use BaksDev\Orders\Order\Entity\Order;
+use BaksDev\Orders\Order\Entity\Products\OrderProduct;
+use BaksDev\Orders\Order\Entity\Products\Price\OrderPrice;
 use BaksDev\Orders\Order\Type\Id\OrderUid;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
@@ -38,18 +42,11 @@ use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Stocks\Entity\Stock\Products\ProductStockProduct;
 use BaksDev\Products\Stocks\Type\Event\ProductStockEventUid;
-use Doctrine\DBAL\Connection;
 
-final class PackageOrderProductsRepository implements PackageOrderProductsInterface
+final readonly class PackageOrderProductsRepository implements PackageOrderProductsInterface
 {
-    private Connection $connection;
 
-    public function __construct(
-        Connection $connection,
-    )
-    {
-        $this->connection = $connection;
-    }
+    public function __construct(private DBALQueryBuilder $DBALQueryBuilder) {}
 
     /**
      * Метод получает продукт и его параметрами упаковки.
@@ -61,26 +58,26 @@ final class PackageOrderProductsRepository implements PackageOrderProductsInterf
         ?ProductModificationConst $modification
     ): array|bool
     {
-        $qb = $this->connection->createQueryBuilder();
+        $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
-        $qb->addSelect('parameter.size');
-        $qb->addSelect('parameter.weight');
+        $dbal->addSelect('parameter.size');
+        $dbal->addSelect('parameter.weight');
 
-        $qb->from(DeliveryPackageProductParameter::TABLE, 'parameter');
+        $dbal->from(DeliveryPackageProductParameter::class, 'parameter');
 
-        $qb->where('parameter.product = :product AND 
+        $dbal->where('parameter.product = :product AND 
             (parameter.offer IS NULL OR parameter.offer =  :offer) AND
             (parameter.variation IS NULL OR parameter.variation = :variation) AND
             (parameter.modification IS NULL OR parameter.modification = :modification)
         ');
 
-        $qb->setParameter('product', $product, ProductUid::TYPE);
-        $qb->setParameter('offer', $offer, ProductOfferConst::TYPE);
-        $qb->setParameter('variation', $variation, ProductVariationConst::TYPE);
-        $qb->setParameter('modification', $modification, ProductModificationConst::TYPE);
+        $dbal->setParameter('product', $product, ProductUid::TYPE);
+        $dbal->setParameter('offer', $offer, ProductOfferConst::TYPE);
+        $dbal->setParameter('variation', $variation, ProductVariationConst::TYPE);
+        $dbal->setParameter('modification', $modification, ProductModificationConst::TYPE);
 
 
-        return $qb->fetchAssociative();
+        return $dbal->fetchAssociative();
     }
 
     /**
@@ -88,21 +85,19 @@ final class PackageOrderProductsRepository implements PackageOrderProductsInterf
      */
     public function fetchAllPackageStocksProductsAssociative(ProductStockEventUid $event): array|bool
     {
-        $qb = $this->connection->createQueryBuilder();
+        $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
-        $qb->from(ProductStockProduct::TABLE, 'product');
+        $dbal->from(ProductStockProduct::class, 'product');
+        $dbal->where('product.event = :event');
+        $dbal->setParameter('event', $event, ProductStockEventUid::TYPE);
 
-        $qb->where('product.event = :event');
-        $qb->setParameter('event', $event, ProductStockEventUid::TYPE);
+        $dbal->addSelect('product.total');
+        $dbal->addSelect('parameter.size');
+        $dbal->addSelect('parameter.weight');
 
-        $qb->addSelect('product.total');
-
-        $qb->addSelect('parameter.size');
-        $qb->addSelect('parameter.weight');
-
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'product',
-            DeliveryPackageProductParameter::TABLE,
+            DeliveryPackageProductParameter::class,
             'parameter',
             'parameter.product = product.product AND 
             (parameter.offer IS NULL OR parameter.offer =  product.offer) AND
@@ -111,7 +106,7 @@ final class PackageOrderProductsRepository implements PackageOrderProductsInterf
             '
         );
 
-        return $qb->fetchAllAssociative();
+        return $dbal->fetchAllAssociative();
     }
 
     /**
@@ -119,70 +114,68 @@ final class PackageOrderProductsRepository implements PackageOrderProductsInterf
      */
     public function fetchAllPackageOrderProductsAssociative(OrderUid $order): array|bool
     {
-        $qb = $this->connection->createQueryBuilder();
+        $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
-        //$qb->select('product.*');
+        $dbal->from(Order::class, 'ord');
 
-        $qb->from(EntityOrder\Order::TABLE, 'ord');
-
-        $qb->join(
+        $dbal->join(
             'ord',
-            EntityOrder\Event\OrderEvent::TABLE,
+            OrderEvent::class,
             'event',
             'event.id = ord.event'
         );
 
-        $qb->join(
+        $dbal->join(
             'event',
-            EntityOrder\Products\OrderProduct::TABLE,
+            OrderProduct::class,
             'product',
             'product.event = ord.event'
         );
 
-        $qb->addSelect('price.total');
-        $qb->join(
+        $dbal->addSelect('price.total');
+        $dbal->join(
             'product',
-            EntityOrder\Products\Price\OrderPrice::TABLE,
+            OrderPrice::class,
             'price',
             'price.product = product.id'
         );
 
-        $qb->join(
+        $dbal->join(
             'product',
-            ProductEvent::TABLE,
+            ProductEvent::class,
             'product_event',
             'product_event.id = product.product'
         );
 
-        //$qb->addSelect('product_offer.const AS product_offer_const');
-        $qb->leftJoin(
+        //$dbal->addSelect('product_offer.const AS product_offer_const');
+        $dbal->leftJoin(
             'product',
-            ProductOffer::TABLE,
+            ProductOffer::class,
             'product_offer',
             'product_offer.id = product.offer'
         );
 
-        //$qb->addSelect('product_variation.const AS product_variation_const');
-        $qb->leftJoin(
+        //$dbal->addSelect('product_variation.const AS product_variation_const');
+        $dbal->leftJoin(
             'product',
-            ProductVariation::TABLE,
+            ProductVariation::class,
             'product_variation',
             'product_variation.id = product.variation'
         );
 
-        //$qb->addSelect('product_modification.const AS product_modification_const');
-        $qb->leftJoin(
+        //$dbal->addSelect('product_modification.const AS product_modification_const');
+        $dbal->leftJoin(
             'product',
-            ProductModification::TABLE,
+            ProductModification::class,
             'product_modification',
             'product_modification.id = product.modification'
         );
 
-        $qb->addSelect('parameter.size');
-        $qb->addSelect('parameter.weight');
-        $qb->leftJoin(
+        $dbal->addSelect('parameter.size');
+        $dbal->addSelect('parameter.weight');
+        $dbal->leftJoin(
             'product',
-            DeliveryPackageProductParameter::TABLE,
+            DeliveryPackageProductParameter::class,
             'parameter',
             'parameter.product = product_event.main AND 
             (parameter.offer IS NULL OR parameter.offer = product_offer.const) AND
@@ -191,8 +184,8 @@ final class PackageOrderProductsRepository implements PackageOrderProductsInterf
             '
         );
 
-        $qb->where('ord.id = :order');
-        $qb->setParameter('order', $order, OrderUid::TYPE);
-        return $qb->fetchAllAssociative();
+        $dbal->where('ord.id = :order');
+        $dbal->setParameter('order', $order, OrderUid::TYPE);
+        return $dbal->fetchAllAssociative();
     }
 }

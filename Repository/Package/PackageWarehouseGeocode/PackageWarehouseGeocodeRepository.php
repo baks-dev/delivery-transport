@@ -87,37 +87,10 @@ final class PackageWarehouseGeocodeRepository implements PackageWarehouseGeocode
             ->addSelect('profile_personal.longitude')
             ->join(
                 'profile',
-                UserProfilePersonal::TABLE,
+                UserProfilePersonal::class,
                 'profile_personal',
                 'profile_personal.event = profile.event'
             );
-
-
-        //        $qb->addSelect('warehouse.id');
-        //        $qb->join(
-        //            'transport_event',
-        //            ContactsRegionCall::TABLE,
-        //            'warehouse',
-        //            'warehouse.const = transport_event.warehouse'
-        //        );
-
-        //        $qb->join(
-        //            'warehouse',
-        //            ContactsRegion::TABLE,
-        //            'warehouse_region',
-        //            'warehouse_region.event = warehouse.event'
-        //        );
-
-
-        //        $qb->addSelect('warehouse_info.latitude');
-        //        $qb->addSelect('warehouse_info.longitude');
-        //
-        //        $qb->join(
-        //            'warehouse',
-        //            ContactsRegionCallInfo::TABLE,
-        //            'warehouse_info',
-        //            'warehouse_info.call = warehouse.id'
-        //        );
 
 
         return $qb

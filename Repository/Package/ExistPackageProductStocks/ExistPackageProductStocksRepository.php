@@ -61,25 +61,25 @@ final class ExistPackageProductStocksRepository implements ExistPackageProductSt
 
         //$qbExist->select('1');
 
-        $qbExist->from(DeliveryPackage::TABLE, 'package');
+        $qbExist->from(DeliveryPackage::class, 'package');
 
         $qbExist->join(
             'package',
-            DeliveryPackageStocks::TABLE,
+            DeliveryPackageStocks::class,
             'package_stock',
             'package_stock.event = package.event'
         );
 
         $qbExist->join(
             'package_stock',
-            ProductStock::TABLE,
+            ProductStock::class,
             'product_stock',
             'product_stock.id = package_stock.stock'
         );
 
         $qbExist->join(
             'product_stock',
-            ProductStockEvent::TABLE,
+            ProductStockEvent::class,
             'product_stock_event',
             'product_stock_event.id = product_stock.event AND product_stock_event.status != :status'
         );
@@ -108,35 +108,38 @@ final class ExistPackageProductStocksRepository implements ExistPackageProductSt
         //$qbExist->select('1');
 
         $qbExist
-            ->from(DeliveryPackage::TABLE, 'package')
+            ->from(DeliveryPackage::class, 'package')
             ->where('package.id = :package')
             ->setParameter('package', $package, DeliveryPackageUid::TYPE);
 
         $qbExist->join(
             'package',
-            DeliveryPackageStocks::TABLE,
+            DeliveryPackageStocks::class,
             'package_stock',
             'package_stock.event = package.event'
         );
 
         $qbExist->join(
             'package_stock',
-            ProductStock::TABLE,
+            ProductStock::class,
             'product_stock',
             'product_stock.id = package_stock.stock'
         );
 
         $qbExist->join(
             'product_stock',
-            ProductStockEvent::TABLE,
+            ProductStockEvent::class,
             'product_stock_event',
             'product_stock_event.id = product_stock.event AND
                 product_stock_event.status != :completed  
             '
         );
 
-        $completed = new ProductStockStatus(ProductStockStatusCompleted::class);
-        $qbExist->setParameter('completed', $completed, ProductStockStatus::TYPE);
+        $qbExist->setParameter(
+            'completed',
+            ProductStockStatusCompleted::class,
+            ProductStockStatus::TYPE
+        );
 
         return $qbExist->fetchExist();
     }

@@ -108,7 +108,7 @@ final class AllDeliveryTransportRepository implements AllDeliveryTransportInterf
         $qb
             ->leftJoin(
                 'event',
-                UserProfile::TABLE,
+                UserProfile::class,
                 'users_profile',
                 'users_profile.id = event.profile'
             );
@@ -119,7 +119,7 @@ final class AllDeliveryTransportRepository implements AllDeliveryTransportInterf
 
         $qb->leftJoin(
             'users_profile',
-            UserProfilePersonal::TABLE,
+            UserProfilePersonal::class,
             'users_profile_personal',
             'users_profile_personal.event = users_profile.event'
         );
