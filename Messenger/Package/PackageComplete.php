@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -31,32 +31,20 @@ use BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed\CompletedPackageDT
 use BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed\CompletedPackageHandler;
 use BaksDev\Products\Stocks\Messenger\ProductStockMessage;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 final class PackageComplete
 {
-    private LoggerInterface $logger;
-    private ExistPackageProductStocksInterface $existPackageProductStocks;
-
-    private PackageByProductStocksInterface $packageByProductStocks;
-
-    private CompletedPackageHandler $completedPackageHandler;
-
 
     public function __construct(
-        LoggerInterface $deliveryTransportLogger,
-        ExistPackageProductStocksInterface $existPackageProductStocks,
-        PackageByProductStocksInterface $packageByProductStocks,
-        CompletedPackageHandler $completedPackageHandler,
+        #[Target('deliveryTransportLogger')] private readonly LoggerInterface $logger,
+        private readonly ExistPackageProductStocksInterface $existPackageProductStocks,
+        private readonly PackageByProductStocksInterface $packageByProductStocks,
+        private readonly CompletedPackageHandler $completedPackageHandler,
 
-    )
-    {
-        $this->logger = $deliveryTransportLogger;
-        $this->existPackageProductStocks = $existPackageProductStocks;
-        $this->packageByProductStocks = $packageByProductStocks;
-        $this->completedPackageHandler = $completedPackageHandler;
-    }
+    ) {}
 
     /**
      *  Если все заказы выданы - меняем статус путевого листа на "ВЫПОЛНЕН"

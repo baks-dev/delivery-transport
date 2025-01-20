@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -36,77 +36,21 @@ use BaksDev\Products\Stocks\Repository\ProductStocksNewByOrder\ProductStocksNewB
 use BaksDev\Products\Stocks\Type\Status\ProductStockStatus\ProductStockStatusIncoming;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler(priority: 999)]
 final class PackageByProductStocksIncoming
 {
-    private EntityManagerInterface $entityManager;
-
-    private LoggerInterface $logger;
-
-    private ExistPackageProductStocksInterface $existPackageProductStocks;
-
-    private PackageByProductStocksInterface $packageByProductStocks;
-
-    private CompletedPackageHandler $completedPackageHandler;
-
-    private ProductStocksNewByOrderInterface $productStocksNewByOrder;
-
-    private MessageDispatchInterface $messageDispatch;
-
-
-    //    private ExistProductStocksMoveOrderInterface $existMoveOrder;
-    //    private AllDeliveryTransportRegionInterface $allDeliveryTransportRegion;
-    //    private OrderDeliveryInterface $orderDelivery;
-    //    private GeocodeDistance $geocodeDistance;
-    //    private PackageOrderProductsInterface $packageOrderProducts;
-    //    private DeliveryPackageHandler $deliveryPackageHandler;
-    //    private DeliveryPackageTransportHandler $packageTransportHandler;
-    //    private ExistStockPackageInterface $existStockPackage;
-    //    private ErrorProductStockHandler $errorProductStockHandler;
-
-
     public function __construct(
-        EntityManagerInterface $entityManager,
-        LoggerInterface $deliveryTransportLogger,
-        ExistPackageProductStocksInterface $existPackageProductStocks,
-        PackageByProductStocksInterface $packageByProductStocks,
-        CompletedPackageHandler $completedPackageHandler,
-        ProductStocksNewByOrderInterface $productStocksNewByOrder,
-        MessageDispatchInterface $messageDispatch,
-
-        //ExistProductStocksMoveOrderInterface $existMoveOrder,
-        //AllDeliveryTransportRegionInterface $allDeliveryTransportRegion,
-        //OrderDeliveryInterface $orderDelivery,
-        //GeocodeDistance $geocodeDistance,
-        //PackageOrderProductsInterface $packageOrderProducts,
-        //DeliveryPackageHandler $deliveryPackageHandler,
-        //DeliveryPackageTransportHandler $packageTransportHandler,
-        //ExistStockPackageInterface $existStockPackage,
-        //ErrorProductStockHandler $errorProductStockHandler,
-    )
-    {
-        $this->entityManager = $entityManager;
-        $this->logger = $deliveryTransportLogger;
-        $this->existPackageProductStocks = $existPackageProductStocks;
-        $this->packageByProductStocks = $packageByProductStocks;
-        $this->completedPackageHandler = $completedPackageHandler;
-        $this->productStocksNewByOrder = $productStocksNewByOrder;
-        $this->messageDispatch = $messageDispatch;
-
-        //$this->existMoveOrder = $existMoveOrder;
-        //$this->allDeliveryTransportRegion = $allDeliveryTransportRegion;
-        //$this->orderDelivery = $orderDelivery;
-        //$this->geocodeDistance = $geocodeDistance;
-        //$this->packageOrderProducts = $packageOrderProducts;
-        //$this->deliveryPackageHandler = $deliveryPackageHandler;
-        //$this->packageTransportHandler = $packageTransportHandler;
-        //$this->existOrderPackage = $existOrderPackage;
-        //$this->existStockPackage = $existStockPackage;
-        //$this->errorProductStockHandler = $errorProductStockHandler;
-
-    }
+        #[Target('deliveryTransportLogger')] private readonly LoggerInterface $logger,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly ExistPackageProductStocksInterface $existPackageProductStocks,
+        private readonly PackageByProductStocksInterface $packageByProductStocks,
+        private readonly CompletedPackageHandler $completedPackageHandler,
+        private readonly ProductStocksNewByOrderInterface $productStocksNewByOrder,
+        private readonly MessageDispatchInterface $messageDispatch,
+    ) {}
 
     /**
      * Добавляем складскую заявку в путевку при поступлении на склад по заказу.

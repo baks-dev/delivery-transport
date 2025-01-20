@@ -57,75 +57,30 @@ use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use DomainException;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler(priority: 999)]
 final class NewPackageByProductStocks
 {
-    private EntityManagerInterface $entityManager;
-
-    private ExistProductStocksMoveOrderInterface $existMoveOrder;
-
-    private AllDeliveryTransportRegionInterface $allDeliveryTransportRegion;
-
-    private OrderDeliveryInterface $orderDelivery;
-
-    private GeocodeDistance $geocodeDistance;
-
-    private PackageOrderProductsInterface $packageOrderProducts;
-
-    private DeliveryPackageHandler $deliveryPackageHandler;
-
-    private DeliveryPackageTransportHandler $packageTransportHandler;
-
-    private LoggerInterface $logger;
-
-    private ExistStockPackageInterface $existStockPackage;
-
-    private ErrorProductStockHandler $errorProductStockHandler;
-
-    private ProductStocksNewByOrderInterface $productStocksNewByOrder;
-
-    private MessageDispatchInterface $messageDispatch;
-
-    private UserProfileGpsInterface $userProfileGps;
-
-    private ExistPackageProductStocksInterface $existPackageProductStocks;
-
     public function __construct(
-        UserProfileGpsInterface $userProfileGps,
-        EntityManagerInterface $entityManager,
-        ExistProductStocksMoveOrderInterface $existMoveOrder,
-        AllDeliveryTransportRegionInterface $allDeliveryTransportRegion,
-        OrderDeliveryInterface $orderDelivery,
-        GeocodeDistance $geocodeDistance,
-        PackageOrderProductsInterface $packageOrderProducts,
-        DeliveryPackageHandler $deliveryPackageHandler,
-        DeliveryPackageTransportHandler $packageTransportHandler,
-        LoggerInterface $deliveryTransportLogger,
-        ExistStockPackageInterface $existStockPackage,
-        ErrorProductStockHandler $errorProductStockHandler,
-        ProductStocksNewByOrderInterface $productStocksNewByOrder,
-        MessageDispatchInterface $messageDispatch,
-        ExistPackageProductStocksInterface $existPackageProductStocks
-    )
-    {
-        $this->entityManager = $entityManager;
-        $this->existMoveOrder = $existMoveOrder;
-        $this->allDeliveryTransportRegion = $allDeliveryTransportRegion;
-        $this->orderDelivery = $orderDelivery;
-        $this->geocodeDistance = $geocodeDistance;
-        $this->packageOrderProducts = $packageOrderProducts;
-        $this->deliveryPackageHandler = $deliveryPackageHandler;
-        $this->packageTransportHandler = $packageTransportHandler;
-        $this->logger = $deliveryTransportLogger;
-        $this->existStockPackage = $existStockPackage;
-        $this->errorProductStockHandler = $errorProductStockHandler;
-        $this->productStocksNewByOrder = $productStocksNewByOrder;
-        $this->messageDispatch = $messageDispatch;
-        $this->userProfileGps = $userProfileGps;
-        $this->existPackageProductStocks = $existPackageProductStocks;
-    }
+        #[Target('deliveryTransportLogger')] private readonly LoggerInterface $logger,
+        private readonly UserProfileGpsInterface $userProfileGps,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly ExistProductStocksMoveOrderInterface $existMoveOrder,
+        private readonly AllDeliveryTransportRegionInterface $allDeliveryTransportRegion,
+        private readonly OrderDeliveryInterface $orderDelivery,
+        private readonly GeocodeDistance $geocodeDistance,
+        private readonly PackageOrderProductsInterface $packageOrderProducts,
+        private readonly DeliveryPackageHandler $deliveryPackageHandler,
+        private readonly DeliveryPackageTransportHandler $packageTransportHandler,
+
+        private readonly ExistStockPackageInterface $existStockPackage,
+        private readonly ErrorProductStockHandler $errorProductStockHandler,
+        private readonly ProductStocksNewByOrderInterface $productStocksNewByOrder,
+        private readonly MessageDispatchInterface $messageDispatch,
+        private readonly ExistPackageProductStocksInterface $existPackageProductStocks
+    ) {}
 
     /**
      * Добавляем складскую заявку в путевку.

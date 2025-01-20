@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -33,33 +33,18 @@ use BaksDev\Products\Stocks\UseCase\Admin\Warehouse\WarehouseProductStockHandler
 use BaksDev\Users\Profile\UserProfile\Repository\UserByUserProfile\UserByUserProfileInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 final class NewProductStocksWarehouseByMove
 {
-    private EntityManagerInterface $entityManager;
-
-    private WarehouseProductStockHandler $WarehouseProductStockHandler;
-
-    private UserByUserProfileInterface $userByUserProfile;
-
-    private LoggerInterface $logger;
-
-
     public function __construct(
-        UserByUserProfileInterface $userByUserProfile,
-        EntityManagerInterface $entityManager,
-        LoggerInterface $deliveryTransportLogger,
-        WarehouseProductStockHandler $WarehouseProductStockHandler,
-    )
-    {
-
-        $this->entityManager = $entityManager;
-        $this->WarehouseProductStockHandler = $WarehouseProductStockHandler;
-        $this->userByUserProfile = $userByUserProfile;
-        $this->logger = $deliveryTransportLogger;
-    }
+        #[Target('deliveryTransportLogger')] private readonly LoggerInterface $logger,
+        private readonly UserByUserProfileInterface $userByUserProfile,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly WarehouseProductStockHandler $WarehouseProductStockHandler,
+    ) {}
 
     /**
      * Создаем приход на склад при перемещении продукции между складами по заказу когда заявка Completed «Выдан по месту назначения»

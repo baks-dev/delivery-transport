@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -32,30 +32,8 @@ use DomainException;
 
 final class ErrorProductStockHandler extends AbstractHandler
 {
-    //    private EntityManagerInterface $entityManager;
-    //
-    //    private ValidatorInterface $validator;
-    //
-    //    private LoggerInterface $logger;
-    //
-    //    private MessageDispatchInterface $messageDispatch;
-    //
-    //    public function __construct(
-    //        EntityManagerInterface $entityManager,
-    //        ValidatorInterface $validator,
-    //        LoggerInterface $logger,
-    //        MessageDispatchInterface $messageDispatch
-    //    )
-    //    {
-    //        $this->entityManager = $entityManager;
-    //        $this->validator = $validator;
-    //        $this->logger = $logger;
-    //        $this->messageDispatch = $messageDispatch;
-    //    }
 
-    public function handle(
-        ErrorProductStockDTO $command,
-    ): string|ProductStock
+    public function handle(ErrorProductStockDTO $command): string|ProductStock
     {
         /** Валидация  $command */
         $this->validatorCollection->add($command);

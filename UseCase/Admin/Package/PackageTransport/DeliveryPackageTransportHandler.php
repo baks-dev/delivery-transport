@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -30,26 +30,8 @@ use BaksDev\DeliveryTransport\Entity\Package\DeliveryPackageTransport;
 
 final class DeliveryPackageTransportHandler extends AbstractHandler
 {
-    //    private EntityManagerInterface $entityManager;
-    //
-    //    private ValidatorInterface $validator;
-    //
-    //    private LoggerInterface $logger;
-    //
-    //    public function __construct(
-    //        EntityManagerInterface $entityManager,
-    //        ValidatorInterface $validator,
-    //        LoggerInterface $logger,
-    //    ) {
-    //        $this->entityManager = $entityManager;
-    //        $this->validator = $validator;
-    //        $this->logger = $logger;
-    //    }
 
-
-    public function handle(
-        DeliveryPackageTransportDTO $command,
-    ): string|DeliveryPackageTransport
+    public function handle(DeliveryPackageTransportDTO $command): string|DeliveryPackageTransport
     {
 
         /** Валидация  $command */
