@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -173,9 +173,10 @@ final class DeliveryPackageProductParameterDTO implements DeliveryPackageProduct
         return $this->weight;
     }
 
-    public function setWeight(Kilogram $weight): void
+    public function setWeight(Kilogram $weight): self
     {
         $this->weight = $weight;
+        return $this;
     }
 
     /**
@@ -186,9 +187,10 @@ final class DeliveryPackageProductParameterDTO implements DeliveryPackageProduct
         return $this->length;
     }
 
-    public function setLength(int $length): void
+    public function setLength(int $length): self
     {
         $this->length = $length;
+        return $this;
     }
 
     /**
@@ -199,9 +201,10 @@ final class DeliveryPackageProductParameterDTO implements DeliveryPackageProduct
         return $this->width;
     }
 
-    public function setWidth(int $width): void
+    public function setWidth(int $width): self
     {
         $this->width = $width;
+        return $this;
     }
 
     /**
@@ -212,9 +215,10 @@ final class DeliveryPackageProductParameterDTO implements DeliveryPackageProduct
         return $this->height;
     }
 
-    public function setHeight(int $height): void
+    public function setHeight(int $height): self
     {
         $this->height = $height;
+        return $this;
     }
 
     /**

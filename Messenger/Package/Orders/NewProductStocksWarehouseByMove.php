@@ -89,7 +89,7 @@ final class NewProductStocksWarehouseByMove
 
         $User = $this->userByUserProfile
             ->forProfile($ProductStockEvent->getProfile())
-            ->findUser();
+            ->find();
 
         $WarehouseProductStockDTO = new WarehouseProductStockDTO($User);
         $ProductStockEvent->getDto($WarehouseProductStockDTO);

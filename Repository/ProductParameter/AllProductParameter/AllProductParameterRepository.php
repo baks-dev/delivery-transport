@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -173,20 +173,20 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         /* Множественные варианты торгового предложения */
 
         $dbal
-            ->addSelect('product_offer_variation.value as product_variation_value')
-            ->addSelect('product_offer_variation.const as product_variation_const')
-            ->addSelect('product_offer_variation.postfix as product_variation_postfix')
+            ->addSelect('product_variation.value as product_variation_value')
+            ->addSelect('product_variation.const as product_variation_const')
+            ->addSelect('product_variation.postfix as product_variation_postfix')
             ->leftJoin(
                 'product_offer',
                 ProductVariation::class,
-                'product_offer_variation',
-                'product_offer_variation.offer = product_offer.id'
+                'product_variation',
+                'product_variation.offer = product_offer.id'
             );
 
 
         if($this->filter?->getVariation())
         {
-            $dbal->andWhere('product_offer_variation.value = :variation');
+            $dbal->andWhere('product_variation.value = :variation');
             $dbal->setParameter('variation', $this->filter->getVariation());
         }
 
@@ -196,35 +196,35 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
             'category_offer_variation',
             ProductVariationPrice::class,
             'product_variation_price',
-            'product_variation_price.variation = product_offer_variation.id'
+            'product_variation_price.variation = product_variation.id'
         );
 
         /* Тип множественного варианта торгового предложения */
         $dbal
             ->addSelect('category_offer_variation.reference as product_variation_reference')
             ->leftJoin(
-                'product_offer_variation',
+                'product_variation',
                 CategoryProductVariation::class,
                 'category_offer_variation',
-                'category_offer_variation.id = product_offer_variation.category_variation'
+                'category_offer_variation.id = product_variation.category_variation'
             );
 
         /* Модификация множественного варианта */
         $dbal
-            ->addSelect('product_offer_modification.value as product_modification_value')
-            ->addSelect('product_offer_modification.const as product_modification_const')
-            ->addSelect('product_offer_modification.postfix as product_modification_postfix')
+            ->addSelect('product_modification.value as product_modification_value')
+            ->addSelect('product_modification.const as product_modification_const')
+            ->addSelect('product_modification.postfix as product_modification_postfix')
             ->leftJoin(
-                'product_offer_variation',
+                'product_variation',
                 ProductModification::class,
-                'product_offer_modification',
-                'product_offer_modification.variation = product_offer_variation.id '
+                'product_modification',
+                'product_modification.variation = product_variation.id '
             );
 
 
         if($this->filter?->getModification())
         {
-            $dbal->andWhere('product_offer_modification.value = :modification');
+            $dbal->andWhere('product_modification.value = :modification');
             $dbal->setParameter('modification', $this->filter->getModification());
         }
 
@@ -233,10 +233,10 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         $dbal
             ->addSelect('category_offer_modification.reference as product_modification_reference')
             ->leftJoin(
-                'product_offer_modification',
+                'product_modification',
                 CategoryProductModification::class,
                 'category_offer_modification',
-                'category_offer_modification.id = product_offer_modification.category_modification'
+                'category_offer_modification.id = product_modification.category_modification'
             );
 
 
@@ -246,8 +246,8 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         $dbal->addSelect(
             '
 					CASE
-					   WHEN product_offer_modification.article IS NOT NULL THEN product_offer_modification.article
-					   WHEN product_offer_variation.article IS NOT NULL THEN product_offer_variation.article
+					   WHEN product_modification.article IS NOT NULL THEN product_modification.article
+					   WHEN product_variation.article IS NOT NULL THEN product_variation.article
 					   WHEN product_offer.article IS NOT NULL THEN product_offer.article
 					   WHEN product_info.article IS NOT NULL THEN product_info.article
 					   ELSE NULL
@@ -267,8 +267,8 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         $dbal->leftJoin(
             'product_offer',
             ProductVariationImage::class,
-            'product_offer_variation_image',
-            'product_offer_variation_image.variation = product_offer_variation.id AND product_offer_variation_image.root = true'
+            'product_variation_image',
+            'product_variation_image.variation = product_variation.id AND product_variation_image.root = true'
         );
 
         $dbal->leftJoin(
@@ -281,8 +281,8 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         $dbal->addSelect(
             "
 			CASE
-			   WHEN product_offer_variation_image.name IS NOT NULL THEN
-					CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_offer_variation_image.name)
+			   WHEN product_variation_image.name IS NOT NULL THEN
+					CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_variation_image.name)
 			   WHEN product_offer_images.name IS NOT NULL THEN
 					CONCAT ( '/upload/".$dbal->table(ProductOfferImage::class)."' , '/', product_offer_images.name)
 			   WHEN product_photo.name IS NOT NULL THEN
@@ -295,8 +295,8 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         /* Флаг загрузки файла CDN */
         $dbal->addSelect('
 			CASE
-			   WHEN product_offer_variation_image.name IS NOT NULL THEN
-					product_offer_variation_image.ext
+			   WHEN product_variation_image.name IS NOT NULL THEN
+					product_variation_image.ext
 			   WHEN product_offer_images.name IS NOT NULL THEN
 					product_offer_images.ext
 			   WHEN product_photo.name IS NOT NULL THEN
@@ -308,8 +308,8 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         /* Флаг загрузки файла CDN */
         $dbal->addSelect('
 			CASE
-			   WHEN product_offer_variation_image.name IS NOT NULL THEN
-					product_offer_variation_image.cdn
+			   WHEN product_variation_image.name IS NOT NULL THEN
+					product_variation_image.cdn
 			   WHEN product_offer_images.name IS NOT NULL THEN
 					product_offer_images.cdn
 			   WHEN product_photo.name IS NOT NULL THEN
@@ -351,25 +351,41 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
 
         $dbal
             /** Длина, см  */
-            ->addSelect('product_parameter.length AS product_parameter_length')
+            ->addSelect('product_package.length AS product_parameter_length')
             /** Ширина, см */
-            ->addSelect('product_parameter.width AS product_parameter_width')
+            ->addSelect('product_package.width AS product_parameter_width')
             /** Высота, см */
-            ->addSelect('product_parameter.height AS product_parameter_height')
+            ->addSelect('product_package.height AS product_parameter_height')
             /** Вес, кг */
-            ->addSelect('product_parameter.weight AS product_parameter_weight')
+            ->addSelect('product_package.weight AS product_parameter_weight')
             /** Объем, см3 */
-            ->addSelect('product_parameter.size AS product_parameter_size')
+            ->addSelect('product_package.size AS product_parameter_size')
             /** Машиноместо */
-            ->addSelect('product_parameter.package AS product_parameter_package')
+            ->addSelect('product_package.package AS product_parameter_package')
             ->leftJoin(
-                'product_offer_modification',
+                'product_modification',
                 DeliveryPackageProductParameter::class,
-                'product_parameter',
-                'product_parameter.product = product.id AND 
-            (product_parameter.offer IS NULL OR product_parameter.offer = product_offer.const) AND
-            (product_parameter.variation IS NULL OR product_parameter.variation = product_offer_variation.const) AND
-            (product_parameter.modification IS NULL OR product_parameter.modification = product_offer_modification.const)
+                'product_package',
+                'product_package.product = product.id  AND 
+                    
+                    (
+                        (product_offer.const IS NOT NULL AND product_package.offer = product_offer.const) OR 
+                        (product_offer.const IS NULL AND product_package.offer IS NULL)
+                    )
+                    
+                    AND
+                     
+                    (
+                        (product_variation.const IS NOT NULL AND product_package.variation = product_variation.const) OR 
+                        (product_variation.const IS NULL AND product_package.variation IS NULL)
+                    )
+                     
+                   AND
+                   
+                   (
+                        (product_modification.const IS NOT NULL AND product_package.modification = product_modification.const) OR 
+                        (product_modification.const IS NULL AND product_package.modification IS NULL)
+                   )
             
         '
             );
@@ -400,7 +416,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         }
 
 
-        $dbal->addOrderBy('product_parameter.id', 'DESC');
+        $dbal->addOrderBy('product_package.id', 'DESC');
 
         if($this->search?->getQuery())
         {
@@ -421,7 +437,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
 
                     $dbal
                         ->createSearchQueryBuilder($this->search)
-                        ->addSearchInArray('product_offer_modification.id', array_column($data, "id"));
+                        ->addSearchInArray('product_modification.id', array_column($data, "id"));
 
                     return $this->paginator->fetchAllAssociative($dbal);
                 }
@@ -453,8 +469,8 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
                 //->addSearchLike('product_trans.preview')
                 ->addSearchLike('product_info.article')
                 ->addSearchLike('product_offer.article')
-                ->addSearchLike('product_offer_modification.article')
-                ->addSearchLike('product_offer_variation.article');
+                ->addSearchLike('product_modification.article')
+                ->addSearchLike('product_variation.article');
 
             $dbal->addOrderBy('product.event', 'DESC');
 

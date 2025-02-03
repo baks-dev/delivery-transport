@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -49,16 +49,32 @@ final class PackageMoveProductsRepository implements PackageMoveProductsInterfac
             ->setParameter('event', $event, ProductStockEventUid::TYPE);
 
         $qb
-            ->addSelect('parameter.size')
-            ->addSelect('parameter.weight')
+            ->addSelect('product_package.size')
+            ->addSelect('product_package.weight')
             ->leftJoin(
                 'product',
                 DeliveryPackageProductParameter::class,
-                'parameter',
-                'parameter.product = product.product AND 
-            (parameter.offer IS NULL OR parameter.offer = product.offer) AND
-            (parameter.variation IS NULL OR parameter.variation = product.variation) AND
-            (parameter.modification IS NULL OR parameter.modification = product.modification)
+                'product_package',
+                'product_package.product = product.product AND 
+                    
+                    (
+                        (product_offer.const IS NOT NULL AND product_package.offer = product_offer.const) OR 
+                        (product_offer.const IS NULL AND product_package.offer IS NULL)
+                    )
+                    
+                    AND
+                     
+                    (
+                        (product_variation.const IS NOT NULL AND product_package.variation = product_variation.const) OR 
+                        (product_variation.const IS NULL AND product_package.variation IS NULL)
+                    )
+                     
+                   AND
+                   
+                   (
+                        (product_modification.const IS NOT NULL AND product_package.modification = product_modification.const) OR 
+                        (product_modification.const IS NULL AND product_package.modification IS NULL)
+                   )
             ');
 
         return $qb->fetchAllAssociative();

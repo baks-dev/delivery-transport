@@ -85,7 +85,7 @@ final class UpdateOrderStatusByDelivery
 
             $User = $this->userByUserProfile
                 ->forProfile($ProductStockEvent->getProfile())
-                ->findUser();
+                ->find();
 
             /** Обновляем статус заказа на "Доставка" (Delivery) */
             $OrderStatusDTO = new OrderStatusDTO(
