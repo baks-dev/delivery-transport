@@ -98,7 +98,7 @@ final class DivideController extends AbstractController
              */
             $Order = $currentOrderEvent
                 ->forOrder($ProductStockEvent->getOrder())
-                ->execute();
+                ->find();
         }
 
 
