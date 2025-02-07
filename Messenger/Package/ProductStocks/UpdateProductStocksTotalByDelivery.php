@@ -87,7 +87,7 @@ final readonly class UpdateProductStocksTotalByDelivery
                     ->getRepository(ProductStockTotal::class)
                     ->findOneBy(
                         [
-                            'profile' => $ProductStockEvent->getProfile(),
+                            'profile' => $ProductStockEvent->getStocksProfile(),
                             'product' => $product->getProduct(),
                             'offer' => $product->getOffer(),
                             'variation' => $product->getVariation(),
@@ -100,7 +100,7 @@ final readonly class UpdateProductStocksTotalByDelivery
                     $this->logger->error('Ошибка при обновлении складских остатков. Не удалось получить остаток продукции.',
                         [
                             self::class.':'.__LINE__,
-                            'profile' => $ProductStockEvent->getProfile(),
+                            'profile' => $ProductStockEvent->getStocksProfile(),
                             'product' => $product->getProduct(),
                             'offer' => $product->getOffer(),
                             'variation' => $product->getVariation(),
@@ -120,7 +120,7 @@ final readonly class UpdateProductStocksTotalByDelivery
                     $this->logger->error('Ошибка при обновлении складских остатков. Не достаточно баланса на складе.',
                         [
                             self::class.':'.__LINE__,
-                            'profile' => $ProductStockEvent->getProfile(),
+                            'profile' => $ProductStockEvent->getStocksProfile(),
                             'product' => $product->getProduct(),
                             'offer' => $product->getOffer(),
                             'variation' => $product->getVariation(),
@@ -140,7 +140,7 @@ final readonly class UpdateProductStocksTotalByDelivery
                 for($i = 1; $i <= $product->getTotal(); $i++)
                 {
                     $SubProductStocksTotalMessage = new SubProductStocksTotalAndReserveMessage(
-                        $ProductStockEvent->getProfile(),
+                        $ProductStockEvent->getStocksProfile(),
                         $product->getProduct(),
                         $product->getOffer(),
                         $product->getVariation(),
@@ -156,7 +156,7 @@ final readonly class UpdateProductStocksTotalByDelivery
                 $this->logger->info('Перевели баланс продукции '.$key.' со склада на баланс транспорта (Доставка)',
                     [
                         self::class.':'.__LINE__,
-                        'profile' => $ProductStockEvent->getProfile(),
+                        'profile' => $ProductStockEvent->getStocksProfile(),
                         'product' => $product->getProduct(),
                         'offer' => $product->getOffer(),
                         'variation' => $product->getVariation(),

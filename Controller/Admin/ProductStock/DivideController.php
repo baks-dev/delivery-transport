@@ -150,11 +150,11 @@ final class DivideController extends AbstractController
 
             /** Получаем транспорт, закрепленный за складом */
             $DeliveryTransportRegion = $allDeliveryTransportRegion
-                ->getDeliveryTransportRegionGps($ProductStockEvent->getProfile());
+                ->getDeliveryTransportRegionGps($ProductStockEvent->getStocksProfile());
 
             if(!$DeliveryTransportRegion)
             {
-                throw new DomainException(sprintf('За складом ID: %s не закреплено ни одного транспорта', $ProductStockEvent->getProfile()));
+                throw new DomainException(sprintf('За складом ID: %s не закреплено ни одного транспорта', $ProductStockEvent->getStocksProfile()));
             }
 
             /*** Определяем постледовательность транспорта */

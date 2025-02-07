@@ -84,14 +84,14 @@ final class UpdateOrderStatusByDelivery
         {
 
             $User = $this->userByUserProfile
-                ->forProfile($ProductStockEvent->getProfile())
+                ->forProfile($ProductStockEvent->getStocksProfile())
                 ->find();
 
             /** Обновляем статус заказа на "Доставка" (Delivery) */
             $OrderStatusDTO = new OrderStatusDTO(
                 OrderStatusDelivery::class,
                 $OrderEvent->getId(),
-                $ProductStockEvent->getProfile()
+                $ProductStockEvent->getStocksProfile()
             );
 
             $this->OrderStatusHandler->handle($OrderStatusDTO);
@@ -99,7 +99,7 @@ final class UpdateOrderStatusByDelivery
             // Отправляем сокет для скрытия заказа у других менеджеров
             $this->CentrifugoPublish
                 ->addData(['order' => (string) $ProductStockEvent->getOrder()])
-                ->addData(['profile' => (string) $ProductStockEvent->getProfile()])
+                ->addData(['profile' => (string) $ProductStockEvent->getStocksProfile()])
                 ->send('orders');
 
 
@@ -108,7 +108,7 @@ final class UpdateOrderStatusByDelivery
                 [
                     self::class.':'.__LINE__,
                     'order' => (string) $ProductStockEvent->getOrder(),
-                    'profile' => (string) $ProductStockEvent->getProfile()
+                    'profile' => (string) $ProductStockEvent->getStocksProfile()
                 ]
             );
 

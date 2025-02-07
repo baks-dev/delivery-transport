@@ -225,7 +225,7 @@ final class NewPackageByProductStocks
 
 
         /* Получаем геоданные склада упаковки (Профиля) */
-        $UserProfileGps = $this->userProfileGps->findUserProfileGps($ProductStockEvent->getProfile());
+        $UserProfileGps = $this->userProfileGps->findUserProfileGps($ProductStockEvent->getStocksProfile());
 
         if(!$UserProfileGps)
         {
@@ -233,7 +233,7 @@ final class NewPackageByProductStocks
 
             $this->logger->critical($msg, [
                 self::class.':'.__LINE__,
-                'profile' => (string) $ProductStockEvent->getProfile()
+                'profile' => (string) $ProductStockEvent->getStocksProfile()
             ]);
 
             if($isConsumer)
@@ -264,7 +264,7 @@ final class NewPackageByProductStocks
 
         /** Получаем транспорт, закрепленный за складом */
         $DeliveryTransportRegion = $this->allDeliveryTransportRegion
-            ->getDeliveryTransportRegionGps($ProductStockEvent->getProfile());
+            ->getDeliveryTransportRegionGps($ProductStockEvent->getStocksProfile());
 
         if(!$DeliveryTransportRegion)
         {
@@ -272,7 +272,7 @@ final class NewPackageByProductStocks
 
             $this->logger->critical($msg, [
                 self::class.':'.__LINE__,
-                'profile' => (string) $ProductStockEvent->getProfile()
+                'profile' => (string) $ProductStockEvent->getStocksProfile()
             ]);
 
             return;
