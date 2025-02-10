@@ -30,7 +30,6 @@ use BaksDev\Products\Stocks\Entity\Stock\Event\ProductStockEventInterface;
 use BaksDev\Products\Stocks\Type\Event\ProductStockEventUid;
 use BaksDev\Products\Stocks\Type\Status\ProductStockStatus;
 use BaksDev\Products\Stocks\Type\Status\ProductStockStatus\ProductStockStatusCompleted;
-use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /** @see MaterialStockEvent */
@@ -41,21 +40,15 @@ final readonly class CompletedProductStockDTO implements ProductStockEventInterf
     #[Assert\Uuid]
     private ProductStockEventUid $id;
 
-    /** Ответственное лицо (Профиль пользователя) */
-    #[Assert\NotBlank]
-    #[Assert\Uuid]
-    private UserProfileUid $profile;
-
     /** Статус заявки - Выдана клиенту */
     #[Assert\NotBlank]
     private ProductStockStatus $status;
 
 
-    public function __construct(ProductStockEventUid $id, UserProfileUid $profile)
+    public function __construct(ProductStockEventUid $id)
     {
         $this->status = new ProductStockStatus(ProductStockStatusCompleted::class);
         $this->id = $id;
-        $this->profile = $profile;
     }
 
     public function getEvent(): ?Uid
@@ -63,16 +56,8 @@ final readonly class CompletedProductStockDTO implements ProductStockEventInterf
         return $this->id;
     }
 
-    /** Ответственное лицо (Профиль пользователя) */
-    public function getProfile(): ?UserProfileUid
-    {
-        return $this->profile;
-    }
-
-    /** Статус заявки - Доставляется */
     public function getStatus(): ProductStockStatus
     {
         return $this->status;
     }
-
 }
