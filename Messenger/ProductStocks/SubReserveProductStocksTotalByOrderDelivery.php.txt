@@ -44,6 +44,9 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+/**
+ * Снимаем резерв со склада при статусе "ДОСТАВКА"
+ */
 #[AsMessageHandler]
 final readonly class SubReserveProductStocksTotalByOrderDelivery
 {
@@ -55,9 +58,7 @@ final readonly class SubReserveProductStocksTotalByOrderDelivery
         private MessageDispatchInterface $messageDispatch
     ) {}
 
-    /**
-     * Снимаем резерв со склада при статусе "ДОСТАВКА"
-     */
+
     public function __invoke(OrderMessage $message): void
     {
         /** TODO: */

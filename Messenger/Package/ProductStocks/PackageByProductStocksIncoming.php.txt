@@ -40,16 +40,16 @@ use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler(priority: 999)]
-final class PackageByProductStocksIncoming
+final readonly class PackageByProductStocksIncoming
 {
     public function __construct(
-        #[Target('deliveryTransportLogger')] private readonly LoggerInterface $logger,
-        private readonly EntityManagerInterface $entityManager,
-        private readonly ExistPackageProductStocksInterface $existPackageProductStocks,
-        private readonly PackageByProductStocksInterface $packageByProductStocks,
-        private readonly CompletedPackageHandler $completedPackageHandler,
-        private readonly ProductStocksNewByOrderInterface $productStocksNewByOrder,
-        private readonly MessageDispatchInterface $messageDispatch,
+        #[Target('deliveryTransportLogger')] private LoggerInterface $logger,
+        private EntityManagerInterface $entityManager,
+        private ExistPackageProductStocksInterface $existPackageProductStocks,
+        private PackageByProductStocksInterface $packageByProductStocks,
+        private CompletedPackageHandler $completedPackageHandler,
+        private ProductStocksNewByOrderInterface $productStocksNewByOrder,
+        private MessageDispatchInterface $messageDispatch,
     ) {}
 
     /**
