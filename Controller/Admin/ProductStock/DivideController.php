@@ -277,12 +277,12 @@ final class DivideController extends AbstractController
                     foreach($DivideProductStockDTO->getProduct() as $product)
                     {
                         /* Параметры упаковки товара */
-                        $parameter = $packageOrderProducts->fetchParameterProductAssociative(
-                            $product->getProduct(),
-                            $product->getOffer(),
-                            $product->getVariation(),
-                            $product->getModification()
-                        );
+                        $parameter = $packageOrderProducts
+                            ->product($product->getProduct())
+                            ->offerConst($product->getOffer())
+                            ->variationConst($product->getVariation())
+                            ->modificationConst($product->getModification())
+                            ->find();
 
                         if(empty($parameter['size']) || empty($parameter['weight']))
                         {

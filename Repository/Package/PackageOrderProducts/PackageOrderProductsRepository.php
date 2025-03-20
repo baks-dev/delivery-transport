@@ -42,39 +42,147 @@ use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Stocks\Entity\Stock\Products\ProductStockProduct;
 use BaksDev\Products\Stocks\Type\Event\ProductStockEventUid;
+use InvalidArgumentException;
 
-final readonly class PackageOrderProductsRepository implements PackageOrderProductsInterface
+final  class PackageOrderProductsRepository implements PackageOrderProductsInterface
 {
+    private ProductUid|false $product = false;
 
-    public function __construct(private DBALQueryBuilder $DBALQueryBuilder) {}
+    private ProductOfferConst|false $offer = false;
+
+    private ProductVariationConst|false $variation = false;
+
+    private ProductModificationConst|false $modification = false;
+
+    public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
+
+    public function product(ProductUid $product): self
+    {
+        $this->product = $product;
+        return $this;
+    }
+
+    public function offerConst(ProductOfferConst|string|null|false $offer): self
+    {
+        if(empty($offer))
+        {
+            $this->offer = false;
+            return $this;
+        }
+
+        if(is_string($offer))
+        {
+            $offer = new ProductOfferConst($offer);
+        }
+
+        $this->offer = $offer;
+
+        return $this;
+    }
+
+    public function variationConst(ProductVariationConst|string|null|false $variation): self
+    {
+        if(empty($variation))
+        {
+            $this->variation = false;
+            return $this;
+        }
+
+        if(is_string($variation))
+        {
+            $variation = new ProductVariationConst($variation);
+        }
+
+        $this->variation = $variation;
+
+        return $this;
+    }
+
+    public function modificationConst(ProductModificationConst|string|null|false $modification): self
+    {
+        if(empty($modification))
+        {
+            $this->modification = false;
+            return $this;
+        }
+
+        if(is_string($modification))
+        {
+            $modification = new ProductModificationConst($modification);
+        }
+
+        $this->modification = $modification;
+        return $this;
+    }
+
 
     /**
      * Метод получает продукт и его параметрами упаковки.
      */
-    public function fetchParameterProductAssociative(
-        ProductUid $product,
-        ?ProductOfferConst $offer,
-        ?ProductVariationConst $variation,
-        ?ProductModificationConst $modification
-    ): array|bool
+    public function find(): array|bool
     {
+        if(false === ($this->product instanceof ProductUid))
+        {
+            throw new InvalidArgumentException('Invalid Argument Product');
+        }
+
         $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
-        $dbal->addSelect('parameter.size');
-        $dbal->addSelect('parameter.weight');
+        $dbal
+            ->addSelect('parameter.size')
+            ->addSelect('parameter.weight')
+            ->from(DeliveryPackageProductParameter::class, 'parameter')
+            ->where('parameter.product = :product')
+            ->setParameter(
+                key: 'product',
+                value: $this->product,
+                type: ProductUid::TYPE
+            );
 
-        $dbal->from(DeliveryPackageProductParameter::class, 'parameter');
+        if($this->offer)
+        {
+            $dbal
+                ->andWhere('parameter.offer =  :offer')
+                ->setParameter(
+                    key: 'offer',
+                    value: $this->offer,
+                    type: ProductOfferConst::TYPE);
+        }
+        else
+        {
+            $dbal->andWhere('parameter.offer IS NULL');
+        }
 
-        $dbal->where('parameter.product = :product AND 
-            (parameter.offer IS NULL OR parameter.offer =  :offer) AND
-            (parameter.variation IS NULL OR parameter.variation = :variation) AND
-            (parameter.modification IS NULL OR parameter.modification = :modification)
-        ');
 
-        $dbal->setParameter('product', $product, ProductUid::TYPE);
-        $dbal->setParameter('offer', $offer, ProductOfferConst::TYPE);
-        $dbal->setParameter('variation', $variation, ProductVariationConst::TYPE);
-        $dbal->setParameter('modification', $modification, ProductModificationConst::TYPE);
+        if($this->variation)
+        {
+            $dbal
+                ->andWhere('parameter.variation = :variation')
+                ->setParameter(
+                    key: 'variation',
+                    value: $this->variation,
+                    type: ProductVariationConst::TYPE
+                );
+        }
+        else
+        {
+            $dbal->andWhere('parameter.variation IS NULL');
+        }
+
+        if($this->modification)
+        {
+            $dbal
+                ->andWhere('parameter.modification = :modification')
+                ->setParameter(
+                    key: 'modification',
+                    value: $this->modification,
+                    type: ProductModificationConst::TYPE
+                );
+        }
+        else
+        {
+            $dbal->andWhere('parameter.modification IS NULL');
+        }
 
 
         return $dbal->fetchAssociative();
@@ -216,8 +324,10 @@ final readonly class PackageOrderProductsRepository implements PackageOrderProdu
             '
         );
 
-        $dbal->where('ord.id = :order');
-        $dbal->setParameter('order', $order, OrderUid::TYPE);
+        $dbal
+            ->where('ord.id = :order')
+            ->setParameter('order', $order, OrderUid::TYPE);
+
         return $dbal->fetchAllAssociative();
     }
 }
