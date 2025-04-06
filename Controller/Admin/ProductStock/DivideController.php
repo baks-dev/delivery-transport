@@ -40,6 +40,7 @@ use BaksDev\Orders\Order\Entity\Order;
 use BaksDev\Orders\Order\Repository\CurrentOrderEvent\CurrentOrderEventInterface;
 use BaksDev\Orders\Order\Repository\OrderDelivery\OrderDeliveryInterface;
 use BaksDev\Orders\Order\Type\Status\OrderStatus;
+use BaksDev\Orders\Order\Type\Status\OrderStatus\Collection\OrderStatusPackage;
 use BaksDev\Orders\Order\UseCase\Admin\Edit\EditOrderDTO;
 use BaksDev\Orders\Order\UseCase\Admin\Edit\EditOrderHandler;
 use BaksDev\Orders\Order\UseCase\User\Basket\Add\OrderProductDTO;
@@ -413,7 +414,7 @@ final class DivideController extends AbstractController
                     }
 
                     $newOrder->resetId();
-                    $newOrder->setStatus(new OrderStatus(new OrderStatus\OrderStatusPackage()));
+                    $newOrder->setStatus(new OrderStatus(OrderStatusPackage::class));
 
 
                     /** @var OrderProductDTO $orderProduct */
