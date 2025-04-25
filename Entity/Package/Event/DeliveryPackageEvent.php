@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -43,8 +43,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'delivery_package_event')]
 class DeliveryPackageEvent extends EntityEvent
 {
-    public const TABLE = 'delivery_package_event';
-
     /** ID */
     #[Assert\NotBlank]
     #[Assert\Uuid]
@@ -59,20 +57,12 @@ class DeliveryPackageEvent extends EntityEvent
     private ?DeliveryPackageUid $main = null;
 
     /** Модификатор */
-    #[ORM\OneToOne(targetEntity: DeliveryPackageModify::class, mappedBy: 'event', cascade: ['all'])]
+    #[ORM\OneToOne(targetEntity: DeliveryPackageModify::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
     private DeliveryPackageModify $modify;
 
 
-    //    /** Заказы в поставке */
-    //    #[ORM\OneToMany(targetEntity: DeliveryPackageOrder::class, mappedBy: 'event', cascade: ['all'])]
-    //    private Collection $ord;
-
-    //    /** Заявки для перемещения */
-    //    #[ORM\OneToMany(targetEntity: DeliveryPackageMove::class, mappedBy: 'event', cascade: ['all'])]
-    //    private Collection $move;
-
     /** Заявки для перемещения */
-    #[ORM\OneToMany(targetEntity: DeliveryPackageStocks::class, mappedBy: 'event', cascade: ['all'])]
+    #[ORM\OneToMany(targetEntity: DeliveryPackageStocks::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
     private Collection $stock;
 
 

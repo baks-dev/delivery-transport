@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -26,21 +26,16 @@ declare(strict_types=1);
 namespace BaksDev\DeliveryTransport\Repository\Transport\AllDeliveryTransportRegion;
 
 use BaksDev\Core\Doctrine\ORMQueryBuilder;
-use BaksDev\DeliveryTransport\Entity\Transport as DeliveryTransportEntity;
+use BaksDev\DeliveryTransport\Entity\Transport\DeliveryTransport;
+use BaksDev\DeliveryTransport\Entity\Transport\Event\DeliveryTransportEvent;
+use BaksDev\DeliveryTransport\Entity\Transport\Parameter\DeliveryTransportParameter;
+use BaksDev\DeliveryTransport\Entity\Transport\Region\DeliveryTransportRegion;
 use BaksDev\DeliveryTransport\Type\Transport\Id\DeliveryTransportUid;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
 final class AllDeliveryTransportRegionRepository implements AllDeliveryTransportRegionInterface
 {
-
-
-    private ORMQueryBuilder $ORMQueryBuilder;
-
-    public function __construct(ORMQueryBuilder $ORMQueryBuilder,)
-    {
-
-        $this->ORMQueryBuilder = $ORMQueryBuilder;
-    }
+    public function __construct(private readonly ORMQueryBuilder $ORMQueryBuilder) {}
 
     /**
      * Метод получает массив идентификаторов транспорта с геоданными региона обслуживания
@@ -49,14 +44,17 @@ final class AllDeliveryTransportRegionRepository implements AllDeliveryTransport
     {
         $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
-        $select = sprintf('new %s(transport.id, region.latitude, region.longitude, parameter.size, parameter.carrying)', DeliveryTransportUid::class);
+        $select = sprintf(
+            'new %s(transport.id, region.latitude, region.longitude, parameter.size, parameter.carrying)',
+            DeliveryTransportUid::class
+        );
 
         $qb->select($select);
 
-        $qb->from(DeliveryTransportEntity\DeliveryTransport::class, 'transport');
+        $qb->from(DeliveryTransport::class, 'transport');
 
         $qb->join(
-            DeliveryTransportEntity\Event\DeliveryTransportEvent::class,
+            DeliveryTransportEvent::class,
             'event',
             'WITH',
             'event.id = transport.event AND event.active = true AND event.profile = :profile'
@@ -64,22 +62,20 @@ final class AllDeliveryTransportRegionRepository implements AllDeliveryTransport
             ->setParameter('profile', $profile, UserProfileUid::TYPE);
 
         $qb->join(
-            DeliveryTransportEntity\Region\DeliveryTransportRegion::class,
+            DeliveryTransportRegion::class,
             'region',
             'WITH',
             'region.event = event.id'
         );
 
         $qb->join(
-            DeliveryTransportEntity\Parameter\DeliveryTransportParameter::class,
+            DeliveryTransportParameter::class,
             'parameter',
             'WITH',
             'parameter.event = event.id'
         );
 
-
         /* Кешируем результат ORM */
-        return $qb->enableCache('delivery-transport', 86400)->getResult();
-
+        return $qb->enableCache('delivery-transport', '1 day')->getResult();
     }
 }

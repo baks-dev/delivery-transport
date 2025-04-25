@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -50,8 +50,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Index(columns: ['profile'])]
 class DeliveryTransportEvent extends EntityEvent
 {
-    public const TABLE = 'delivery_transport_event';
-
     /** ID */
     #[Assert\NotBlank]
     #[Assert\Uuid]
@@ -82,27 +80,27 @@ class DeliveryTransportEvent extends EntityEvent
     private ?UserProfileUid $profile = null;
 
     /** Модификатор */
-    #[ORM\OneToOne(targetEntity: DeliveryTransportModify::class, mappedBy: 'event', cascade: ['all'])]
+    #[ORM\OneToOne(targetEntity: DeliveryTransportModify::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
     private DeliveryTransportModify $modify;
 
     /** Перевод */
     #[Assert\Valid]
-    #[ORM\OneToMany(targetEntity: DeliveryTransportTrans::class, mappedBy: 'event', cascade: ['all'])]
+    #[ORM\OneToMany(targetEntity: DeliveryTransportTrans::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
     private Collection $translate;
 
     /** Параметры автомобиля */
     #[Assert\Valid]
-    #[ORM\OneToOne(targetEntity: DeliveryTransportParameter::class, mappedBy: 'event', cascade: ['all'])]
+    #[ORM\OneToOne(targetEntity: DeliveryTransportParameter::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
     private DeliveryTransportParameter $parameter;
 
     /** Регион обслуживания */
     #[Assert\Valid]
-    #[ORM\OneToOne(targetEntity: DeliveryTransportRegion::class, mappedBy: 'event', cascade: ['all'])]
+    #[ORM\OneToOne(targetEntity: DeliveryTransportRegion::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
     private DeliveryTransportRegion $region;
 
     /** Водители */
     #[Assert\Valid]
-    #[ORM\OneToMany(targetEntity: DeliveryTransportDriver::class, mappedBy: 'event', cascade: ['all'])]
+    #[ORM\OneToMany(targetEntity: DeliveryTransportDriver::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
     private Collection $driver;
 
     public function __construct()
