@@ -21,40 +21,23 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\DeliveryTransport\Controller\Admin\Transport\Tests;
+namespace BaksDev\DeliveryTransport\Controller\Admin\Package\Tests;
 
-use BaksDev\DeliveryTransport\Type\Transport\Event\DeliveryTransportEventUid;
-use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Tests\DeliveryTransportNewTest;
 use BaksDev\Users\User\Tests\TestUserAccount;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
-/**
- * @group delivery-transport
- * @group delivery-transport-transport
- *
- * @depends BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Tests\DeliveryTransportNewTest::class
- */
+/** @group delivery-transport */
 #[When(env: 'test')]
-final class EditControllerTest extends WebTestCase
+final class IndexAdminControllerTest extends WebTestCase
 {
-    private const string URL = '/admin/delivery/transport/edit/%s';
+    private const string URL = '/admin/delivery/packages';
 
-    private const string ROLE = 'ROLE_DELIVERY_TRANSPORT_EDIT';
+    private const string ROLE = 'ROLE_DELIVERY_PACKAGE';
 
-    //    private static ?DeliveryTransportEventUid $identifier;
-    //
-    //    public static function setUpBeforeClass(): void
-    //    {
-    //        // Получаем одно из событий Продукта
-    //        $em = self::getContainer()->get(EntityManagerInterface::class);
-    //        self::$identifier = $em->getRepository(DeliveryTransport::class)->findOneBy([], ['id' => 'DESC'])?->getEvent();
-    //    }
-
-    /** Доступ по роли */
+    /** Доступ по роли ROLE_PRODUCT */
     public function testRoleSuccessful(): void
     {
-
         self::ensureKernelShutdown();
         $client = static::createClient();
 
@@ -65,21 +48,17 @@ final class EditControllerTest extends WebTestCase
             $usr = TestUserAccount::getModer(self::ROLE);
 
             $client->loginUser($usr, 'user');
-            $client->request('GET', sprintf(self::URL, DeliveryTransportEventUid::TEST));
+            $client->request('GET', self::URL);
 
-            //self::assertResponseIsSuccessful();
-            /** Другому профилю не принадлежит */
-            self::assertResponseStatusCodeSame(500);
+            self::assertResponseIsSuccessful();
         }
 
         self::assertTrue(true);
-
     }
 
-    // доступ по роли ROLE_ADMIN
+    /** Доступ по роли ROLE_ADMIN */
     public function testRoleAdminSuccessful(): void
     {
-
         self::ensureKernelShutdown();
         $client = static::createClient();
 
@@ -90,19 +69,17 @@ final class EditControllerTest extends WebTestCase
             $usr = TestUserAccount::getAdmin();
 
             $client->loginUser($usr, 'user');
-            $client->request('GET', sprintf(self::URL, DeliveryTransportEventUid::TEST));
+            $client->request('GET', self::URL);
 
             self::assertResponseIsSuccessful();
         }
 
         self::assertTrue(true);
-
     }
 
-    // доступ по роли ROLE_USER
-    public function testRoleUserDeny(): void
+    /** Доступ по роли ROLE_USER */
+    public function testRoleUserFiled(): void
     {
-
         self::ensureKernelShutdown();
         $client = static::createClient();
 
@@ -112,19 +89,17 @@ final class EditControllerTest extends WebTestCase
 
             $usr = TestUserAccount::getUsr();
             $client->loginUser($usr, 'user');
-            $client->request('GET', sprintf(self::URL, DeliveryTransportEventUid::TEST));
+            $client->request('GET', self::URL);
 
             self::assertResponseStatusCodeSame(403);
         }
 
         self::assertTrue(true);
-
     }
 
     /** Доступ по без роли */
     public function testGuestFiled(): void
     {
-
         self::ensureKernelShutdown();
         $client = static::createClient();
 
@@ -132,13 +107,12 @@ final class EditControllerTest extends WebTestCase
         {
             $client->setServerParameter('HTTP_USER_AGENT', $device);
 
-            $client->request('GET', sprintf(self::URL, DeliveryTransportEventUid::TEST));
+            $client->request('GET', self::URL);
 
             // Full authentication is required to access this resource
             self::assertResponseStatusCodeSame(401);
         }
 
         self::assertTrue(true);
-
     }
 }

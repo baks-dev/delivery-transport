@@ -1,17 +1,17 @@
 <?php
 /*
  *  Copyright 2025.  Baks.dev <admin@baks.dev>
- *
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,37 +21,34 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\DeliveryTransport\Controller\Admin\Package\Tests;
+namespace BaksDev\DeliveryTransport\Controller\Admin\ProductParameter\Tests;
 
-use BaksDev\Products\Stocks\Entity\Stock\ProductStock;
-use BaksDev\Products\Stocks\Type\Id\ProductStockUid;
+use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Users\User\Tests\TestUserAccount;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
-/**
- * @group delivery-transport
- */
+/** @group delivery-transport */
 #[When(env: 'test')]
-final class CompleteControllerTest extends WebTestCase
+final class EditAdminControllerTest extends WebTestCase
 {
-    private const string URL = '/admin/delivery/package/completed/%s';
+    private const string URL = '/admin/delivery/package/parameter/%s';
 
-    private const string ROLE = 'ROLE_DELIVERY_PACKAGE_COMPLETED';
+    private const string ROLE = 'ROLE_DELIVERY_PACKAGE_PARAMETER_EDIT';
 
-    private static ?ProductStockUid $identifier = null;
+    private static ?ProductUid $identifier = null;
 
     public static function setUpBeforeClass(): void
     {
         // Получаем одно из событий Продукта
         $em = self::getContainer()->get(EntityManagerInterface::class);
-        self::$identifier = $em->getRepository(ProductStock::class)->findOneBy([], ['id' => 'DESC'])?->getId();
+        self::$identifier = $em->getRepository(Product::class)->findOneBy([], ['id' => 'DESC'])?->getId();
 
         $em->clear();
         //$em->close();
     }
-
 
     /** Доступ по роли */
     public function testRoleSuccessful(): void
@@ -78,7 +75,6 @@ final class CompleteControllerTest extends WebTestCase
         }
 
         self::assertTrue(true);
-
     }
 
     // доступ по роли ROLE_ADMIN
@@ -133,7 +129,6 @@ final class CompleteControllerTest extends WebTestCase
 
         self::assertTrue(true);
     }
-
 
     /** Доступ по без роли */
     public function testGuestFiled(): void

@@ -21,34 +21,37 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\DeliveryTransport\Controller\Admin\ProductParameter\Tests;
+namespace BaksDev\DeliveryTransport\Controller\Admin\Package\Tests;
 
-use BaksDev\Products\Product\Entity\Product;
-use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Stocks\Entity\Stock\ProductStock;
+use BaksDev\Products\Stocks\Type\Id\ProductStockUid;
 use BaksDev\Users\User\Tests\TestUserAccount;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
-/** @group delivery-transport */
+/**
+ * @group delivery-transport
+ */
 #[When(env: 'test')]
-final class EditControllerTest extends WebTestCase
+final class CompleteAdminControllerTest extends WebTestCase
 {
-    private const string URL = '/admin/delivery/package/parameter/%s';
+    private const string URL = '/admin/delivery/package/completed/%s';
 
-    private const string ROLE = 'ROLE_DELIVERY_PACKAGE_PARAMETER_EDIT';
+    private const string ROLE = 'ROLE_DELIVERY_PACKAGE_COMPLETED';
 
-    private static ?ProductUid $identifier = null;
+    private static ?ProductStockUid $identifier = null;
 
     public static function setUpBeforeClass(): void
     {
         // Получаем одно из событий Продукта
         $em = self::getContainer()->get(EntityManagerInterface::class);
-        self::$identifier = $em->getRepository(Product::class)->findOneBy([], ['id' => 'DESC'])?->getId();
+        self::$identifier = $em->getRepository(ProductStock::class)->findOneBy([], ['id' => 'DESC'])?->getId();
 
         $em->clear();
         //$em->close();
     }
+
 
     /** Доступ по роли */
     public function testRoleSuccessful(): void
@@ -75,6 +78,7 @@ final class EditControllerTest extends WebTestCase
         }
 
         self::assertTrue(true);
+
     }
 
     // доступ по роли ROLE_ADMIN
@@ -129,6 +133,7 @@ final class EditControllerTest extends WebTestCase
 
         self::assertTrue(true);
     }
+
 
     /** Доступ по без роли */
     public function testGuestFiled(): void

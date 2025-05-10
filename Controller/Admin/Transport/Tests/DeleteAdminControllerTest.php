@@ -21,21 +21,52 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\DeliveryTransport\Controller\Admin\Package\Tests;
+namespace BaksDev\DeliveryTransport\Controller\Admin\Transport\Tests;
 
+use BaksDev\DeliveryTransport\Type\Transport\Event\DeliveryTransportEventUid;
+use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Tests\DeliveryTransportNewTest;
 use BaksDev\Users\User\Tests\TestUserAccount;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
-/** @group delivery-transport */
+/**
+ * @group delivery-transport
+ * @group delivery-transport-transport
+ *
+ * @depends BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Tests\DeliveryTransportNewTest::class
+ */
 #[When(env: 'test')]
-final class IndexControllerTest extends WebTestCase
+final class DeleteAdminControllerTest extends WebTestCase
 {
-    private const string URL = '/admin/delivery/packages';
+    private const string URL = '/admin/delivery/transport/delete/%s';
 
-    private const string ROLE = 'ROLE_DELIVERY_PACKAGE';
+    private const string ROLE = 'ROLE_DELIVERY_TRANSPORT_DELETE';
 
-    /** Доступ по роли ROLE_PRODUCT */
+
+    // доступ по роли ROLE_ADMIN
+    public function testRoleAdminSuccessful(): void
+    {
+
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        foreach(TestUserAccount::getDevice() as $device)
+        {
+            $client->setServerParameter('HTTP_USER_AGENT', $device);
+
+            $usr = TestUserAccount::getAdmin();
+
+            $client->loginUser($usr, 'user');
+            $client->request('GET', sprintf(self::URL, DeliveryTransportEventUid::TEST));
+
+            self::assertResponseIsSuccessful();
+        }
+
+        self::assertTrue(true);
+    }
+
+
+    /** Доступ по роли */
     public function testRoleSuccessful(): void
     {
         self::ensureKernelShutdown();
@@ -48,38 +79,21 @@ final class IndexControllerTest extends WebTestCase
             $usr = TestUserAccount::getModer(self::ROLE);
 
             $client->loginUser($usr, 'user');
-            $client->request('GET', self::URL);
+            $client->request('GET', sprintf(self::URL, DeliveryTransportEventUid::TEST));
 
-            self::assertResponseIsSuccessful();
+            //self::assertResponseIsSuccessful();
+
+            self::assertResponseStatusCodeSame(500);
         }
 
         self::assertTrue(true);
+
     }
 
-    /** Доступ по роли ROLE_ADMIN */
-    public function testRoleAdminSuccessful(): void
+    // доступ по роли ROLE_USER
+    public function testRoleUserDeny(): void
     {
-        self::ensureKernelShutdown();
-        $client = static::createClient();
 
-        foreach(TestUserAccount::getDevice() as $device)
-        {
-            $client->setServerParameter('HTTP_USER_AGENT', $device);
-
-            $usr = TestUserAccount::getAdmin();
-
-            $client->loginUser($usr, 'user');
-            $client->request('GET', self::URL);
-
-            self::assertResponseIsSuccessful();
-        }
-
-        self::assertTrue(true);
-    }
-
-    /** Доступ по роли ROLE_USER */
-    public function testRoleUserFiled(): void
-    {
         self::ensureKernelShutdown();
         $client = static::createClient();
 
@@ -89,17 +103,19 @@ final class IndexControllerTest extends WebTestCase
 
             $usr = TestUserAccount::getUsr();
             $client->loginUser($usr, 'user');
-            $client->request('GET', self::URL);
+            $client->request('GET', sprintf(self::URL, DeliveryTransportEventUid::TEST));
 
             self::assertResponseStatusCodeSame(403);
         }
 
         self::assertTrue(true);
+
     }
 
     /** Доступ по без роли */
     public function testGuestFiled(): void
     {
+
         self::ensureKernelShutdown();
         $client = static::createClient();
 
@@ -107,12 +123,13 @@ final class IndexControllerTest extends WebTestCase
         {
             $client->setServerParameter('HTTP_USER_AGENT', $device);
 
-            $client->request('GET', self::URL);
+            $client->request('GET', sprintf(self::URL, DeliveryTransportEventUid::TEST));
 
             // Full authentication is required to access this resource
             self::assertResponseStatusCodeSame(401);
         }
 
         self::assertTrue(true);
+
     }
 }

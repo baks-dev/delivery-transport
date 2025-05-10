@@ -23,6 +23,8 @@
 
 namespace BaksDev\DeliveryTransport\Controller\Admin\Transport\Tests;
 
+use BaksDev\DeliveryTransport\Type\Transport\Event\DeliveryTransportEventUid;
+use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Tests\DeliveryTransportNewTest;
 use BaksDev\Users\User\Tests\TestUserAccount;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
@@ -30,17 +32,29 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 /**
  * @group delivery-transport
  * @group delivery-transport-transport
+ *
+ * @depends BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Tests\DeliveryTransportNewTest::class
  */
 #[When(env: 'test')]
-final class IndexControllerTest extends WebTestCase
+final class EditAdminControllerTest extends WebTestCase
 {
-    private const string URL = '/admin/delivery/transports';
+    private const string URL = '/admin/delivery/transport/edit/%s';
 
-    private const string ROLE = 'ROLE_DELIVERY_TRANSPORT';
+    private const string ROLE = 'ROLE_DELIVERY_TRANSPORT_EDIT';
 
-    /** Доступ по роли ROLE_PRODUCT */
+    //    private static ?DeliveryTransportEventUid $identifier;
+    //
+    //    public static function setUpBeforeClass(): void
+    //    {
+    //        // Получаем одно из событий Продукта
+    //        $em = self::getContainer()->get(EntityManagerInterface::class);
+    //        self::$identifier = $em->getRepository(DeliveryTransport::class)->findOneBy([], ['id' => 'DESC'])?->getEvent();
+    //    }
+
+    /** Доступ по роли */
     public function testRoleSuccessful(): void
     {
+
         self::ensureKernelShutdown();
         $client = static::createClient();
 
@@ -51,17 +65,21 @@ final class IndexControllerTest extends WebTestCase
             $usr = TestUserAccount::getModer(self::ROLE);
 
             $client->loginUser($usr, 'user');
-            $client->request('GET', self::URL);
+            $client->request('GET', sprintf(self::URL, DeliveryTransportEventUid::TEST));
 
-            self::assertResponseIsSuccessful();
+            //self::assertResponseIsSuccessful();
+            /** Другому профилю не принадлежит */
+            self::assertResponseStatusCodeSame(500);
         }
 
         self::assertTrue(true);
+
     }
 
-    /** Доступ по роли ROLE_ADMIN */
+    // доступ по роли ROLE_ADMIN
     public function testRoleAdminSuccessful(): void
     {
+
         self::ensureKernelShutdown();
         $client = static::createClient();
 
@@ -72,17 +90,19 @@ final class IndexControllerTest extends WebTestCase
             $usr = TestUserAccount::getAdmin();
 
             $client->loginUser($usr, 'user');
-            $client->request('GET', self::URL);
+            $client->request('GET', sprintf(self::URL, DeliveryTransportEventUid::TEST));
 
             self::assertResponseIsSuccessful();
         }
 
         self::assertTrue(true);
+
     }
 
-    /** Доступ по роли ROLE_USER */
-    public function testRoleUserFiled(): void
+    // доступ по роли ROLE_USER
+    public function testRoleUserDeny(): void
     {
+
         self::ensureKernelShutdown();
         $client = static::createClient();
 
@@ -92,17 +112,19 @@ final class IndexControllerTest extends WebTestCase
 
             $usr = TestUserAccount::getUsr();
             $client->loginUser($usr, 'user');
-            $client->request('GET', self::URL);
+            $client->request('GET', sprintf(self::URL, DeliveryTransportEventUid::TEST));
 
             self::assertResponseStatusCodeSame(403);
         }
 
         self::assertTrue(true);
+
     }
 
     /** Доступ по без роли */
     public function testGuestFiled(): void
     {
+
         self::ensureKernelShutdown();
         $client = static::createClient();
 
@@ -110,12 +132,13 @@ final class IndexControllerTest extends WebTestCase
         {
             $client->setServerParameter('HTTP_USER_AGENT', $device);
 
-            $client->request('GET', self::URL);
+            $client->request('GET', sprintf(self::URL, DeliveryTransportEventUid::TEST));
 
             // Full authentication is required to access this resource
             self::assertResponseStatusCodeSame(401);
         }
 
         self::assertTrue(true);
+
     }
 }

@@ -23,8 +23,8 @@
 
 namespace BaksDev\DeliveryTransport\Controller\Admin\Package\Tests;
 
-use BaksDev\Products\Stocks\Entity\Stock\ProductStock;
-use BaksDev\Products\Stocks\Type\Id\ProductStockUid;
+use BaksDev\DeliveryTransport\Entity\Package\DeliveryPackage;
+use BaksDev\DeliveryTransport\Type\Package\Id\DeliveryPackageUid;
 use BaksDev\Users\User\Tests\TestUserAccount;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -32,19 +32,19 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 
 /** @group delivery-transport */
 #[When(env: 'test')]
-final class DeliveryControllerTest extends WebTestCase
+final class NavigatorAdminControllerTest extends WebTestCase
 {
-    private const string URL = '/admin/delivery/package/delivery/%s';
+    private const string URL = '/admin/delivery/navigator/%s';
 
-    private const string ROLE = 'ROLE_DELIVERY_PACKAGE_DELIVERY';
+    private const string ROLE = 'ROLE_DELIVERY_PACKAGE_NAVIGATOR';
 
-    private static ?ProductStockUid $identifier = null;
+    private static ?DeliveryPackageUid $identifier = null;
 
     public static function setUpBeforeClass(): void
     {
         // Получаем одно из событий Продукта
         $em = self::getContainer()->get(EntityManagerInterface::class);
-        self::$identifier = $em->getRepository(ProductStock::class)->findOneBy([], ['id' => 'DESC'])?->getId();
+        self::$identifier = $em->getRepository(DeliveryPackage::class)->findOneBy([], ['id' => 'DESC'])?->getId();
 
         $em->clear();
         //$em->close();
@@ -70,7 +70,7 @@ final class DeliveryControllerTest extends WebTestCase
                 $client->loginUser($usr, 'user');
                 $client->request('GET', sprintf(self::URL, $identifier->getValue()));
 
-                self::assertResponseIsSuccessful();
+                self::assertResponseRedirects();
             }
         }
 
@@ -97,9 +97,11 @@ final class DeliveryControllerTest extends WebTestCase
                 $client->loginUser($usr, 'user');
                 $client->request('GET', sprintf(self::URL, $identifier->getValue()));
 
-                self::assertResponseIsSuccessful();
+                self::assertResponseRedirects();
+
             }
         }
+
 
         self::assertTrue(true);
     }
