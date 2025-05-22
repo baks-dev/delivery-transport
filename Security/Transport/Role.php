@@ -36,7 +36,9 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 final class Role implements RoleInterface, MenuAdminInterface
 {
     /** Транспорт доставки заказов */
-    public const ROLE = 'ROLE_DELIVERY_TRANSPORT';
+    public const string ROLE = 'ROLE_DELIVERY_TRANSPORT';
+
+    public const string KEY = 'hTNqzdpqmQ';
 
     public function getRole(): string
     {
@@ -53,6 +55,14 @@ final class Role implements RoleInterface, MenuAdminInterface
     public function getPath(): string
     {
         return 'delivery-transport:admin.transport.index';
+    }
+
+    /**
+     * Метод возвращает ключ раздела (для меню телеграм)
+     */
+    public function getPathKey(): string
+    {
+        return self::KEY;
     }
 
     /**
