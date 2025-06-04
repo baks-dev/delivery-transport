@@ -31,7 +31,6 @@ use BaksDev\Products\Stocks\Entity\Stock\Event\ProductStockEventInterface;
 use BaksDev\Products\Stocks\Type\Event\ProductStockEventUid;
 use BaksDev\Products\Stocks\Type\Status\ProductStockStatus;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
-use ReflectionProperty;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /** @see MaterialStockEvent */
@@ -40,21 +39,19 @@ final class DeliveryProductStockDTO implements ProductStockEventInterface
     /** Идентификатор */
     #[Assert\NotBlank]
     #[Assert\Uuid]
-    private ProductStockEventUid $id;
+    private readonly ProductStockEventUid $id;
 
-    /** Ответственное лицо за доставку (Профиль пользователя) */
-    #[Assert\NotBlank]
+    /** Ответственное лицо за упаковку (Профиль пользователя) */
     #[Assert\Uuid]
-    private readonly UserProfileUid $fixed;
+    private ?UserProfileUid $fixed = null;
 
     /** Статус заявки - Доставляется */
     #[Assert\NotBlank]
     private readonly ProductStockStatus $status;
 
-    public function __construct(UserProfileUid $profile)
+    public function __construct()
     {
         $this->status = new ProductStockStatus(new ProductStockStatusDelivery());
-        $this->fixed = $profile;
     }
 
     public function getEvent(): ?ProductStockEventUid
@@ -62,22 +59,18 @@ final class DeliveryProductStockDTO implements ProductStockEventInterface
         return $this->id;
     }
 
-    public function setId(ProductStockEventUid $id): self
-    {
-        if(false === (new ReflectionProperty($this, 'id'))->isInitialized())
-        {
-            $this->id = $id;
-        }
-
-        return $this;
-    }
-
     /**
      * Ответственное лицо (Профиль пользователя)
      */
-    public function getFixed(): UserProfileUid
+    public function getFixed(): ?UserProfileUid
     {
         return $this->fixed;
+    }
+
+    public function setFixed(?UserProfileUid $fixed): self
+    {
+        $this->fixed = $fixed;
+        return $this;
     }
 
     /** Статус заявки - Доставляется */
