@@ -31,6 +31,7 @@ use BaksDev\Products\Stocks\Entity\Stock\Event\ProductStockEventInterface;
 use BaksDev\Products\Stocks\Type\Event\ProductStockEventUid;
 use BaksDev\Products\Stocks\Type\Status\ProductStockStatus;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+use ReflectionProperty;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /** @see MaterialStockEvent */
@@ -39,34 +40,44 @@ final class DeliveryProductStockDTO implements ProductStockEventInterface
     /** Идентификатор */
     #[Assert\NotBlank]
     #[Assert\Uuid]
-    private readonly ProductStockEventUid $id;
+    private ProductStockEventUid $id;
 
-    /** Ответственное лицо (Профиль пользователя) */
+    /** Ответственное лицо за доставку (Профиль пользователя) */
     #[Assert\NotBlank]
     #[Assert\Uuid]
-    private readonly UserProfileUid $profile;
+    private readonly UserProfileUid $fixed;
 
     /** Статус заявки - Доставляется */
     #[Assert\NotBlank]
     private readonly ProductStockStatus $status;
 
-
-    public function __construct(ProductStockEventUid $id, UserProfileUid $profile)
+    public function __construct(UserProfileUid $profile)
     {
         $this->status = new ProductStockStatus(new ProductStockStatusDelivery());
-        $this->id = $id;
-        $this->profile = $profile;
+        $this->fixed = $profile;
     }
 
-    public function getEvent(): ?Uid
+    public function getEvent(): ?ProductStockEventUid
     {
         return $this->id;
     }
 
-    /** Ответственное лицо (Профиль пользователя) */
-    public function getProfile(): ?UserProfileUid
+    public function setId(ProductStockEventUid $id): self
     {
-        return $this->profile;
+        if(false === (new ReflectionProperty($this, 'id'))->isInitialized())
+        {
+            $this->id = $id;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Ответственное лицо (Профиль пользователя)
+     */
+    public function getFixed(): UserProfileUid
+    {
+        return $this->fixed;
     }
 
     /** Статус заявки - Доставляется */
@@ -74,5 +85,4 @@ final class DeliveryProductStockDTO implements ProductStockEventInterface
     {
         return $this->status;
     }
-
 }

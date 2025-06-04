@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -35,19 +35,11 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 class ProductStockStatusDelivery implements ProductStockStatusInterface
 {
 
-    public const STATUS = 'delivery';
+    public const string STATUS = 'delivery';
 
     /** Возвращает значение (value) */
     public function getValue(): string
     {
         return self::STATUS;
     }
-
-    //    /**
-    //     * Проверяет, относится ли статус к данному объекту
-    //     */
-    //    public static function equals(string $status): bool
-    //    {
-    //        return self::STATUS === $status;
-    //    }
 }
