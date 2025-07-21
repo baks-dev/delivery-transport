@@ -36,21 +36,24 @@ use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\DeliveryTransportD
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\DeliveryTransportHandler;
 use BaksDev\Users\User\Type\Id\UserUid;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DependsOnClass;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 /**
  * @group delivery-transport
- * @group delivery-transport-transport
  *
  * @depends BaksDev\DeliveryTransport\Controller\Admin\Transport\Tests\EditAdminControllerTest::class
  *
  * @see     EditAdminControllerTest
  */
+#[Group('delivery-transport')]
 #[When(env: 'test')]
 final class DeliveryTransportEditTest extends KernelTestCase
 {
 
+    #[DependsOnClass(EditAdminControllerTest::class)]
     public function testUseCase(): void
     {
         //self::bootKernel();

@@ -24,13 +24,14 @@
 namespace BaksDev\DeliveryTransport\Controller\Admin\Transport\Tests;
 
 use BaksDev\Users\User\Tests\TestUserAccount;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 /**
  * @group delivery-transport
- * @group delivery-transport-transport
  */
+#[Group('delivery-transport')]
 #[When(env: 'test')]
 final class NewAdminControllerTest extends WebTestCase
 {

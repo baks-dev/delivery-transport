@@ -23,18 +23,21 @@
 
 namespace BaksDev\DeliveryTransport\Controller\Admin\Transport\Tests;
 
+use BaksDev\Delivery\UseCase\Admin\NewEdit\Tests\NewDeliveryHandleTest;
 use BaksDev\DeliveryTransport\Type\Transport\Event\DeliveryTransportEventUid;
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Tests\DeliveryTransportNewTest;
 use BaksDev\Users\User\Tests\TestUserAccount;
+use PHPUnit\Framework\Attributes\DependsOnClass;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 /**
  * @group delivery-transport
- * @group delivery-transport-transport
  *
  * @depends BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Tests\DeliveryTransportNewTest::class
  */
+#[Group('delivery-transport')]
 #[When(env: 'test')]
 final class DeleteAdminControllerTest extends WebTestCase
 {
@@ -44,6 +47,7 @@ final class DeleteAdminControllerTest extends WebTestCase
 
 
     // доступ по роли ROLE_ADMIN
+    #[DependsOnClass(DeliveryTransportNewTest::class)]
     public function testRoleAdminSuccessful(): void
     {
 

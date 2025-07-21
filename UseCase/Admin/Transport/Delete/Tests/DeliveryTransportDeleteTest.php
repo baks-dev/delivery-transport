@@ -39,12 +39,13 @@ use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\DeliveryTransportD
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Tests\DeliveryTransportEditTest;
 use BaksDev\Users\User\Type\Id\UserUid;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DependsOnClass;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 /**
  * @group delivery-transport
- * @group delivery-transport-transport
  *
  * @depends BaksDev\DeliveryTransport\Controller\Admin\Transport\Tests\DeleteAdminControllerTest::class
  * @depends BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Tests\DeliveryTransportEditTest::class
@@ -53,10 +54,13 @@ use Symfony\Component\DependencyInjection\Attribute\When;
  * @see     DeleteAdminControllerTest
  *
  */
+#[Group('delivery-transport')]
 #[When(env: 'test')]
 final class DeliveryTransportDeleteTest extends KernelTestCase
 {
 
+    #[DependsOnClass(DeleteAdminControllerTest::class)]
+    #[DependsOnClass(DeliveryTransportEditTest::class)]
     public function testUseCase(): void
     {
         self::bootKernel();
@@ -135,11 +139,7 @@ final class DeliveryTransportDeleteTest extends KernelTestCase
 
     }
 
-
-    /**
-     * @depends testUseCase
-     */
-    public function testComplete(): void
+    public function testUseCaseComplete(): void
     {
         /** @var EntityManagerInterface $em */
         $em = self::getContainer()->get(EntityManagerInterface::class);

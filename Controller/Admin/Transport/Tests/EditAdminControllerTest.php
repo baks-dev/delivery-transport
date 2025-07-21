@@ -26,15 +26,17 @@ namespace BaksDev\DeliveryTransport\Controller\Admin\Transport\Tests;
 use BaksDev\DeliveryTransport\Type\Transport\Event\DeliveryTransportEventUid;
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Tests\DeliveryTransportNewTest;
 use BaksDev\Users\User\Tests\TestUserAccount;
+use PHPUnit\Framework\Attributes\DependsOnClass;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 /**
  * @group delivery-transport
- * @group delivery-transport-transport
  *
  * @depends BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Tests\DeliveryTransportNewTest::class
  */
+#[Group('delivery-transport')]
 #[When(env: 'test')]
 final class EditAdminControllerTest extends WebTestCase
 {
@@ -42,16 +44,9 @@ final class EditAdminControllerTest extends WebTestCase
 
     private const string ROLE = 'ROLE_DELIVERY_TRANSPORT_EDIT';
 
-    //    private static ?DeliveryTransportEventUid $identifier;
-    //
-    //    public static function setUpBeforeClass(): void
-    //    {
-    //        // Получаем одно из событий Продукта
-    //        $em = self::getContainer()->get(EntityManagerInterface::class);
-    //        self::$identifier = $em->getRepository(DeliveryTransport::class)->findOneBy([], ['id' => 'DESC'])?->getEvent();
-    //    }
 
     /** Доступ по роли */
+    #[DependsOnClass(DeliveryTransportNewTest::class)]
     public function testRoleSuccessful(): void
     {
 

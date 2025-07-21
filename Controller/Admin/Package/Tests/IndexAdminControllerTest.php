@@ -24,10 +24,12 @@
 namespace BaksDev\DeliveryTransport\Controller\Admin\Package\Tests;
 
 use BaksDev\Users\User\Tests\TestUserAccount;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 /** @group delivery-transport */
+#[Group('delivery-transport')]
 #[When(env: 'test')]
 final class IndexAdminControllerTest extends WebTestCase
 {

@@ -27,10 +27,12 @@ use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Users\User\Tests\TestUserAccount;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 /** @group delivery-transport */
+#[Group('delivery-transport')]
 #[When(env: 'test')]
 final class EditAdminControllerTest extends WebTestCase
 {
