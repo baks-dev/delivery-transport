@@ -58,7 +58,9 @@ final class DeliveryPackageStatusTest extends KernelTestCase
 
 
             $DeliveryPackageStatusType = new DeliveryPackageStatusType();
-            $platform = $this->getMockForAbstractClass(AbstractPlatform::class);
+            $platform = $this
+                ->getMockBuilder(AbstractPlatform::class)
+                ->getMock();
 
             $convertToDatabase = $DeliveryPackageStatusType->convertToDatabaseValue($DeliveryPackageStatus, $platform);
             self::assertEquals($DeliveryPackageStatus->getPackageStatusValue(), $convertToDatabase);
