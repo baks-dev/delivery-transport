@@ -1,0 +1,16 @@
+{% trans_default_domain 'delivery-transport.transport' %}
+
+<div class="d-flex justify-content-between gap-3">
+
+    {# Длина (Глубина), см #}
+    {{ form_row(form.parameter.length, { label: 'form.label.length'|trans } ) }}
+
+    {# Ширина, см #}
+    {{ form_row(form.parameter.width, { label: 'form.label.width'|trans } ) }}
+
+    {# Высота, см #}
+    {{ form_row(form.parameter.height, { label: 'form.label.height'|trans } ) }}
+
+</div>
+
+

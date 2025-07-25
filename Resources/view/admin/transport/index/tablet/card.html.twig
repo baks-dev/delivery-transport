@@ -1,0 +1,74 @@
+{% trans_default_domain('admin.products.category') %}
+
+<tr class="vertical-middle">
+
+
+    <td class="text-nowrap">
+        {# Пользовательское меню #}
+        {{ include(_self|replace({ "card.html.twig": "_usecase.html.twig" })) }}
+    </td>
+
+
+    {# <td class="text-center">
+		{{ item.delivery_sort }}
+	</td> #}
+
+
+    <td class="text-center">
+        {% if item.auto_active %}
+            <span class="badge text-bg-success">Активный</span>
+        {% else %}
+            <span class="badge text-bg-danger">Отключен</span>
+        {% endif %}
+    </td>
+
+    <td class="w-25">
+
+        <div class="w-100 d-flex align-items-center gap-5">
+
+            <div class="ms-0">
+
+                {% if is_granted(ROLE~'_EDIT') or is_granted('ROLE_ADMIN') %}
+                    {# Название #}
+                    <a href="{{ path('delivery-transport:admin.transport.newedit.edit', { id: item.event }) }}"
+                       class="text-decoration-none"
+                    >{{ item.auto_name }}</a>
+                {% else %}
+                    {{ item.auto_name }}
+                {% endif %}
+
+                {# Регистрационный номер #}
+                <div class="text-muted">
+                    {{ item.auto_number }}
+                </div>
+
+            </div>
+        </div>
+
+    </td>
+
+    <td class="w-50">
+
+        <div class="w-100 d-flex align-items-center gap-5">
+
+            <div class="ms-0">
+
+                {{ item.users_profile_username }}
+
+                {# Регистрационный номер #}
+                <div class="text-muted">
+                    {{ item.users_profile_location }}
+                </div>
+
+            </div>
+        </div>
+
+
+    </td>
+
+    <td class="w-50">
+        {{ item.auto_address }}
+    </td>
+
+
+</tr>
