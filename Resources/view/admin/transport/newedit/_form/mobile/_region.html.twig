@@ -1,0 +1,18 @@
+{% trans_default_domain 'delivery-transport.transport' %}
+
+
+{# Название региона #}
+{{ form_row(form.region.address, { label: 'form.label.address'|trans }) }}
+
+<div class="d-flex justify-content-between gap-3">
+    {# GPS широта #}
+    {{ form_row(form.region.latitude, { label: 'form.label.latitude'|trans }) }}
+
+    {# GPS долгота #}
+    {{ form_row(form.region.longitude, { label: 'form.label.longitude'|trans }) }}
+
+</div>
+
+
+
+
