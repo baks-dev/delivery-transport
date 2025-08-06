@@ -41,7 +41,7 @@ class OrderStatusDelivery implements OrderStatusInterface, VoterInterface
     /** Статус доставки */
     public const STATUS = 'delivery';
 
-    private static int $sort = 600;
+    private static int $sort = 700;
 
     private static string $color = '#FFC107';
 
