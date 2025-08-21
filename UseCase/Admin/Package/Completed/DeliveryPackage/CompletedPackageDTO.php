@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed;
+namespace BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed\DeliveryPackage;
 
 use BaksDev\DeliveryTransport\Entity\Package\Event\DeliveryPackageEventInterface;
 use BaksDev\DeliveryTransport\Type\Package\Event\DeliveryPackageEventUid;

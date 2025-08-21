@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed;
+namespace BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed\ProductStock;
 
 use BaksDev\Core\Type\UidType\Uid;
 use BaksDev\Products\Stocks\Entity\Stock\Event\ProductStockEventInterface;
@@ -33,7 +33,7 @@ use BaksDev\Products\Stocks\Type\Status\ProductStockStatus\ProductStockStatusCom
 use Symfony\Component\Validator\Constraints as Assert;
 
 /** @see MaterialStockEvent */
-final readonly class CompletedProductStockDTO implements ProductStockEventInterface
+final class CompletedProductStockDTO implements ProductStockEventInterface
 {
     /** Идентификатор */
     #[Assert\NotBlank]
@@ -44,11 +44,9 @@ final readonly class CompletedProductStockDTO implements ProductStockEventInterf
     #[Assert\NotBlank]
     private ProductStockStatus $status;
 
-
-    public function __construct(ProductStockEventUid $id)
+    public function __construct()
     {
         $this->status = new ProductStockStatus(ProductStockStatusCompleted::class);
-        $this->id = $id;
     }
 
     public function getEvent(): ?Uid
@@ -60,4 +58,17 @@ final readonly class CompletedProductStockDTO implements ProductStockEventInterf
     {
         return $this->status;
     }
+
+    public function setId(ProductStockEventUid $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    public function getId(): ProductStockEventUid
+    {
+        return ($this->id instanceof ProductStockEventUid) ? $this->id : new ProductStockEventUid($this->id);
+    }
+
 }

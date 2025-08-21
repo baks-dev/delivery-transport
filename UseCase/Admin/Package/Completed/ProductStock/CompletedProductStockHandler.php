@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed;
+namespace BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed\ProductStock;
 
 use BaksDev\Core\Entity\AbstractHandler;
 use BaksDev\Products\Stocks\Entity\Stock\Event\ProductStockEvent;
