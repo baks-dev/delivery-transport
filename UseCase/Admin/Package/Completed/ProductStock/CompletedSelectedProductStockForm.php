@@ -23,19 +23,27 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed;
+namespace BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed\ProductStock;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-final class CompletedProductStockForm extends AbstractType
+final class CompletedSelectedProductStockForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+
+        $builder->add('collection', CollectionType::class, [
+            /** Указать вложенные формы */
+            'entry_type' => CompletedProductStockForm::class,
+            'allow_add' => true,
+        ]);
+
         $builder->add(
-            'completed_package',
+            'completed_selected_package',
             SubmitType::class,
             ['label' => 'Save', 'label_html' => true]
         );
@@ -45,7 +53,7 @@ final class CompletedProductStockForm extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => CompletedProductStockDTO::class,
+                'data_class' => CompletedSelectedProductStockDTO::class,
                 'method' => 'POST',
                 'attr' => ['class' => 'w-100']
             ],
