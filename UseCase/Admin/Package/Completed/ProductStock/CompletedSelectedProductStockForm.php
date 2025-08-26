@@ -41,6 +41,7 @@ final class CompletedSelectedProductStockForm extends AbstractType
             'entry_type' => CompletedProductStockForm::class,
             'allow_add' => true,
             'entry_options' => ['label' => false],
+            'label' => false,
         ]);
 
         $builder->add(
