@@ -44,16 +44,6 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
-/**
- * @group delivery-transport
- *
- * @depends BaksDev\DeliveryTransport\Controller\Admin\Transport\Tests\DeleteAdminControllerTest::class
- * @depends BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Tests\DeliveryTransportEditTest::class
- *
- * @see     DeliveryTransportEditTest
- * @see     DeleteAdminControllerTest
- *
- */
 #[Group('delivery-transport')]
 #[When(env: 'test')]
 final class DeliveryTransportDeleteTest extends KernelTestCase

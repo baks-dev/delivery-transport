@@ -31,11 +31,6 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
-/**
- * @group delivery-transport
- *
- * @depends BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Tests\DeliveryTransportNewTest::class
- */
 #[Group('delivery-transport')]
 #[When(env: 'test')]
 final class EditAdminControllerTest extends WebTestCase

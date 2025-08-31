@@ -44,9 +44,6 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
-/**
- * @group delivery-transport
- */
 #[Group('delivery-transport')]
 #[When(env: 'test')]
 final class DeliveryTransportNewTest extends KernelTestCase
