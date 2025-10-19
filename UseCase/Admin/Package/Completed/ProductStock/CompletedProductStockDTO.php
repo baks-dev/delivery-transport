@@ -33,7 +33,7 @@ use BaksDev\Products\Stocks\Type\Status\ProductStockStatus\ProductStockStatusCom
 use Symfony\Component\Validator\Constraints as Assert;
 
 /** @see MaterialStockEvent */
-final class CompletedProductStockDTO implements ProductStockEventInterface
+final readonly class CompletedProductStockDTO implements ProductStockEventInterface
 {
     /** Идентификатор */
     #[Assert\NotBlank]
