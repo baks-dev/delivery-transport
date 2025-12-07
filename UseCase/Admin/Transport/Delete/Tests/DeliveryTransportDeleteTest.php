@@ -37,6 +37,7 @@ use BaksDev\DeliveryTransport\UseCase\Admin\Transport\Delete\DeliveryTransportDe
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\Delete\DeliveryTransportDeleteHandler;
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\DeliveryTransportDTO;
 use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Tests\DeliveryTransportEditTest;
+use BaksDev\DeliveryTransport\UseCase\Admin\Transport\NewEdit\Tests\DeliveryTransportNewTest;
 use BaksDev\Users\User\Type\Id\UserUid;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\DependsOnClass;
@@ -71,7 +72,7 @@ final class DeliveryTransportDeleteTest extends KernelTestCase
             ->leftJoin(DeliveryTransportEvent::class,
                 'event',
                 'WITH',
-                'event.id = main.event'
+                'event.id = main.event',
             );
 
 
@@ -129,38 +130,8 @@ final class DeliveryTransportDeleteTest extends KernelTestCase
 
     }
 
-    public function testUseCaseComplete(): void
+    public static function tearDownAfterClass(): void
     {
-        /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get(EntityManagerInterface::class);
-
-
-        $DeliveryTransport = $em
-            ->getRepository(DeliveryTransport::class)
-            ->find(DeliveryTransportUid::TEST);
-
-        if($DeliveryTransport)
-        {
-            $em->remove($DeliveryTransport);
-        }
-
-
-        $DeliveryTransportCollection = $em
-            ->getRepository(DeliveryTransportEvent::class)
-            ->findBy(['main' => DeliveryTransportUid::TEST]);
-
-        foreach($DeliveryTransportCollection as $remove)
-        {
-            $em->remove($remove);
-        }
-
-
-        $em->flush();
-        $em->clear();
-        //$em->close();
-
-        self::assertNull($DeliveryTransport);
-
+        DeliveryTransportNewTest::setUpBeforeClass();
     }
-
 }
