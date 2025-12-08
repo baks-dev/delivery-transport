@@ -33,19 +33,17 @@ final class DeliveryPackageTransportHandler extends AbstractHandler
 
     public function handle(DeliveryPackageTransportDTO $command): string|DeliveryPackageTransport
     {
+        $this->setCommand($command);
 
-        /** Валидация  $command */
-        $this->validatorCollection->add($command);
+        $this->clear();
 
-        $this->entityManager->clear();
-
-        $DeliveryPackageTransport = $this->entityManager->getRepository(DeliveryPackageTransport::class)
+        $DeliveryPackageTransport = $this->getRepository(DeliveryPackageTransport::class)
             ->findOneBy(
                 [
                     'package' => $command->getPackage(),
                     'transport' => $command->getTransport(),
-                    'date' => $command->getDate()
-                ]
+                    'date' => $command->getDate(),
+                ],
             );
 
         if(empty($DeliveryPackageTransport))
@@ -53,10 +51,10 @@ final class DeliveryPackageTransportHandler extends AbstractHandler
             $DeliveryPackageTransport = new DeliveryPackageTransport(
                 $command->getPackage(),
                 $command->getTransport(),
-                $command->getDate()
+                $command->getDate(),
             );
 
-            $this->entityManager->persist($DeliveryPackageTransport);
+            $this->persist($DeliveryPackageTransport);
         }
 
         $DeliveryPackageTransport->setEntity($command);
@@ -70,7 +68,7 @@ final class DeliveryPackageTransportHandler extends AbstractHandler
             return $this->validatorCollection->getErrorUniqid();
         }
 
-        $this->entityManager->flush();
+        $this->flush();
 
         return $DeliveryPackageTransport;
     }
