@@ -38,9 +38,11 @@
             {% if current.destination %}
                 <div class="w-100 text-uppercase text-muted opacity-50">Перемещение</div>
             {% else %}
-                <div class="w-100 text-uppercase text-muted opacity-50">Клиент</div>
-                {# Клиент #}
-                {{ user_profile(current.order_client) }}
+                {% if current.order_client %}
+                    <div class="w-100 text-uppercase text-muted opacity-50">Клиент</div>
+                    {# Клиент #}
+                    {{ user_profile(current.order_client) }}
+                {% endif %}
             {% endif %}
 
 
@@ -184,10 +186,10 @@
 
                 {% else %}
 
-                    {{ form_widget(form.completed_package, { label: '
+                    {# {{ form_widget(form.completed_package, { label: '
                         <span>Заказ выдан клиенту</span>
                         <span class="spinner-border spinner-border-sm vertical-middle d-none"></span>
-                    ', attr: { class : current ? 'btn-success' : ' d-none' }}) }}
+                    ', attr: { class : current ? 'btn-success' : ' d-none' }}) }} #}
 
                 {% endif %}
             </div>
