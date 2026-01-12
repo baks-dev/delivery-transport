@@ -43,7 +43,7 @@ use BaksDev\Orders\Order\Type\Status\OrderStatus;
 use BaksDev\Orders\Order\Type\Status\OrderStatus\Collection\OrderStatusPackage;
 use BaksDev\Orders\Order\UseCase\Admin\Edit\EditOrderDTO;
 use BaksDev\Orders\Order\UseCase\Admin\Edit\EditOrderHandler;
-use BaksDev\Orders\Order\UseCase\Public\Basket\Add\OrderProductDTO;
+use BaksDev\Orders\Order\UseCase\Public\Basket\Add\PublicOrderProductDTO;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
@@ -413,7 +413,7 @@ final class DivideController extends AbstractController
                     $newOrder->setStatus(new OrderStatus(OrderStatusPackage::class));
 
 
-                    /** @var OrderProductDTO $orderProduct */
+                    /** @var PublicOrderProductDTO $orderProduct */
                     foreach($newOrder->getProduct() as $orderProduct)
                     {
                         /** Обнуляем все количество в заказе */
@@ -422,7 +422,7 @@ final class DivideController extends AbstractController
                     }
 
 
-                    /** @var OrderProductDTO $orderProduct */
+                    /** @var PublicOrderProductDTO $orderProduct */
                     foreach($newOrder->getProduct() as $orderProduct)
                     {
                         /** Обнуляем количество в заказе */
