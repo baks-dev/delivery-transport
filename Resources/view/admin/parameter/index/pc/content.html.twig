@@ -26,8 +26,19 @@
                 {# Форма поиска по разделу #}
                 {% include Template('/_includes/'~baks_settings.device~'/search.html.twig') %}
 
+
+
                 {# Фильтр по продукции #}
-                <div class="w-100">
+                <div class="d-flex gap-3">
+                    {# Редактирование параметров нескольких товаров #}
+                    <button data-href="{{ path('delivery-transport:admin.parameter.multiple.edit') }}"
+                            class="btn btn-outline-primary modal-link disabled"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modal"
+                            title="">
+                        Редактировать
+                    </button>
+
                     {% include Template('@products-product/admin/filter/'~baks_settings.device~'/filter.html.twig') %}
                 </div>
 
@@ -35,7 +46,6 @@
 
             {# Текстовый результат фильтра #}
             {% include Template('@products-product/filter/'~baks_settings.device~'/filter_text.html.twig') %}
-
 
             <table class="table table-striped table-borderless mt-3"
                    style='--bs-table-striped-bg: rgba(249,249,249,0.7);'>

@@ -1,0 +1,22 @@
+{% trans_default_domain 'delivery-transport.parameter' %}
+
+{# ---- ШАБЛОН ------------------------------------------------------------ #}
+{% extends Template('/admin/base.html.twig') %}
+
+{% block title %}
+    {{ 'admin.page.edit'|trans }}
+{% endblock %}
+
+{# ---- CSS ------------------------------------------------------------ #}
+{% block stylesheets %}
+    <link href="/assets/plugins/nice-select2/nice-select2.min.css" rel="stylesheet">
+{% endblock %}
+
+{# ---- КОНТЕНТ-БЛОК ------------------------------------------------------------ #}
+{% block content %}
+    {{ include(_self|replace({ "template.html.twig": "content.html.twig" })) }}
+{% endblock %}
+
+{% block javascript %}
+    <script nonce="{{ csp_nonce() }}" async src='/assets/{{ version }}/js/lazyload.min.js'></script>
+{% endblock %}

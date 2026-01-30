@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -121,7 +121,7 @@ final class DeliveryPackageProductParameterDTO implements DeliveryPackageProduct
 
     public function setOffer(?ProductOfferConst $offer): self
     {
-        if(!(new ReflectionProperty(self::class, 'offer'))->isInitialized($this))
+        if(!new ReflectionProperty(self::class, 'offer')->isInitialized($this))
         {
             $this->offer = $offer;
         }
@@ -139,7 +139,7 @@ final class DeliveryPackageProductParameterDTO implements DeliveryPackageProduct
 
     public function setVariation(?ProductVariationConst $variation): self
     {
-        if(!(new ReflectionProperty(self::class, 'variation'))->isInitialized($this))
+        if(!new ReflectionProperty(self::class, 'variation')->isInitialized($this))
         {
             $this->variation = $variation;
         }
@@ -157,7 +157,7 @@ final class DeliveryPackageProductParameterDTO implements DeliveryPackageProduct
 
     public function setModification(?ProductModificationConst $modification): self
     {
-        if(!(new ReflectionProperty(self::class, 'modification'))->isInitialized($this))
+        if(!new ReflectionProperty(self::class, 'modification')->isInitialized($this))
         {
             $this->modification = $modification;
         }
@@ -234,6 +234,4 @@ final class DeliveryPackageProductParameterDTO implements DeliveryPackageProduct
         $this->package = $package;
         return $this;
     }
-
-
 }

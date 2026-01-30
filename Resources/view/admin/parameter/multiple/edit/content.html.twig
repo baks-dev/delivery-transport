@@ -1,0 +1,5 @@
+{{ include(_self|replace({ "content.html.twig": baks_settings.device~"/form.html.twig" })) }}
+
+<script nonce='{{ csp_nonce() }}' async data-src="/assets/{{ version }}/plugins/nice-select2/nice-select2.min.js?v={{ version }}" class="lazy"></script>
+<script nonce='{{ csp_nonce() }}' async data-src="/assets/{{ version }}/delivery-transport/package-parameters.min.js?v={{ version }}"
+        class="lazy"></script>

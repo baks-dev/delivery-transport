@@ -1,17 +1,17 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
- *  
+ * Copyright 2026.  Baks.dev <admin@baks.dev>
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,22 +23,21 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\DeliveryTransport\Repository\ProductParameter\AllProductParameter;
+namespace BaksDev\DeliveryTransport\Repository\ProductParameter\OnePackageParameterByProductProperties;
 
-use BaksDev\Core\Form\Search\SearchDTO;
-use BaksDev\Core\Services\Paginator\PaginatorInterface;
-use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
+use BaksDev\DeliveryTransport\Entity\ProductParameter\DeliveryPackageProductParameter;
 
-interface AllProductParameterInterface
+interface OnePackageParameterByProductPropertiesInterface
 {
-    public function search(SearchDTO $search): self;
-
-    public function filter(ProductFilterDTO $filter): self;
-
     /**
-     * Метод возвращает параметры упаковки для всех (либо фильтруемых) продуктов в виде пагинатора с ассоциативными
-     * массивами
-     * @return PaginatorInterface<array>
+     * Получаем параметры упаковки любого первого продукта, соответствующего указанным значениям offer, variation и
+     * modification
      */
-    public function fetchAllProductParameterAssociative(): PaginatorInterface;
+    public function findOne(): ?DeliveryPackageProductParameter;
+
+    public function forOffer(?string $offer): self;
+
+    public function forVariation(?string $variation): self;
+
+    public function forModification(?string $modification): self;
 }

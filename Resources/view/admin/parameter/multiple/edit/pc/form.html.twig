@@ -1,0 +1,76 @@
+{% trans_default_domain 'delivery-transport.parameter' %}
+
+<div class="modal-dialog modal-dialog-centered" style="max-width: 800px;">
+
+    {{ form_start(form) }}
+
+    <div class="modal-content p-3 border-bottom border-5 border-primary">
+
+        <div class="modal-header">
+            <h5 class="modal-title">
+                {{ 'page.edit'|trans }}
+            </h5>
+        </div>
+
+        {% if(form.vars.steps['product'].is_current_step) %}
+        <div class="modal-body">
+            <div class="package-parameters d-flex flex-column">
+                <div>
+                    {{ form_widget(form.product.category, { placeholder: 'Выберите категорию'}) }}
+                </div>
+                <br>
+                <div class="d-flex gap-3">
+                    {{ form_widget(form.product.offer) }}
+                    {{ form_widget(form.product.variation) }}
+                    {{ form_widget(form.product.modification) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer ">
+            <div class="mt-3 gap-3 d-flex">
+                    {# Отмена #}
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+                        {{ 'btn.cancel'|trans({}, 'core.btn') }}
+                    </button>
+
+                    {# Сохранить #}
+                    {{ form_widget(form.product_package_parameters_next, { label: '
+                    <span>Далее</span>
+                    <span class="spinner-border spinner-border-sm vertical-middle d-none"></span>
+			    '}) }}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if(form.vars.steps['parameters'].is_current_step) %}
+        <div class="modal-body">
+            <div class="package-parameters d-flex justify-content-between gap-3">
+                {{ form_widget(form.parameters.weight) }}
+                {{ form_widget(form.parameters.length) }}
+                {{ form_widget(form.parameters.width) }}
+                {{ form_widget(form.parameters.height) }}
+                {{ form_widget(form.parameters.package) }}
+            </div>
+
+        </div>
+
+            <div class="modal-footer ">
+                <div class="mt-3 gap-3 d-flex">
+                   {# Отмена #}
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+                         {{ 'btn.cancel'|trans({}, 'core.btn') }}
+                    </button>
+
+                    {# Сохранить #}
+                    {{ form_widget(form.product_package_parameters, { label: '
+                    <span>Сохранить</span>
+                    <span class="spinner-border spinner-border-sm vertical-middle d-none"></span>
+			    ', attr: { value: 'finish' } }) }}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    {{ form_end(form) }}
+</div>
