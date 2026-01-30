@@ -67,7 +67,6 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         PaginatorInterface $paginator,
     )
     {
-
         $this->paginator = $paginator;
         $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
@@ -86,10 +85,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
     }
 
 
-    /**
-     * Метод возвращает пагинатор ProductParameter c параметрами упаковки
-     */
-    public function fetchAllProductParameterAssociative(): PaginatorInterface
+    private function builder(): DBALQueryBuilder
     {
         $dbal = $this->DBALQueryBuilder
             ->createQueryBuilder(self::class)
@@ -115,6 +111,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
                 'product_trans',
                 'product_trans.event = product_event.id AND product_trans.local = :local'
             );
+
 
         /* ProductInfo */
 
@@ -156,6 +153,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
             'product_offer_price.offer = product_offer.id'
         );
 
+
         /* Тип торгового предложения */
         $dbal
             ->addSelect('category_offer.reference as product_offer_reference')
@@ -165,6 +163,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
                 'category_offer',
                 'category_offer.id = product_offer.category_offer'
             );
+
 
         /* Множественные варианты торгового предложения */
 
@@ -195,6 +194,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
             'product_variation_price.variation = product_variation.id'
         );
 
+
         /* Тип множественного варианта торгового предложения */
         $dbal
             ->addSelect('category_offer_variation.reference as product_variation_reference')
@@ -204,6 +204,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
                 'category_offer_variation',
                 'category_offer_variation.id = product_variation.category_variation'
             );
+
 
         /* Модификация множественного варианта */
         $dbal
@@ -237,8 +238,6 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
 
 
         /* Артикул продукта */
-
-
         $dbal->addSelect(
             '
 					CASE
@@ -251,8 +250,8 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
 				'
         );
 
-        /* Фото продукта */
 
+        /* Фото продукта */
         $dbal->leftJoin(
             'product_event',
             ProductPhoto::class,
@@ -288,6 +287,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
 		"
         );
 
+
         /* Флаг загрузки файла CDN */
         $dbal->addSelect('
 			CASE
@@ -301,6 +301,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
 			END AS product_image_ext
 		');
 
+
         /* Флаг загрузки файла CDN */
         $dbal->addSelect('
 			CASE
@@ -313,6 +314,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
 			   ELSE NULL
 			END AS product_image_cdn
 		');
+
 
         /* Категория */
         $dbal->join(
@@ -362,34 +364,29 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
                 'product_modification',
                 DeliveryPackageProductParameter::class,
                 'product_package',
-                'product_package.product = product.id  AND 
-                    
+                'product_package.product = product.id  AND
                     (
                         (product_offer.const IS NOT NULL AND product_package.offer = product_offer.const) OR 
                         (product_offer.const IS NULL AND product_package.offer IS NULL)
                     )
-                    
                     AND
-                     
                     (
                         (product_variation.const IS NOT NULL AND product_package.variation = product_variation.const) OR 
                         (product_variation.const IS NULL AND product_package.variation IS NULL)
                     )
-                     
                    AND
-                   
                    (
                         (product_modification.const IS NOT NULL AND product_package.modification = product_modification.const) OR 
                         (product_modification.const IS NULL AND product_package.modification IS NULL)
                    )
-            
-        '
+                '
             );
+
 
         /**
          * Фильтр по свойства продукта
          */
-        if($this->filter->getProperty())
+        if($this->filter?->getProperty())
         {
             /** @var ProductFilterPropertyDTO $property */
             foreach($this->filter->getProperty() as $property)
@@ -411,7 +408,6 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
             }
         }
 
-
         $dbal->addOrderBy('product_package.id', 'DESC');
 
         if($this->search?->getQuery())
@@ -421,18 +417,26 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
                 ->addSearchEqualUid('account.id')
                 ->addSearchEqualUid('account.event')
                 ->addSearchLike('product_trans.name')
-                //->addSearchLike('product_trans.preview')
                 ->addSearchLike('product_info.article')
                 ->addSearchLike('product_offer.article')
                 ->addSearchLike('product_modification.article')
                 ->addSearchLike('product_variation.article');
 
             $dbal->addOrderBy('product.event', 'DESC');
-
         }
 
+        return $dbal;
+    }
 
+
+    /**
+     * Метод возвращает параметры упаковки для всех (либо фильтруемых) продуктов в виде пагинатора с ассоциативными
+     * массивами
+     * @return PaginatorInterface<array>
+     */
+    public function fetchAllProductParameterAssociative(): PaginatorInterface
+    {
+        $dbal = $this->builder();
         return $this->paginator->fetchAllAssociative($dbal);
-
     }
 }

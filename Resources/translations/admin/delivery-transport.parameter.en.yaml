@@ -1,17 +1,16 @@
 page:
-  index: 'Параметры упаковки'
-  edit: 'Редактировать параметры упаковки'
+  index: 'Packaging parameters'
+  edit: 'Edit packaging parameters'
 
 breadcrumb:
-  index: 'Параметры упаковки продукции'
-  edit: 'Редактировать параметры упаковки'
-
+  index: 'Packaging parameters'
+  edit: 'Edit packaging parameters'
 
 success:
-  edit: 'Параметры упаковки успешно обновлены'
-
-
+  edit: 'Packaging parameters are successfully updated'
+  multiple:
+    edit: 'Request for packaging parameters update is successfully sent'
 
 danger:
-  edit: '%s: Ошибка при обновлении параметров упаковки'
+  edit: '%s: Error on packaging parameters update'
 
