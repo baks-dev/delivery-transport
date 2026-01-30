@@ -1,6 +1,6 @@
 # BaksDev Delivery Transport
 
-[![Version](https://img.shields.io/badge/version-7.3.6-blue)](https://github.com/baks-dev/delivery-transport/releases)
+[![Version](https://img.shields.io/badge/version-7.3.7-blue)](https://github.com/baks-dev/delivery-transport/releases)
 ![php 8.4+](https://img.shields.io/badge/php-min%208.4-red.svg)
 [![packagist](https://img.shields.io/badge/packagist-green)](https://packagist.org/packages/baks-dev/delivery-transport)
 
@@ -37,3 +37,4 @@ $ php bin/phpunit --group=delivery-transport
 ## Лицензия ![License](https://img.shields.io/badge/MIT-green)
 
 The MIT License (MIT). Обратитесь к [Файлу лицензии](LICENSE.md) за дополнительной информацией.
+
