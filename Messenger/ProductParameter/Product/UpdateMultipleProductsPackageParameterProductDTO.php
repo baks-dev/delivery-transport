@@ -34,7 +34,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class UpdateMultipleProductsPackageParameterProductDTO
 {
     /** Категория */
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(groups: ['product'])]
     private ?CategoryProductUid $category = null;
 
     /** Постоянный уникальный идентификатор ТП */

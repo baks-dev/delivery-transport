@@ -61,6 +61,7 @@ final class OnePackageParameterByProductPropertiesRepository implements OnePacka
         return $this;
     }
 
+    
     /**
      * Получаем параметры упаковки любого первого продукта, соответствующего указанным значениям offer, variation и
      * modification
@@ -81,33 +82,42 @@ final class OnePackageParameterByProductPropertiesRepository implements OnePacka
                 'product.id = delivery_package_product_parameters.product'
             );
 
-        $orm
-            ->join(
-                ProductOffer::class,
-                'product_offer',
-                'WITH',
-                'product_offer.event = product.event AND product_offer.value = :offer'
-            )
-            ->setParameter('offer', $this->offer, Types::STRING);
+        if(false === empty($offer))
+        {
+            $orm
+                ->join(
+                    ProductOffer::class,
+                    'product_offer',
+                    'WITH',
+                    'product_offer.event = product.event AND product_offer.value = :offer'
+                )
+                ->setParameter('offer', $this->offer, Types::STRING);
+        }
 
-        $orm
-            ->join(
-                ProductVariation::class,
-                'product_variation',
-                'WITH',
-                'product_variation.offer = product_offer.id AND product_variation.value = :variation'
-            )
-            ->setParameter('variation', $this->variation, Types::STRING);
+        if(false === empty($variation))
+        {
+            $orm
+                ->join(
+                    ProductVariation::class,
+                    'product_variation',
+                    'WITH',
+                    'product_variation.offer = product_offer.id AND product_variation.value = :variation'
+                )
+                ->setParameter('variation', $this->variation, Types::STRING);
+        }
 
-        $orm
-            ->join(
-                ProductModification::class,
-                'product_modification',
-                'WITH',
-                'product_modification.variation = product_variation.id AND
+        if(false === empty($modification))
+        {
+            $orm
+                ->join(
+                    ProductModification::class,
+                    'product_modification',
+                    'WITH',
+                    'product_modification.variation = product_variation.id AND
                 product_modification.value = :modification'
-            )
-            ->setParameter('modification', $this->modification, Types::STRING);
+                )
+                ->setParameter('modification', $this->modification, Types::STRING);
+        }
 
         $orm->setMaxResults(1);
 
