@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -42,6 +42,7 @@ use BaksDev\DeliveryTransport\Entity\Transport\Event\DeliveryTransportEvent;
 use BaksDev\DeliveryTransport\Entity\Transport\Trans\DeliveryTransportTrans;
 use BaksDev\DeliveryTransport\Forms\Package\Admin\DeliveryPackageFilterDTO;
 use BaksDev\Orders\Order\Entity\Event\OrderEvent;
+use BaksDev\Orders\Order\Entity\Invariable\OrderInvariable;
 use BaksDev\Orders\Order\Entity\Order;
 use BaksDev\Orders\Order\Entity\User\Delivery\Field\OrderDeliveryField;
 use BaksDev\Orders\Order\Entity\User\Delivery\OrderDelivery;
@@ -227,6 +228,13 @@ final class AllDeliveryPackageRepository implements AllDeliveryPackageInterface
             'orders.id = product_stocks_order.ord OR orders.id = product_stocks_move.ord'
         );
 
+        $dbal->leftJoin(
+            'orders',
+            OrderInvariable::class,
+            'orders_invariable',
+            'orders_invariable.main = orders.id',
+        );
+
 
         // $dbal->addSelect('orders_event.status AS order_status'); //->addGroupBy('orders_event.status');
         $dbal->leftJoin(
@@ -348,7 +356,7 @@ final class AllDeliveryPackageRepository implements AllDeliveryPackageInterface
                         'stock_id', package_stocks.stock,
                         
                         'order_id', orders.id,
-                        'order_number', orders.number,
+                        'order_number', orders_invariable.number,
                         'order_client', order_user.profile,
                         'order_status', orders_event.status,
                         
