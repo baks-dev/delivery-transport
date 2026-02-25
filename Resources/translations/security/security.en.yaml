@@ -34,9 +34,9 @@ ROLE_DELIVERY_PACKAGE_PARAMETER_EDIT:
   name: 'Edit'
   desc: 'Change order packing options'
 
-ROLE_PRODUCT_STOCK_DIVIDE:
-  name: 'Split order'
-  desc: 'Split the order as the vehicle is loaded'
+#ROLE_PRODUCT_STOCK_DIVIDE:
+#  name: 'Split order'
+#  desc: 'Split the order as the vehicle is loaded'
 
 
 

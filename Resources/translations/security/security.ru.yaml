@@ -37,9 +37,9 @@ ROLE_DELIVERY_PACKAGE_PARAMETER_EDIT:
 
 
 
-ROLE_PRODUCT_STOCK_DIVIDE:
-  name: 'Разделить заказ'
-  desc: 'Разделить заказ по мере погрузки транспорта'
+#ROLE_PRODUCT_STOCK_DIVIDE:
+#  name: 'Разделить заказ'
+#  desc: 'Разделить заказ по мере погрузки транспорта'
 
 
 
