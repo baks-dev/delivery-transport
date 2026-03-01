@@ -47,7 +47,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 /**
  * Снимаем резерв со склада при статусе "ДОСТАВКА"
  */
-#[AsMessageHandler]
+#[AsMessageHandler(priority: 0)]
 final readonly class SubReserveProductStocksTotalByOrderDelivery
 {
 
