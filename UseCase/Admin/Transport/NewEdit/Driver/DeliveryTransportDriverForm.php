@@ -68,14 +68,14 @@ final class DeliveryTransportDriverForm extends AbstractType
         $builder->add(
             'delete',
             ButtonType::class,
-            ['label_html' => true]
+            ['label_html' => true],
         );
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => DeliveryTransportDriverDTO::class
+            'data_class' => DeliveryTransportDriverDTO::class,
         ]);
     }
 }

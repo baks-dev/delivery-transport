@@ -117,7 +117,7 @@ final class AllDeliveryPackageRepository implements AllDeliveryPackageInterface
                 'package',
                 DeliveryPackageEvent::class,
                 'package_event',
-                'package_event.id = package.event'
+                'package_event.id = package.event',
             );
 
 
@@ -125,7 +125,7 @@ final class AllDeliveryPackageRepository implements AllDeliveryPackageInterface
             'package',
             DeliveryPackageStocks::class,
             'package_stocks',
-            'package_stocks.event = package_event.id'
+            'package_stocks.event = package_event.id',
         );
 
 
@@ -133,7 +133,7 @@ final class AllDeliveryPackageRepository implements AllDeliveryPackageInterface
             'package_stocks',
             DeliveryPackageEvent::class,
             'package_stocks_event',
-            'package_stocks_event.id = package_stocks.event'
+            'package_stocks_event.id = package_stocks.event',
         );
 
 
@@ -153,7 +153,7 @@ final class AllDeliveryPackageRepository implements AllDeliveryPackageInterface
                 'package',
                 DeliveryPackageTransport::class,
                 'package_transport',
-                'package_transport.package = package.id '.($date ? ' AND package_transport.date_package = :date' : '')
+                'package_transport.package = package.id '.($date ? ' AND package_transport.date_package = :date' : ''),
             );
 
 
@@ -165,7 +165,7 @@ final class AllDeliveryPackageRepository implements AllDeliveryPackageInterface
                 'package_stocks',
                 ProductStock::class,
                 'product_stocks',
-                'product_stocks.id = package_stocks.stock'
+                'product_stocks.id = package_stocks.stock',
             );
 
         $dbal
@@ -173,7 +173,7 @@ final class AllDeliveryPackageRepository implements AllDeliveryPackageInterface
                 'product_stocks',
                 ProductStockEvent::class,
                 'product_stocks_event',
-                'product_stocks_event.id = product_stocks.event'
+                'product_stocks_event.id = product_stocks.event',
             );
 
 
@@ -181,7 +181,7 @@ final class AllDeliveryPackageRepository implements AllDeliveryPackageInterface
             'product_stocks_event',
             ProductStockOrder::class,
             'product_stocks_order',
-            'product_stocks_order.event = product_stocks_event.id'
+            'product_stocks_order.event = product_stocks_event.id',
         );
 
 
@@ -189,7 +189,7 @@ final class AllDeliveryPackageRepository implements AllDeliveryPackageInterface
             'product_stocks_event',
             ProductStockMove::class,
             'product_stocks_move',
-            'product_stocks_move.event = product_stocks_event.id'
+            'product_stocks_move.event = product_stocks_event.id',
         );
 
 
@@ -201,7 +201,7 @@ final class AllDeliveryPackageRepository implements AllDeliveryPackageInterface
                 'product_stocks_move',
                 UserProfile::class,
                 'destination',
-                'destination.id = product_stocks_move.destination'
+                'destination.id = product_stocks_move.destination',
             );
 
 
@@ -214,7 +214,7 @@ final class AllDeliveryPackageRepository implements AllDeliveryPackageInterface
                 'destination',
                 UserProfilePersonal::class,
                 'destination_trans',
-                'destination_trans.event = destination.event'
+                'destination_trans.event = destination.event',
             );
 
 
@@ -225,7 +225,7 @@ final class AllDeliveryPackageRepository implements AllDeliveryPackageInterface
             'product_stocks_order',
             Order::class,
             'orders',
-            'orders.id = product_stocks_order.ord OR orders.id = product_stocks_move.ord'
+            'orders.id = product_stocks_order.ord OR orders.id = product_stocks_move.ord',
         );
 
         $dbal->leftJoin(
@@ -241,7 +241,7 @@ final class AllDeliveryPackageRepository implements AllDeliveryPackageInterface
             'orders',
             OrderEvent::class,
             'orders_event',
-            'orders_event.id = orders.event'
+            'orders_event.id = orders.event',
         );
 
         //$dbal->addSelect('order_user.profile AS order_profile'); //->addGroupBy('order_user.profile');
@@ -249,7 +249,7 @@ final class AllDeliveryPackageRepository implements AllDeliveryPackageInterface
             'orders',
             OrderUser::class,
             'order_user',
-            'order_user.event = orders.event'
+            'order_user.event = orders.event',
         );
 
 
@@ -259,28 +259,28 @@ final class AllDeliveryPackageRepository implements AllDeliveryPackageInterface
             'order_user',
             OrderDelivery::class,
             'order_delivery',
-            'order_delivery.usr = order_user.id'
+            'order_delivery.usr = order_user.id',
         );
 
         $dbal->leftJoin(
             'order_delivery',
             OrderDeliveryField::class,
             'order_delivery_fields',
-            'order_delivery_fields.delivery = order_delivery.id'
+            'order_delivery_fields.delivery = order_delivery.id',
         );
 
         $dbal->leftJoin(
             'order_delivery',
             DeliveryField::class,
             'delivery_field',
-            'delivery_field.id = order_delivery_fields.field'
+            'delivery_field.id = order_delivery_fields.field',
         );
 
         $dbal->leftJoin(
             'delivery_field',
             DeliveryFieldTrans::class,
             'delivery_field_trans',
-            'delivery_field_trans.field = delivery_field.id AND delivery_field_trans.local = :local'
+            'delivery_field_trans.field = delivery_field.id AND delivery_field_trans.local = :local',
         );
 
 
@@ -288,7 +288,7 @@ final class AllDeliveryPackageRepository implements AllDeliveryPackageInterface
             'package_transport',
             DeliveryTransport::class,
             'delivery_transport',
-            'delivery_transport.id = package_transport.transport'
+            'delivery_transport.id = package_transport.transport',
         );
 
         $dbal->addSelect('delivery_transport_event.number AS transport_number'); //->addGroupBy('delivery_transport_event.number');
@@ -296,7 +296,7 @@ final class AllDeliveryPackageRepository implements AllDeliveryPackageInterface
             'delivery_transport',
             DeliveryTransportEvent::class,
             'delivery_transport_event',
-            'delivery_transport_event.id = delivery_transport.event AND delivery_transport_event.profile = :profile'
+            'delivery_transport_event.id = delivery_transport.event AND delivery_transport_event.profile = :profile',
         )
             ->setParameter('profile', $profile, UserProfileUid::TYPE);
 
@@ -306,7 +306,7 @@ final class AllDeliveryPackageRepository implements AllDeliveryPackageInterface
             'delivery_transport',
             DeliveryTransportTrans::class,
             'delivery_transport_trans',
-            'delivery_transport_trans.event = delivery_transport.event AND delivery_transport_trans.local = :local'
+            'delivery_transport_trans.event = delivery_transport.event AND delivery_transport_trans.local = :local',
         );
 
 
@@ -316,7 +316,7 @@ final class AllDeliveryPackageRepository implements AllDeliveryPackageInterface
                 'delivery_transport_event',
                 UserProfile::class,
                 'warehouse',
-                'warehouse.id = delivery_transport_event.profile'
+                'warehouse.id = delivery_transport_event.profile',
             );
 
 
@@ -327,7 +327,7 @@ final class AllDeliveryPackageRepository implements AllDeliveryPackageInterface
                 'warehouse',
                 UserProfilePersonal::class,
                 'warehouse_trans',
-                'warehouse_trans.event = warehouse.event'
+                'warehouse_trans.event = warehouse.event',
             );
 
 
@@ -367,7 +367,7 @@ final class AllDeliveryPackageRepository implements AllDeliveryPackageInterface
                         'stocks_comment', product_stocks_event.comment
                     )
             )
-			AS package_orders"
+			AS package_orders",
         );
 
         $dbal->addOrderBy('package_transport.date_package');

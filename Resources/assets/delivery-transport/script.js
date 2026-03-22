@@ -20,17 +20,17 @@
  *  THE SOFTWARE.
  */
 
-let $addButton = document.getElementById('delivery_transport_form_add_driver');
+let $addButton = document.getElementById("delivery_transport_form_add_driver");
 
 if($addButton)
 {
     /* Блок для новой коллекции */
-    let $blockCollection = document.getElementById('delivery_transport_form-collection');
+    let $blockCollection = document.getElementById("delivery_transport_form-collection");
 
     if($blockCollection)
     {
 
-        $addButton.addEventListener('click', function()
+        $addButton.addEventListener("click", function()
         {
 
             let $addButton = this;
@@ -43,8 +43,8 @@ if($addButton)
             newForm = newForm.replace(/__delivery_driver__/g, index);
 
             /* Вставляем новую коллекцию */
-            let div = document.createElement('div');
-            div.id = 'item_delivery_transport_form_driver_' + index;
+            let div = document.createElement("div");
+            div.id = "item_delivery_transport_form_driver_" + index;
 
             // div.classList.add('align-items-center');
             // div.classList.add('gap-3');
@@ -54,7 +54,7 @@ if($addButton)
             $blockCollection.append(div);
 
             /* применяем select2 */
-            new NiceSelect(div.querySelector('[data-select="select2"]'), {searchable: true});
+            new NiceSelect(div.querySelector("[data-select=\"select2\"]"), {searchable : true});
 
 
             /* Добавить контактный номер телефона */
@@ -62,7 +62,7 @@ if($addButton)
 
 
             /* Удаляем контактный номер телефона */
-            (div.querySelector('.del-item'))?.addEventListener('click', deleteItem);
+            (div.querySelector(".del-item"))?.addEventListener("click", deleteItem);
 
 
             // (div.querySelector('.del-item-call'))?.addEventListener('click', deleteCall);
@@ -115,9 +115,9 @@ if($addButton)
 //     this.dataset.index = (index + 1).toString();
 // }
 
-document.querySelectorAll('.del-item').forEach(function(item)
+document.querySelectorAll(".del-item").forEach(function(item)
 {
-    item.addEventListener('click', deleteItem);
+    item.addEventListener("click", deleteItem);
 });
 
 function deleteItem()

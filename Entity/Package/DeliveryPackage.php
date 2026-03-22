@@ -56,11 +56,6 @@ class DeliveryPackage
         $this->id = new DeliveryPackageUid();
     }
 
-    public function getId(): DeliveryPackageUid
-    {
-        return $this->id;
-    }
-
     public function getEvent(): DeliveryPackageEventUid
     {
         return $this->event;
@@ -69,6 +64,11 @@ class DeliveryPackage
     public function setEvent(DeliveryPackageEventUid|DeliveryPackageEvent $event): void
     {
         $this->event = $event instanceof DeliveryPackageEvent ? $event->getId() : $event;
+    }
+
+    public function getId(): DeliveryPackageUid
+    {
+        return $this->id;
     }
 
 }

@@ -35,7 +35,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class UpdateMultipleProductsPackageParameterForm extends AbstractFlowType
 {
-	public function buildFormFlow(FormFlowBuilderInterface $builder, array $options) : void
+    public function buildFormFlow(FormFlowBuilderInterface $builder, array $options): void
     {
         $builder->addStep('product', UpdateMultipleProductsPackageParameterProductForm::class);
         $builder->addStep('parameters', UpdateMultipleProductsPackageParameterParametersForm::class);
@@ -44,22 +44,22 @@ final class UpdateMultipleProductsPackageParameterForm extends AbstractFlowType
         $builder->add(
             'product_package_parameters_next',
             NextFlowType::class,
-            ['label' => 'Next', 'label_html' => true, 'attr' => ['class' => 'btn-primary']]
+            ['label' => 'Next', 'label_html' => true, 'attr' => ['class' => 'btn-primary']],
         );
 
         /** Сохранить */
         $builder->add(
             'product_package_parameters',
             FinishFlowType::class,
-            ['label' => 'Save', 'label_html' => true, 'attr' => ['class' => 'btn-primary']]
+            ['label' => 'Save', 'label_html' => true, 'attr' => ['class' => 'btn-primary']],
         );
     }
-	
-	public function configureOptions(OptionsResolver $resolver) : void
-	{
-		$resolver->setDefaults([
-			'data_class' => UpdateMultipleProductsPackageParameterDTO::class,
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => UpdateMultipleProductsPackageParameterDTO::class,
             'step_property_path' => 'currentStep',
-		]);
-	}
+        ]);
+    }
 }

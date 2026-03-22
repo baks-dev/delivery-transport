@@ -82,7 +82,7 @@ final class AllDeliveryTransportRepository implements AllDeliveryTransportInterf
                 'auto',
                 DeliveryTransportEvent::class,
                 'event',
-                'event.id = auto.event AND event.profile = :profile'
+                'event.id = auto.event AND event.profile = :profile',
             )
             ->setParameter('profile', $profile, UserProfileUid::TYPE);
 
@@ -92,7 +92,7 @@ final class AllDeliveryTransportRepository implements AllDeliveryTransportInterf
                 'event',
                 DeliveryTransportTrans::class,
                 'trans',
-                'trans.event = event.id AND trans.local = :local'
+                'trans.event = event.id AND trans.local = :local',
             );
 
         $qb
@@ -101,7 +101,7 @@ final class AllDeliveryTransportRepository implements AllDeliveryTransportInterf
                 'event',
                 DeliveryTransportRegion::class,
                 'region',
-                'region.event = event.id'
+                'region.event = event.id',
             );
 
 
@@ -110,7 +110,7 @@ final class AllDeliveryTransportRepository implements AllDeliveryTransportInterf
                 'event',
                 UserProfile::class,
                 'users_profile',
-                'users_profile.id = event.profile'
+                'users_profile.id = event.profile',
             );
 
         // Personal
@@ -121,7 +121,7 @@ final class AllDeliveryTransportRepository implements AllDeliveryTransportInterf
             'users_profile',
             UserProfilePersonal::class,
             'users_profile_personal',
-            'users_profile_personal.event = users_profile.event'
+            'users_profile_personal.event = users_profile.event',
         );
 
 

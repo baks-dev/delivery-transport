@@ -23,8 +23,8 @@
 executeFunc(function MultiplePackageParameters()
 {
     const form = document.forms.update_multiple_products_package_parameter_form;
-    
-    const submitButton = form.querySelector('button[type="submit"]');
+
+    const submitButton = form.querySelector("button[type=\"submit\"]");
 
     if(typeof form === "undefined")
     {
@@ -115,7 +115,7 @@ executeFunc(function MultiplePackageParameters()
             formData.delete(form.name + "[_token]");
 
             await fetch(form.action, {
-                method : 'POST', // *GET, POST, PUT, DELETE, etc.
+                method : "POST", // *GET, POST, PUT, DELETE, etc.
                 cache : "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
                 credentials : "same-origin", // include, *same-origin, omit
                 headers : {
@@ -135,7 +135,7 @@ executeFunc(function MultiplePackageParameters()
             }).then(() =>
             {
                 addPackageParameters(form);
-            })
+            });
         }
 
         enableElementsForm(form);
@@ -147,7 +147,7 @@ executeFunc(function MultiplePackageParameters()
         disabledElementsForm(forms);
 
         let formData = new FormData(forms);
-        formData.append(forms.name + "[product_package_parameters_next]", '')
+        formData.append(forms.name + "[product_package_parameters_next]", "");
 
         await fetch(forms.action, {
             method : forms.method, // *GET, POST, PUT, DELETE, etc.
@@ -171,7 +171,7 @@ executeFunc(function MultiplePackageParameters()
         {
             disabledElementsForm(forms);
 
-            document.querySelector('.modal-dialog').parentElement.innerHTML = data;
+            document.querySelector(".modal-dialog").parentElement.innerHTML = data;
 
             /** Вешаем событие на сабмит формы, чтобы успеть провалидировать поля до того, как она будет отправлена */
             document.querySelector(`form[name="${form.name}"] button[type="submit"]`).addEventListener("click", async function(event)
@@ -188,7 +188,7 @@ executeFunc(function MultiplePackageParameters()
 
                     /** Отрисовываем тост с предупреждением пользователя */
                     let $errorFormHandler = "{ \"type\":\"danger\" , " +
-                        "\"header\":\"" + 'Изменение параметров упаковки' + "\"  , " +
+                        "\"header\":\"" + "Изменение параметров упаковки" + "\"  , " +
                         "\"message\" : \"Значения полей не должны быть отрицательными или пустыми\" }";
                     createToast(JSON.parse($errorFormHandler));
 
@@ -197,9 +197,9 @@ executeFunc(function MultiplePackageParameters()
             });
 
             enableElementsForm(form);
-        })
+        });
     }
 
     return true;
 
-})
+});

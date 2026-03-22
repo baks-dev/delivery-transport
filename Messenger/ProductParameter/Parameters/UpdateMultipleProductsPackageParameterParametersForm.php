@@ -43,8 +43,8 @@ final class UpdateMultipleProductsPackageParameterParametersForm extends Abstrac
         private readonly OnePackageParameterByProductPropertiesInterface $OnePackageParameterByProductPropertiesRepository
     ) {}
 
-    public function buildForm(FormBuilderInterface $builder, array $options) : void
-	{
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
         /**
          * Вес, кг.
          */
@@ -57,8 +57,8 @@ final class UpdateMultipleProductsPackageParameterParametersForm extends Abstrac
                 },
                 function($weight) {
                     return $weight ? new Kilogram($weight) : null;
-                }
-            )
+                },
+            ),
         );
 
         /**
@@ -84,8 +84,7 @@ final class UpdateMultipleProductsPackageParameterParametersForm extends Abstrac
 
 
         /** Предзаполнение полей */
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event)
-        {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) {
             /**
              * По полученным на предыдущем этапе параметрам продуктов находим параметры упаковки для первого попавшегося
              * из них (чтобы предзаполнить поля "рекомендуемыми" значениями, соответствующими существующим настройкам
@@ -97,7 +96,7 @@ final class UpdateMultipleProductsPackageParameterParametersForm extends Abstrac
                 ->forVariation($productData->getVariation())
                 ->forModification($productData->getModification())
                 ->findOne();
-//dd($packageParameter);
+            //dd($packageParameter);
             /** Если с такими свойствами товар или настройка для него не были найдены - делаем return */
             if(false === $packageParameter instanceof DeliveryPackageProductParameter)
             {
@@ -109,14 +108,14 @@ final class UpdateMultipleProductsPackageParameterParametersForm extends Abstrac
             $parametersDTO = $event->getData();
             $packageParameter->getDto($parametersDTO);
         });
-	}
-	
-	public function configureOptions(OptionsResolver $resolver) : void
-	{
-		$resolver->setDefaults([
-			'data_class' => UpdateMultipleProductsPackageParameterParametersDTO::class,
-			'method' => 'POST',
-             'attr' => ['class' => 'w-100'],
-		]);
-	}
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => UpdateMultipleProductsPackageParameterParametersDTO::class,
+            'method' => 'POST',
+            'attr' => ['class' => 'w-100'],
+        ]);
+    }
 }

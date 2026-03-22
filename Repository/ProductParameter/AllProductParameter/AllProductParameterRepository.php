@@ -84,6 +84,17 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         return $this;
     }
 
+    /**
+     * Метод возвращает параметры упаковки для всех (либо фильтруемых) продуктов в виде пагинатора с ассоциативными
+     * массивами
+     *
+     * @return PaginatorInterface<array>
+     */
+    public function fetchAllProductParameterAssociative(): PaginatorInterface
+    {
+        $dbal = $this->builder();
+        return $this->paginator->fetchAllAssociative($dbal);
+    }
 
     private function builder(): DBALQueryBuilder
     {
@@ -100,7 +111,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
             'product',
             ProductEvent::class,
             'product_event',
-            'product_event.id = product.event'
+            'product_event.id = product.event',
         );
 
         $dbal
@@ -109,7 +120,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
                 'product_event',
                 ProductTrans::class,
                 'product_trans',
-                'product_trans.event = product_event.id AND product_trans.local = :local'
+                'product_trans.event = product_event.id AND product_trans.local = :local',
             );
 
 
@@ -121,7 +132,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
                 'product_event',
                 ProductInfo::class,
                 'product_info',
-                'product_info.product = product.id'
+                'product_info.product = product.id',
             );
 
 
@@ -135,7 +146,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
                 'product_event',
                 ProductOffer::class,
                 'product_offer',
-                'product_offer.event = product_event.id'
+                'product_offer.event = product_event.id',
             );
 
         if($this->filter?->getOffer())
@@ -150,7 +161,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
             'product_offer',
             ProductOfferPrice::class,
             'product_offer_price',
-            'product_offer_price.offer = product_offer.id'
+            'product_offer_price.offer = product_offer.id',
         );
 
 
@@ -161,7 +172,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
                 'product_offer',
                 CategoryProductOffers::class,
                 'category_offer',
-                'category_offer.id = product_offer.category_offer'
+                'category_offer.id = product_offer.category_offer',
             );
 
 
@@ -175,7 +186,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
                 'product_offer',
                 ProductVariation::class,
                 'product_variation',
-                'product_variation.offer = product_offer.id'
+                'product_variation.offer = product_offer.id',
             );
 
 
@@ -191,7 +202,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
             'category_offer_variation',
             ProductVariationPrice::class,
             'product_variation_price',
-            'product_variation_price.variation = product_variation.id'
+            'product_variation_price.variation = product_variation.id',
         );
 
 
@@ -202,7 +213,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
                 'product_variation',
                 CategoryProductVariation::class,
                 'category_offer_variation',
-                'category_offer_variation.id = product_variation.category_variation'
+                'category_offer_variation.id = product_variation.category_variation',
             );
 
 
@@ -215,7 +226,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
                 'product_variation',
                 ProductModification::class,
                 'product_modification',
-                'product_modification.variation = product_variation.id '
+                'product_modification.variation = product_variation.id ',
             );
 
 
@@ -233,7 +244,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
                 'product_modification',
                 CategoryProductModification::class,
                 'category_offer_modification',
-                'category_offer_modification.id = product_modification.category_modification'
+                'category_offer_modification.id = product_modification.category_modification',
             );
 
 
@@ -247,7 +258,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
 					   WHEN product_info.article IS NOT NULL THEN product_info.article
 					   ELSE NULL
 					END AS product_article
-				'
+				',
         );
 
 
@@ -256,21 +267,21 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
             'product_event',
             ProductPhoto::class,
             'product_photo',
-            'product_photo.event = product_event.id AND product_photo.root = true'
+            'product_photo.event = product_event.id AND product_photo.root = true',
         );
 
         $dbal->leftJoin(
             'product_offer',
             ProductVariationImage::class,
             'product_variation_image',
-            'product_variation_image.variation = product_variation.id AND product_variation_image.root = true'
+            'product_variation_image.variation = product_variation.id AND product_variation_image.root = true',
         );
 
         $dbal->leftJoin(
             'product_offer',
             ProductOfferImage::class,
             'product_offer_images',
-            'product_offer_images.offer = product_offer.id AND product_offer_images.root = true'
+            'product_offer_images.offer = product_offer.id AND product_offer_images.root = true',
         );
 
         $dbal->addSelect(
@@ -284,7 +295,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
 					CONCAT ( '/upload/".$dbal->table(ProductPhoto::class)."' , '/', product_photo.name)
 			   ELSE NULL
 			END AS product_image
-		"
+		",
         );
 
 
@@ -321,7 +332,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
             'product_event',
             ProductCategory::class,
             'product_event_category',
-            'product_event_category.event = product_event.id AND product_event_category.root = true'
+            'product_event_category.event = product_event.id AND product_event_category.root = true',
         );
 
         if($this->filter?->getCategory())
@@ -334,7 +345,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
             'product_event_category',
             CategoryProduct::class,
             'category',
-            'category.id = product_event_category.category'
+            'category.id = product_event_category.category',
         );
 
         $dbal->addSelect('category_trans.name AS category_name');
@@ -343,7 +354,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
             'category',
             CategoryProductTrans::class,
             'category_trans',
-            'category_trans.event = category.event AND category_trans.local = :local'
+            'category_trans.event = category.event AND category_trans.local = :local',
         );
 
 
@@ -379,7 +390,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
                         (product_modification.const IS NOT NULL AND product_package.modification = product_modification.const) OR 
                         (product_modification.const IS NULL AND product_package.modification IS NULL)
                    )
-                '
+                ',
             );
 
 
@@ -399,7 +410,7 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
                         'product_property_'.$property->getType(),
                         'product_property_'.$property->getType().'.event = product.event AND 
                         product_property_'.$property->getType().'.field = :'.$property->getType().'_const AND 
-                        product_property_'.$property->getType().'.value = :'.$property->getType().'_value'
+                        product_property_'.$property->getType().'.value = :'.$property->getType().'_value',
                     );
 
                     $dbal->setParameter($property->getType().'_const', $property->getConst());
@@ -426,17 +437,5 @@ final class AllProductParameterRepository implements AllProductParameterInterfac
         }
 
         return $dbal;
-    }
-
-
-    /**
-     * Метод возвращает параметры упаковки для всех (либо фильтруемых) продуктов в виде пагинатора с ассоциативными
-     * массивами
-     * @return PaginatorInterface<array>
-     */
-    public function fetchAllProductParameterAssociative(): PaginatorInterface
-    {
-        $dbal = $this->builder();
-        return $this->paginator->fetchAllAssociative($dbal);
     }
 }

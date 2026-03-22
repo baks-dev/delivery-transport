@@ -50,6 +50,11 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 final class DeliveryTransportDeleteTest extends KernelTestCase
 {
 
+    public static function tearDownAfterClass(): void
+    {
+        DeliveryTransportNewTest::setUpBeforeClass();
+    }
+
     #[DependsOnClass(DeleteAdminControllerTest::class)]
     #[DependsOnClass(DeliveryTransportEditTest::class)]
     public function testUseCase(): void
@@ -128,10 +133,5 @@ final class DeliveryTransportDeleteTest extends KernelTestCase
         $handle = $DeliveryTransportDeleteHandler->handle($DeliveryTransportDeleteDTO);
         self::assertTrue(($handle instanceof DeliveryTransport), $handle.': Ошибка DeliveryTransport');
 
-    }
-
-    public static function tearDownAfterClass(): void
-    {
-        DeliveryTransportNewTest::setUpBeforeClass();
     }
 }

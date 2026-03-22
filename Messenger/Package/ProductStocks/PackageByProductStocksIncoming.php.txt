@@ -58,7 +58,6 @@ final readonly class PackageByProductStocksIncoming
     public function __invoke(ProductStockMessage $message): void
     {
 
-        /** TODO: */
         return;
 
         /** @var ProductStockEvent $ProductStockEvent */

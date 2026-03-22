@@ -38,6 +38,7 @@ interface AllProductParameterInterface
     /**
      * Метод возвращает параметры упаковки для всех (либо фильтруемых) продуктов в виде пагинатора с ассоциативными
      * массивами
+     *
      * @return PaginatorInterface<array>
      */
     public function fetchAllProductParameterAssociative(): PaginatorInterface;

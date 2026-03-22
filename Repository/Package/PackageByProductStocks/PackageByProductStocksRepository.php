@@ -55,7 +55,7 @@ final class PackageByProductStocksRepository implements PackageByProductStocksIn
             DeliveryPackage::class,
             'package',
             'WITH',
-            'package.event = package_stock.event'
+            'package.event = package_stock.event',
         );
 
         return $qb->getQuery()->getOneOrNullResult();

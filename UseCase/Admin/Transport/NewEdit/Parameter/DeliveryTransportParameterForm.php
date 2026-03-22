@@ -42,8 +42,8 @@ final class DeliveryTransportParameterForm extends AbstractType
          */
         $builder->add('carrying', NumberType::class, [
             'attr' => [
-                'min' => 1
-            ]
+                'min' => 1,
+            ],
         ]);
 
         $builder->get('carrying')->addModelTransformer(
@@ -53,8 +53,8 @@ final class DeliveryTransportParameterForm extends AbstractType
                 },
                 function($carrying) {
                     return $carrying ? new Kilogram($carrying) : null;
-                }
-            )
+                },
+            ),
         );
 
 
@@ -64,9 +64,9 @@ final class DeliveryTransportParameterForm extends AbstractType
         $builder->add('length', IntegerType::class,
             [
                 'attr' => [
-                    'min' => 1
-                ]
-            ]
+                    'min' => 1,
+                ],
+            ],
         );
 
         /*
@@ -75,9 +75,9 @@ final class DeliveryTransportParameterForm extends AbstractType
         $builder->add('width', IntegerType::class,
             [
                 'attr' => [
-                    'min' => 1
-                ]
-            ]
+                    'min' => 1,
+                ],
+            ],
         );
 
         /*
@@ -86,9 +86,9 @@ final class DeliveryTransportParameterForm extends AbstractType
         $builder->add('height', IntegerType::class,
             [
                 'attr' => [
-                    'min' => 1
-                ]
-            ]
+                    'min' => 1,
+                ],
+            ],
         );
     }
 

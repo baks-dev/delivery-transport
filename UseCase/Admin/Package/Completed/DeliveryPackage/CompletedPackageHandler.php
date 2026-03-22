@@ -64,7 +64,7 @@ final readonly class CompletedPackageHandler
         if($command->getEvent())
         {
             $EventRepo = $this->entityManager->getRepository(DeliveryPackageEvent::class)->find(
-                $command->getEvent()
+                $command->getEvent(),
             );
 
             if($EventRepo === null)
@@ -73,7 +73,7 @@ final readonly class CompletedPackageHandler
                 $errorsString = sprintf(
                     'Not found %s by id: %s',
                     DeliveryPackageEvent::class,
-                    $command->getEvent()
+                    $command->getEvent(),
                 );
                 $this->logger->error($uniqid.': '.$errorsString);
 
@@ -107,7 +107,7 @@ final readonly class CompletedPackageHandler
                 $errorsString = sprintf(
                     'Not found %s by event: %s',
                     DeliveryPackage::class,
-                    $command->getEvent()
+                    $command->getEvent(),
                 );
                 $this->logger->error($uniqid.': '.$errorsString);
 
@@ -160,7 +160,7 @@ final readonly class CompletedPackageHandler
         /* Отправляем сообщение в шину */
         $this->messageDispatch->dispatch(
             message: new DeliveryPackageMessage($Main->getId(), $Main->getEvent(), $command->getEvent()),
-            transport: 'delivery-transport'
+            transport: 'delivery-transport',
         );
 
         // 'delivery_package_high'

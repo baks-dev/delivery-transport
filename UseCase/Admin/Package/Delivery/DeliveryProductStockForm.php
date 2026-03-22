@@ -37,7 +37,7 @@ final class DeliveryProductStockForm extends AbstractType
         $builder->add(
             'delivery_package',
             SubmitType::class,
-            ['label' => 'Save', 'label_html' => true]
+            ['label' => 'Save', 'label_html' => true],
         );
     }
 
@@ -47,7 +47,7 @@ final class DeliveryProductStockForm extends AbstractType
             [
                 'data_class' => DeliveryProductStockDTO::class,
                 'method' => 'POST',
-                'attr' => ['class' => 'w-100']
+                'attr' => ['class' => 'w-100'],
             ],
         );
     }

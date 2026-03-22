@@ -73,17 +73,29 @@ final class DeliveryPackageStatus
 
     }
 
-    public function __toString(): string
-    {
-        return $this->status ? $this->status->getValue() : '';
-    }
-
     /**
      * Возвращает значение (value) страны String
      */
     public function getPackageStatus(): DeliveryPackageStatusInterface
     {
         return $this->status;
+    }
+
+    public static function getDeclared(): array
+    {
+        return array_filter(
+            get_declared_classes(),
+            static function($className) {
+                return in_array(DeliveryPackageStatusInterface::class, class_implements($className), true);
+            },
+        );
+    }
+
+    public function equals(mixed $status): bool
+    {
+        $status = new self($status);
+
+        return $this->getPackageStatusValue() === $status->getPackageStatusValue();
     }
 
     /**
@@ -108,21 +120,9 @@ final class DeliveryPackageStatus
         return $case;
     }
 
-    public static function getDeclared(): array
+    public function __toString(): string
     {
-        return array_filter(
-            get_declared_classes(),
-            static function($className) {
-                return in_array(DeliveryPackageStatusInterface::class, class_implements($className), true);
-            }
-        );
-    }
-
-    public function equals(mixed $status): bool
-    {
-        $status = new self($status);
-
-        return $this->getPackageStatusValue() === $status->getPackageStatusValue();
+        return $this->status ? $this->status->getValue() : '';
     }
 
 }

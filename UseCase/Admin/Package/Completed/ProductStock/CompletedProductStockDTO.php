@@ -59,16 +59,16 @@ final readonly class CompletedProductStockDTO implements ProductStockEventInterf
         return $this->status;
     }
 
+    public function getId(): ProductStockEventUid
+    {
+        return ($this->id instanceof ProductStockEventUid) ? $this->id : new ProductStockEventUid($this->id);
+    }
+
     public function setId(ProductStockEventUid $id): self
     {
         $this->id = $id;
 
         return $this;
-    }
-
-    public function getId(): ProductStockEventUid
-    {
-        return ($this->id instanceof ProductStockEventUid) ? $this->id : new ProductStockEventUid($this->id);
     }
 
 }

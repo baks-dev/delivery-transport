@@ -134,14 +134,6 @@ final class DeliveryTransportDTO implements DeliveryTransportEventInterface
         $this->active = $active;
     }
 
-    /**
-     * Перевод.
-     */
-    public function setTranslate(ArrayCollection $trans): void
-    {
-        $this->translate = $trans;
-    }
-
     public function getTranslate(): ArrayCollection
     {
         /* Вычисляем расхождение и добавляем неопределенные локали */
@@ -153,6 +145,14 @@ final class DeliveryTransportDTO implements DeliveryTransportEventInterface
         }
 
         return $this->translate;
+    }
+
+    /**
+     * Перевод.
+     */
+    public function setTranslate(ArrayCollection $trans): void
+    {
+        $this->translate = $trans;
     }
 
     public function addTranslate(Trans\DeliveryTransportTransDTO $trans): void
@@ -208,6 +208,20 @@ final class DeliveryTransportDTO implements DeliveryTransportEventInterface
         return $this;
     }
 
+    /**
+     * Profile
+     */
+    public function getProfile(): ?UserProfileUid
+    {
+        return $this->profile;
+    }
+
+    public function setProfile(?UserProfileUid $profile): self
+    {
+        $this->profile = $profile;
+        return $this;
+    }
+
     public function removeDriver(Driver\DeliveryTransportDriverDTO $driver): void
     {
         $this->driver->removeElement($driver);
@@ -237,20 +251,6 @@ final class DeliveryTransportDTO implements DeliveryTransportEventInterface
     public function setRegion(Region\DeliveryTransportRegionDTO $region): void
     {
         $this->region = $region;
-    }
-
-    /**
-     * Profile
-     */
-    public function getProfile(): ?UserProfileUid
-    {
-        return $this->profile;
-    }
-
-    public function setProfile(?UserProfileUid $profile): self
-    {
-        $this->profile = $profile;
-        return $this;
     }
 
     /**

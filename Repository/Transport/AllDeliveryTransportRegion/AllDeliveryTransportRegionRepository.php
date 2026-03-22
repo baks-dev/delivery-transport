@@ -46,7 +46,7 @@ final class AllDeliveryTransportRegionRepository implements AllDeliveryTransport
 
         $select = sprintf(
             'new %s(transport.id, region.latitude, region.longitude, parameter.size, parameter.carrying)',
-            DeliveryTransportUid::class
+            DeliveryTransportUid::class,
         );
 
         $qb->select($select);
@@ -57,7 +57,7 @@ final class AllDeliveryTransportRegionRepository implements AllDeliveryTransport
             DeliveryTransportEvent::class,
             'event',
             'WITH',
-            'event.id = transport.event AND event.active = true AND event.profile = :profile'
+            'event.id = transport.event AND event.active = true AND event.profile = :profile',
         )
             ->setParameter('profile', $profile, UserProfileUid::TYPE);
 
@@ -65,14 +65,14 @@ final class AllDeliveryTransportRegionRepository implements AllDeliveryTransport
             DeliveryTransportRegion::class,
             'region',
             'WITH',
-            'region.event = event.id'
+            'region.event = event.id',
         );
 
         $qb->join(
             DeliveryTransportParameter::class,
             'parameter',
             'WITH',
-            'parameter.event = event.id'
+            'parameter.event = event.id',
         );
 
         /* Кешируем результат ORM */

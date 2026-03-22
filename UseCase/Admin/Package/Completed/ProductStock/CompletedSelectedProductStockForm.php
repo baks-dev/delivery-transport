@@ -57,7 +57,7 @@ final class CompletedSelectedProductStockForm extends AbstractType
             [
                 'data_class' => CompletedSelectedProductStockDTO::class,
                 'method' => 'POST',
-                'attr' => ['class' => 'w-100']
+                'attr' => ['class' => 'w-100'],
             ],
         );
     }

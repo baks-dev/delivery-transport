@@ -48,8 +48,8 @@ final class DeliveryTransportRegionForm extends AbstractType
                 },
                 function($gps) {
                     return new GpsLatitude($gps);
-                }
-            )
+                },
+            ),
         );
 
         /* GPS долгота:*/
@@ -63,8 +63,8 @@ final class DeliveryTransportRegionForm extends AbstractType
                 },
                 function($gps) {
                     return new GpsLongitude($gps);
-                }
-            )
+                },
+            ),
         );
 
         /*

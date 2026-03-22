@@ -47,19 +47,19 @@ return static function(ContainerConfigurator $configurator) {
     /** Статусы заказа */
     $services->load(
         $NAMESPACE.'Type\OrderStatus\\',
-        $PATH.implode(DIRECTORY_SEPARATOR, ['Type', 'OrderStatus'])
+        $PATH.implode(DIRECTORY_SEPARATOR, ['Type', 'OrderStatus']),
     );
 
     /** Статусы складской заявки */
     $services->load(
         $NAMESPACE.'Type\ProductStockStatus\\',
-        $PATH.implode(DIRECTORY_SEPARATOR, ['Type', 'ProductStockStatus'])
+        $PATH.implode(DIRECTORY_SEPARATOR, ['Type', 'ProductStockStatus']),
     );
 
     /** Статусы погрузки */
     $services->load(
         $NAMESPACE.'Type\Package\Status\DeliveryPackageStatus\\',
-        $PATH.implode(DIRECTORY_SEPARATOR, ['Type', 'Package', 'Status', 'DeliveryPackageStatus'])
+        $PATH.implode(DIRECTORY_SEPARATOR, ['Type', 'Package', 'Status', 'DeliveryPackageStatus']),
     );
 
 

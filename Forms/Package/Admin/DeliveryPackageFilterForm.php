@@ -61,21 +61,21 @@ final class DeliveryPackageFilterForm extends AbstractType
 
                 $this->request->getSession()->set(DeliveryPackageFilterDTO::date, $data->getDate());
                 //$this->request->getSession()->set(ManufactureFilterDTO::status, $data->getStatus());
-            }
+            },
         );
 
 
         $builder->add(
             'back',
             SubmitType::class,
-            ['label' => 'Back', 'label_html' => true, 'attr' => ['class' => 'btn-light']]
+            ['label' => 'Back', 'label_html' => true, 'attr' => ['class' => 'btn-light']],
         );
 
 
         $builder->add(
             'next',
             SubmitType::class,
-            ['label' => 'next', 'label_html' => true, 'attr' => ['class' => 'btn-light']]
+            ['label' => 'next', 'label_html' => true, 'attr' => ['class' => 'btn-light']],
         );
 
         $builder->addEventListener(
@@ -85,7 +85,7 @@ final class DeliveryPackageFilterForm extends AbstractType
                 $data = $event->getData();
 
                 $this->request->getSession()->set(DeliveryPackageFilterDTO::date, $data->getDate());
-            }
+            },
         );
     }
 
@@ -95,7 +95,7 @@ final class DeliveryPackageFilterForm extends AbstractType
             [
                 'data_class' => DeliveryPackageFilterDTO::class,
                 'method' => 'POST',
-            ]
+            ],
         );
     }
 }

@@ -158,16 +158,16 @@ final class DeliveryPackageTransportDTO implements DeliveryPackageTransportInter
         $this->carrying = $carrying;
     }
 
+    public function getTraveled(): int
+    {
+        return $this->traveled;
+    }
+
     /**
      * Очередь на погрузку (Общее количество км в пути).
      */
     public function setTraveled(int $traveled): void
     {
         $this->traveled = $traveled;
-    }
-
-    public function getTraveled(): int
-    {
-        return $this->traveled;
     }
 }

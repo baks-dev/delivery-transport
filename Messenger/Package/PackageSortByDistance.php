@@ -103,7 +103,7 @@ final readonly class PackageSortByDistance
             /** Обновляем сортировку, если упаковка заказа */
 
             $DeliveryPackageStocks = $this->entityManager->getRepository(DeliveryPackageStocks::class)->findOneBy(
-                ['event' => $DeliveryPackageEventUid, 'stock' => $order['attr']]
+                ['event' => $DeliveryPackageEventUid, 'stock' => $order['attr']],
             );
 
             $DeliveryPackageStocks?->setSort($sort + 1);

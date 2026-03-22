@@ -57,7 +57,7 @@ final class NavigatorController extends AbstractController
         {
             $this->addFlash(
                 'danger',
-                'Невозможно определить геолокацию склада погрузки'
+                'Невозможно определить геолокацию склада погрузки',
             );
 
             return $this->redirectToRoute('delivery-transport:admin.package.index');

@@ -87,9 +87,9 @@ class DeliveryPackageEvent extends EntityEvent
         return (string) $this->id;
     }
 
-    public function getId(): DeliveryPackageEventUid
+    public function getMain(): ?DeliveryPackageUid
     {
-        return $this->id;
+        return $this->main;
     }
 
     public function setMain(DeliveryPackageUid|DeliveryPackage $main): void
@@ -97,9 +97,9 @@ class DeliveryPackageEvent extends EntityEvent
         $this->main = $main instanceof DeliveryPackage ? $main->getId() : $main;
     }
 
-    public function getMain(): ?DeliveryPackageUid
+    public function getId(): DeliveryPackageEventUid
     {
-        return $this->main;
+        return $this->id;
     }
 
     public function getDto($dto): mixed

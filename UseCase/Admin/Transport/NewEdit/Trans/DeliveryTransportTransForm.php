@@ -49,8 +49,8 @@ final class DeliveryTransportTransForm extends AbstractType
                 },
                 function($local) {
                     return new Locale($local);
-                }
-            )
+                },
+            ),
         );
 
         /*

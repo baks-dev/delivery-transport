@@ -119,9 +119,9 @@ class DeliveryTransportEvent extends EntityEvent
         return (string) $this->id;
     }
 
-    public function getId(): DeliveryTransportEventUid
+    public function getMain(): ?DeliveryTransportUid
     {
-        return $this->id;
+        return $this->main;
     }
 
     public function setMain(DeliveryTransportUid|DeliveryTransport $main): void
@@ -129,10 +129,9 @@ class DeliveryTransportEvent extends EntityEvent
         $this->main = $main instanceof DeliveryTransport ? $main->getId() : $main;
     }
 
-
-    public function getMain(): ?DeliveryTransportUid
+    public function getId(): DeliveryTransportEventUid
     {
-        return $this->main;
+        return $this->id;
     }
 
     public function getDto($dto): mixed

@@ -61,7 +61,7 @@ final class OnePackageParameterByProductPropertiesRepository implements OnePacka
         return $this;
     }
 
-    
+
     /**
      * Получаем параметры упаковки любого первого продукта, соответствующего указанным значениям offer, variation и
      * modification
@@ -79,7 +79,7 @@ final class OnePackageParameterByProductPropertiesRepository implements OnePacka
                 Product::class,
                 'product',
                 'WITH',
-                'product.id = delivery_package_product_parameters.product'
+                'product.id = delivery_package_product_parameters.product',
             );
 
         if(false === empty($offer))
@@ -89,7 +89,7 @@ final class OnePackageParameterByProductPropertiesRepository implements OnePacka
                     ProductOffer::class,
                     'product_offer',
                     'WITH',
-                    'product_offer.event = product.event AND product_offer.value = :offer'
+                    'product_offer.event = product.event AND product_offer.value = :offer',
                 )
                 ->setParameter('offer', $this->offer, Types::STRING);
         }
@@ -101,7 +101,7 @@ final class OnePackageParameterByProductPropertiesRepository implements OnePacka
                     ProductVariation::class,
                     'product_variation',
                     'WITH',
-                    'product_variation.offer = product_offer.id AND product_variation.value = :variation'
+                    'product_variation.offer = product_offer.id AND product_variation.value = :variation',
                 )
                 ->setParameter('variation', $this->variation, Types::STRING);
         }
@@ -114,7 +114,7 @@ final class OnePackageParameterByProductPropertiesRepository implements OnePacka
                     'product_modification',
                     'WITH',
                     'product_modification.variation = product_variation.id AND
-                product_modification.value = :modification'
+                product_modification.value = :modification',
                 )
                 ->setParameter('modification', $this->modification, Types::STRING);
         }

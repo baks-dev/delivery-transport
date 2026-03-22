@@ -136,7 +136,7 @@ final  class PackageOrderProductsRepository implements PackageOrderProductsInter
             ->setParameter(
                 key: 'product',
                 value: $this->product,
-                type: ProductUid::TYPE
+                type: ProductUid::TYPE,
             );
 
         if($this->offer)
@@ -161,7 +161,7 @@ final  class PackageOrderProductsRepository implements PackageOrderProductsInter
                 ->setParameter(
                     key: 'variation',
                     value: $this->variation,
-                    type: ProductVariationConst::TYPE
+                    type: ProductVariationConst::TYPE,
                 );
         }
         else
@@ -176,7 +176,7 @@ final  class PackageOrderProductsRepository implements PackageOrderProductsInter
                 ->setParameter(
                     key: 'modification',
                     value: $this->modification,
-                    type: ProductModificationConst::TYPE
+                    type: ProductModificationConst::TYPE,
                 );
         }
         else
@@ -227,7 +227,7 @@ final  class PackageOrderProductsRepository implements PackageOrderProductsInter
                         (product_modification.const IS NOT NULL AND product_package.modification = product_modification.const) OR 
                         (product_modification.const IS NULL AND product_package.modification IS NULL)
                    )
-            '
+            ',
         );
 
         return $dbal->fetchAllAssociative();
@@ -246,14 +246,14 @@ final  class PackageOrderProductsRepository implements PackageOrderProductsInter
             'ord',
             OrderEvent::class,
             'event',
-            'event.id = ord.event'
+            'event.id = ord.event',
         );
 
         $dbal->join(
             'event',
             OrderProduct::class,
             'product',
-            'product.event = ord.event'
+            'product.event = ord.event',
         );
 
         $dbal->addSelect('price.total');
@@ -261,14 +261,14 @@ final  class PackageOrderProductsRepository implements PackageOrderProductsInter
             'product',
             OrderPrice::class,
             'price',
-            'price.product = product.id'
+            'price.product = product.id',
         );
 
         $dbal->join(
             'product',
             ProductEvent::class,
             'product_event',
-            'product_event.id = product.product'
+            'product_event.id = product.product',
         );
 
         //$dbal->addSelect('product_offer.const AS product_offer_const');
@@ -276,7 +276,7 @@ final  class PackageOrderProductsRepository implements PackageOrderProductsInter
             'product',
             ProductOffer::class,
             'product_offer',
-            'product_offer.id = product.offer'
+            'product_offer.id = product.offer',
         );
 
         //$dbal->addSelect('product_variation.const AS product_variation_const');
@@ -284,7 +284,7 @@ final  class PackageOrderProductsRepository implements PackageOrderProductsInter
             'product',
             ProductVariation::class,
             'product_variation',
-            'product_variation.id = product.variation'
+            'product_variation.id = product.variation',
         );
 
         //$dbal->addSelect('product_modification.const AS product_modification_const');
@@ -292,7 +292,7 @@ final  class PackageOrderProductsRepository implements PackageOrderProductsInter
             'product',
             ProductModification::class,
             'product_modification',
-            'product_modification.id = product.modification'
+            'product_modification.id = product.modification',
         );
 
         $dbal->addSelect('product_package.size');
@@ -321,7 +321,7 @@ final  class PackageOrderProductsRepository implements PackageOrderProductsInter
                         (product_modification.const IS NOT NULL AND product_package.modification = product_modification.const) OR 
                         (product_modification.const IS NULL AND product_package.modification IS NULL)
                    )
-            '
+            ',
         );
 
         $dbal

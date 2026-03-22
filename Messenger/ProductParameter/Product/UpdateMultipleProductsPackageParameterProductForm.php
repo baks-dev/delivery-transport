@@ -26,11 +26,11 @@ declare(strict_types=1);
 namespace BaksDev\DeliveryTransport\Messenger\ProductParameter\Product;
 
 use BaksDev\Core\Services\Fields\FieldsChoice;
-use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Category\Repository\CategoryChoice\CategoryChoiceInterface;
 use BaksDev\Products\Category\Repository\ModificationFieldsCategoryChoice\ModificationFieldsCategoryChoiceInterface;
 use BaksDev\Products\Category\Repository\OfferFieldsCategoryChoice\OfferFieldsCategoryChoiceInterface;
 use BaksDev\Products\Category\Repository\VariationFieldsCategoryChoice\VariationFieldsCategoryChoiceInterface;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Category\Type\Offers\Id\CategoryProductOffersUid;
 use BaksDev\Products\Category\Type\Offers\Variation\CategoryProductVariationUid;
 use Symfony\Component\Form\AbstractType;
@@ -52,8 +52,8 @@ final class UpdateMultipleProductsPackageParameterProductForm extends AbstractTy
         private readonly FieldsChoice $choice,
     ) {}
 
-	public function buildForm(FormBuilderInterface $builder, array $options) : void
-	{
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
         $builder->add('category', ChoiceType::class, [
             'choices' => $this->categoryChoice->findAll(),
             'choice_value' => function(?CategoryProductUid $category) {
@@ -78,7 +78,7 @@ final class UpdateMultipleProductsPackageParameterProductForm extends AbstractTy
         $builder->add('variation', HiddenType::class);
 
         $builder->add('modification', HiddenType::class);
-	}
+    }
 
 
     public function formOfferModifier(FormInterface $form, ?CategoryProductUid $category = null): void
@@ -104,7 +104,7 @@ final class UpdateMultipleProductsPackageParameterProductForm extends AbstractTy
                     [
                         'label' => $offerField->getOption(),
                         'priority' => 200,
-                    ]
+                    ],
                 );
 
                 $this->formVariationModifier($form, $offerField);
@@ -131,7 +131,7 @@ final class UpdateMultipleProductsPackageParameterProductForm extends AbstractTy
                     [
                         'label' => $variationField->getOption(),
                         'priority' => 199,
-                    ]
+                    ],
                 );
 
                 $this->formModificationModifier($form, $variationField);
@@ -158,18 +158,18 @@ final class UpdateMultipleProductsPackageParameterProductForm extends AbstractTy
                     [
                         'label' => $modificationField->getOption(),
                         'priority' => 198,
-                    ]
+                    ],
                 );
             }
         }
     }
-	
-	public function configureOptions(OptionsResolver $resolver) : void
-	{
-		$resolver->setDefaults([
-			'data_class' => UpdateMultipleProductsPackageParameterProductDTO::class,
-			'method' => 'POST',
-             'attr' => ['class' => 'w-100'],
-		]);
-	}
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => UpdateMultipleProductsPackageParameterProductDTO::class,
+            'method' => 'POST',
+            'attr' => ['class' => 'w-100'],
+        ]);
+    }
 }

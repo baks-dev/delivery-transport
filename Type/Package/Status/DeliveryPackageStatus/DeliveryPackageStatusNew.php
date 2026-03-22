@@ -36,13 +36,13 @@ class DeliveryPackageStatusNew implements DeliveryPackageStatusInterface
 {
     public const STATUS = 'new';
 
-    public function getValue(): string
-    {
-        return self::STATUS;
-    }
-
     public static function equals(string $status): bool
     {
         return self::STATUS === mb_strtolower($status);
+    }
+
+    public function getValue(): string
+    {
+        return self::STATUS;
     }
 }

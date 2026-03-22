@@ -72,7 +72,7 @@ final class PackageOrderGeocodeRepository implements PackageOrderGeocodeInterfac
             'delivery',
             ProductStock::class,
             'product_stock',
-            'product_stock.id = delivery.stock'
+            'product_stock.id = delivery.stock',
         );
 
 
@@ -82,7 +82,7 @@ final class PackageOrderGeocodeRepository implements PackageOrderGeocodeInterfac
             'product_stock',
             ProductStockOrder::class,
             'product_stock_order',
-            'product_stock_order.event = product_stock.event'
+            'product_stock_order.event = product_stock.event',
         );
 
 
@@ -90,14 +90,14 @@ final class PackageOrderGeocodeRepository implements PackageOrderGeocodeInterfac
             'product_stock_order',
             Order::class,
             'orders',
-            'orders.id = product_stock_order.ord'
+            'orders.id = product_stock_order.ord',
         );
 
         $dbal->leftJoin(
             'orders',
             OrderUser::class,
             'order_user',
-            'order_user.event = orders.event'
+            'order_user.event = orders.event',
         );
 
 
@@ -105,7 +105,7 @@ final class PackageOrderGeocodeRepository implements PackageOrderGeocodeInterfac
             'order_user',
             OrderDelivery::class,
             'order_delivery',
-            'order_delivery.usr = order_user.id'
+            'order_delivery.usr = order_user.id',
         );
 
         /*
@@ -118,16 +118,15 @@ final class PackageOrderGeocodeRepository implements PackageOrderGeocodeInterfac
                 'product_stock',
                 ProductStockMove::class,
                 'product_stock_move',
-                'product_stock_move.event = product_stock.event'
+                'product_stock_move.event = product_stock.event',
             );
-
 
 
         $dbal->leftJoin(
             'product_stock_move',
             UserProfile::class,
             'profile_destination',
-            'profile_destination.id = product_stock_move.destination'
+            'profile_destination.id = product_stock_move.destination',
         );
 
         $dbal
@@ -137,7 +136,7 @@ final class PackageOrderGeocodeRepository implements PackageOrderGeocodeInterfac
                 'profile_destination',
                 UserProfilePersonal::class,
                 'profile_destination_personal',
-                'profile_destination_personal.event = profile_destination.event'
+                'profile_destination_personal.event = profile_destination.event',
             );
 
 

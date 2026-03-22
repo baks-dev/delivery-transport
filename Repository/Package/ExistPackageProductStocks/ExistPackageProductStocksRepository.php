@@ -67,21 +67,21 @@ final class ExistPackageProductStocksRepository implements ExistPackageProductSt
             'package',
             DeliveryPackageStocks::class,
             'package_stock',
-            'package_stock.event = package.event'
+            'package_stock.event = package.event',
         );
 
         $qbExist->join(
             'package_stock',
             ProductStock::class,
             'product_stock',
-            'product_stock.id = package_stock.stock'
+            'product_stock.id = package_stock.stock',
         );
 
         $qbExist->join(
             'product_stock',
             ProductStockEvent::class,
             'product_stock_event',
-            'product_stock_event.id = product_stock.event AND product_stock_event.status != :status'
+            'product_stock_event.id = product_stock.event AND product_stock_event.status != :status',
         );
 
         $qbExist->where('package.id = :package');
@@ -116,14 +116,14 @@ final class ExistPackageProductStocksRepository implements ExistPackageProductSt
             'package',
             DeliveryPackageStocks::class,
             'package_stock',
-            'package_stock.event = package.event'
+            'package_stock.event = package.event',
         );
 
         $qbExist->join(
             'package_stock',
             ProductStock::class,
             'product_stock',
-            'product_stock.id = package_stock.stock'
+            'product_stock.id = package_stock.stock',
         );
 
         $qbExist->join(
@@ -132,13 +132,13 @@ final class ExistPackageProductStocksRepository implements ExistPackageProductSt
             'product_stock_event',
             'product_stock_event.id = product_stock.event AND
                 product_stock_event.status != :completed  
-            '
+            ',
         );
 
         $qbExist->setParameter(
             'completed',
             ProductStockStatusCompleted::class,
-            ProductStockStatus::TYPE
+            ProductStockStatus::TYPE,
         );
 
         return $qbExist->fetchExist();

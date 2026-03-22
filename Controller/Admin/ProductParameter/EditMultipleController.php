@@ -27,14 +27,14 @@ namespace BaksDev\DeliveryTransport\Controller\Admin\ProductParameter;
 
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
-use BaksDev\DeliveryTransport\Messenger\ProductParameter\UpdateMultipleProductsPackageParametersDispatcher;
 use BaksDev\DeliveryTransport\Messenger\ProductParameter\UpdateMultipleProductsPackageParameterDTO;
 use BaksDev\DeliveryTransport\Messenger\ProductParameter\UpdateMultipleProductsPackageParameterForm;
+use BaksDev\DeliveryTransport\Messenger\ProductParameter\UpdateMultipleProductsPackageParametersDispatcher;
 use Symfony\Component\Form\Flow\FormFlowTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[AsController]
 #[RoleSecurity('ROLE_DELIVERY_PACKAGE_PARAMETER_EDIT')]
@@ -53,25 +53,27 @@ final class EditMultipleController extends AbstractController
             ->createForm(
                 UpdateMultipleProductsPackageParameterForm::class,
                 $updateMultipleProductsPackageParametersDTO,
-                ['action' => $this->generateUrl('delivery-transport:admin.parameter.multiple.edit')]
+                ['action' => $this->generateUrl('delivery-transport:admin.parameter.multiple.edit')],
             )
             ->handleRequest($request);
 
 
         /**
          * Чтобы при каждом новом открытии формы рендерить ее с самого начала - сбрасываем ее
+         *
          * @var FormFlowTypeInterface $form
          */
-        iF(
+        if(
             'GET' === $request->getMethod() &&
-            $updateMultipleProductsPackageParametersDTO->currentStep !== $form->getCursor()->getCurrentStep())
+            $updateMultipleProductsPackageParametersDTO->currentStep !== $form->getCursor()->getCurrentStep()
+        )
         {
             $form->reset();
 
             $form = $this->createForm(
                 UpdateMultipleProductsPackageParameterForm::class,
                 $updateMultipleProductsPackageParametersDTO,
-                ['action' => $this->generateUrl('delivery-transport:admin.parameter.multiple.edit')]
+                ['action' => $this->generateUrl('delivery-transport:admin.parameter.multiple.edit')],
             );
         }
 
@@ -84,7 +86,7 @@ final class EditMultipleController extends AbstractController
                 'page.edit',
                 'success.multiple.edit',
                 'delivery-transport.parameter',
-                $handle
+                $handle,
             );
 
             return $this->redirectToRoute('delivery-transport:admin.parameter.index');

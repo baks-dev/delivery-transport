@@ -59,7 +59,7 @@ final class PackageWarehouseGeocodeRepository implements PackageWarehouseGeocode
             'package_transport',
             DeliveryTransport::class,
             'transport',
-            'transport.id = package_transport.transport'
+            'transport.id = package_transport.transport',
         );
 
 
@@ -68,7 +68,7 @@ final class PackageWarehouseGeocodeRepository implements PackageWarehouseGeocode
             'transport',
             DeliveryTransportEvent::class,
             'transport_event',
-            'transport_event.id = transport.event'
+            'transport_event.id = transport.event',
         );
 
 
@@ -78,7 +78,7 @@ final class PackageWarehouseGeocodeRepository implements PackageWarehouseGeocode
                 'transport_event',
                 UserProfile::class,
                 'profile',
-                'profile.id = transport_event.profile'
+                'profile.id = transport_event.profile',
             );
 
 
@@ -89,7 +89,7 @@ final class PackageWarehouseGeocodeRepository implements PackageWarehouseGeocode
                 'profile',
                 UserProfilePersonal::class,
                 'profile_personal',
-                'profile_personal.event = profile.event'
+                'profile_personal.event = profile.event',
             );
 
 

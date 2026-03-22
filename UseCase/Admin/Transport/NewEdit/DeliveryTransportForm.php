@@ -143,7 +143,7 @@ final class DeliveryTransportForm extends AbstractType
         $builder->add(
             'delivery_transport',
             SubmitType::class,
-            ['label' => 'Save', 'label_html' => true, 'attr' => ['class' => 'btn-primary']]
+            ['label' => 'Save', 'label_html' => true, 'attr' => ['class' => 'btn-primary']],
         );
     }
 

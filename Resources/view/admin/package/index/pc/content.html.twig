@@ -127,24 +127,12 @@
 
         {% set package_status = item.package_status %}
 
-
-
-
-        {# TODO:  #}
-        {# {% set package_status = 'delivery' %} #}
-
-
-
-
-
         {# Сортируем в обратном порядке для погрузки #}
         {% if package_status != 'delivery' %}
             {# {% set package_orders = package_orders|sort((a, b) => a.package_order_sort <=> b.package_order_sort)|reverse %} #}
         {% endif %}
 
-
         <div class="card mb-3" style="">
-
 
             <div class="card-header bg-body border-light">
 

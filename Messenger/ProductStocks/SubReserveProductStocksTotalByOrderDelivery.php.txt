@@ -61,8 +61,6 @@ final readonly class SubReserveProductStocksTotalByOrderDelivery
 
     public function __invoke(OrderMessage $message): void
     {
-        /** TODO: */
-
         return;
 
         $this->entityManager->clear();

@@ -53,7 +53,7 @@ final class IndexController extends AbstractController
             ->createForm(
                 type: SearchForm::class,
                 data: $search,
-                options: ['action' => $this->generateUrl('delivery-transport:admin.transport.index')]
+                options: ['action' => $this->generateUrl('delivery-transport:admin.transport.index')],
             )
             ->handleRequest($request);
 
@@ -68,7 +68,7 @@ final class IndexController extends AbstractController
             [
                 'query' => $DeliveryTransport,
                 'search' => $searchForm->createView(),
-            ]
+            ],
         );
     }
 }

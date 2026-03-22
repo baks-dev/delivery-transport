@@ -29,13 +29,13 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 interface DeliveryPackageStatusInterface
 {
     /**
-     * Возвращает значение статуса (value)
-     */
-    public function getValue(): string;
-
-    /**
      * Проверяет, относится ли статус к данному объекту
      */
     public static function equals(string $status): bool;
+
+    /**
+     * Возвращает значение статуса (value)
+     */
+    public function getValue(): string;
 
 }

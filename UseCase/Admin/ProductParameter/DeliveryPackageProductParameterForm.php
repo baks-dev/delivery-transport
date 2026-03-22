@@ -51,8 +51,8 @@ final class DeliveryPackageProductParameterForm extends AbstractType
                 },
                 function($weight) {
                     return $weight ? new Kilogram($weight) : null;
-                }
-            )
+                },
+            ),
         );
 
 
@@ -82,7 +82,7 @@ final class DeliveryPackageProductParameterForm extends AbstractType
         $builder->add(
             'product_stock_parameter',
             SubmitType::class,
-            ['label' => 'Save', 'label_html' => true, 'attr' => ['class' => 'btn-primary']]
+            ['label' => 'Save', 'label_html' => true, 'attr' => ['class' => 'btn-primary']],
         );
     }
 

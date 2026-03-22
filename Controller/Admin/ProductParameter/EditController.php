@@ -71,7 +71,7 @@ final class EditController extends AbstractController
                 'product' => $DeliveryPackageProductParameterDTO->getProduct(),
                 'offer' => $DeliveryPackageProductParameterDTO->getOffer(),
                 'variation' => $DeliveryPackageProductParameterDTO->getVariation(),
-                'modification' => $DeliveryPackageProductParameterDTO->getModification()
+                'modification' => $DeliveryPackageProductParameterDTO->getModification(),
             ]);
 
         if($ProductStockParameter)
@@ -89,9 +89,9 @@ final class EditController extends AbstractController
                     'product' => $DeliveryPackageProductParameterDTO->getProduct(),
                     'offer' => $DeliveryPackageProductParameterDTO->getOffer(),
                     'variation' => $DeliveryPackageProductParameterDTO->getVariation(),
-                    'modification' => $DeliveryPackageProductParameterDTO->getModification()
-                ]
-            )]
+                    'modification' => $DeliveryPackageProductParameterDTO->getModification(),
+                ],
+            )],
         );
 
         $form->handleRequest($request);
@@ -107,7 +107,7 @@ final class EditController extends AbstractController
                 'page.edit',
                 $handle instanceof DeliveryPackageProductParameter ? 'success.edit' : 'danger.edit',
                 'delivery-transport.parameter',
-                $handle
+                $handle,
             );
 
             return $this->redirectToReferer();

@@ -69,7 +69,7 @@ final class DeleteController extends AbstractController
                 $this->addFlash(
                     'page.delete',
                     'success.delete',
-                    'delivery-transport.transport'
+                    'delivery-transport.transport',
                 );
 
                 return $this->redirectToRoute('delivery-transport:admin.transport.index');
@@ -79,7 +79,7 @@ final class DeleteController extends AbstractController
                 'page.delete',
                 'danger.delete',
                 'delivery-transport.transport',
-                $DeliveryTransport
+                $DeliveryTransport,
             );
 
             return $this->redirectToRoute('delivery-transport:admin.transport.index', status: 400);

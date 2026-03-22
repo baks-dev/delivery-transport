@@ -46,8 +46,8 @@ final class CompletedProductStockForm extends AbstractType
                 },
                 function($id) {
                     return $id ? new ProductStockEventUid($id) : null;
-                }
-            )
+                },
+            ),
         );
 
     }

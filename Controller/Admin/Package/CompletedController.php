@@ -68,14 +68,14 @@ final class CompletedController extends AbstractController
          */
         $CompletedProductStockDTO = new CompletedProductStockDTO(
             $ProductStock->getEvent(),
-            $this->getProfileUid()
+            $this->getProfileUid(),
         );
 
         // Форма
         $form = $this->createForm(CompletedProductStockForm::class, $CompletedProductStockDTO, [
             'action' => $this->generateUrl(
                 'delivery-transport:admin.package.completed',
-                ['id' => $ProductStock->getId()]
+                ['id' => $ProductStock->getId()],
             )]);
 
         $form->handleRequest($request);
@@ -91,7 +91,7 @@ final class CompletedController extends AbstractController
                 $this->addFlash(
                     'page.index',
                     'success.completed',
-                    'delivery-transport.package'
+                    'delivery-transport.package',
                 );
 
                 /* Чистим кеш модуля */
@@ -140,8 +140,8 @@ final class CompletedController extends AbstractController
         return $this->render(
             [
                 'form' => $form->createView(),
-                'products' => $productDetail->fetchAllProductsByProductStocksAssociative($ProductStock->getId())
-            ]
+                'products' => $productDetail->fetchAllProductsByProductStocksAssociative($ProductStock->getId()),
+            ],
         );
     }
 }

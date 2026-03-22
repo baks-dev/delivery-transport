@@ -26,9 +26,9 @@ declare(strict_types=1);
 namespace BaksDev\DeliveryTransport\Controller\Admin\ProductParameter\Tests;
 
 use BaksDev\Users\User\Tests\TestUserAccount;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
-use PHPUnit\Framework\Attributes\Group;
 
 #[Group('delivery-transport')]
 #[Group('delivery-transport-controller')]
