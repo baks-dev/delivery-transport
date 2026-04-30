@@ -37,6 +37,7 @@ final readonly class CompletedSelectedProductStockDTO /*implements ProductStockE
         $this->collection = new ArrayCollection();
     }
 
+    /** @return ArrayCollection<CompletedProductStockDTO> */
     public function getCollection(): ArrayCollection
     {
         return $this->collection;
