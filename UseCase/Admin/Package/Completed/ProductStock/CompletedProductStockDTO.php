@@ -28,6 +28,7 @@ namespace BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed\ProductStock
 
 use BaksDev\Core\Type\UidType\Uid;
 use BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed\ProductStock\Lock\CompletedProductStockLockDTO;
+use BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed\ProductStock\Order\CompletedProductStockOrderDTO;
 use BaksDev\Products\Stocks\Entity\Stock\Event\ProductStockEventInterface;
 use BaksDev\Products\Stocks\Type\Event\ProductStockEventUid;
 use BaksDev\Products\Stocks\Type\Status\ProductStockStatus;
@@ -35,7 +36,7 @@ use BaksDev\Products\Stocks\Type\Status\ProductStockStatus\ProductStockStatusCom
 use Symfony\Component\Validator\Constraints as Assert;
 
 /** @see MaterialStockEvent */
-final readonly class CompletedProductStockDTO implements ProductStockEventInterface
+final class CompletedProductStockDTO implements ProductStockEventInterface
 {
     /** Идентификатор */
     #[Assert\NotBlank]
@@ -44,7 +45,10 @@ final readonly class CompletedProductStockDTO implements ProductStockEventInterf
 
     /** Статус заявки - Выдана клиенту */
     #[Assert\NotBlank]
-    private ProductStockStatus $status;
+    private readonly ProductStockStatus $status;
+
+    /** заказ */
+    private CompletedProductStockOrderDTO $ord;
 
     /**
      * Блокировка
@@ -55,6 +59,7 @@ final readonly class CompletedProductStockDTO implements ProductStockEventInterf
     public function __construct()
     {
         $this->status = new ProductStockStatus(ProductStockStatusCompleted::class);
+        $this->ord = new CompletedProductStockOrderDTO();
 
         /** Блокировка */
         $this->lock = new CompletedProductStockLockDTO();
@@ -85,6 +90,16 @@ final readonly class CompletedProductStockDTO implements ProductStockEventInterf
     public function getLock(): CompletedProductStockLockDTO
     {
         return $this->lock;
+    }
+
+    public function getOrd(): CompletedProductStockOrderDTO
+    {
+        return $this->ord;
+    }
+
+    public function setOrd(CompletedProductStockOrderDTO $ord): void
+    {
+        $this->ord = $ord;
     }
 
 }
