@@ -24,23 +24,23 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\DeliveryTransport\Type\ProductStockStatus;
+namespace BaksDev\DeliveryTransport\UseCase\Admin\Package\Completed\ProductStock\Lock;
 
-use BaksDev\Products\Stocks\Type\Status\ProductStockStatus\Collection\ProductStockStatusInterface;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+use BaksDev\Products\Stocks\Entity\Stock\Lock\ProductStockLockInterface;
 
-/**
- * Статус Delivery «Доставка»
- */
-#[AutoconfigureTag('baks.product.stock.status')]
-class ProductStockStatusDelivery implements ProductStockStatusInterface
+/** @see ProductStock */
+final class CompletedProductStockLockDTO implements ProductStockLockInterface
 {
+    /** Блокируем при создании, не перезаписывая данными из сущности */
+    private readonly true $value;
 
-    public const string STATUS = 'delivery';
-
-    /** Возвращает значение (value) */
-    public function getValue(): string
+    public function __construct()
     {
-        return self::STATUS;
+        $this->value = true;
+    }
+
+    public function getValue(): true
+    {
+        return $this->value;
     }
 }

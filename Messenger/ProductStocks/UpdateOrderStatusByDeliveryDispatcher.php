@@ -19,17 +19,21 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
 
 namespace BaksDev\DeliveryTransport\Messenger\ProductStocks;
 
+use BaksDev\Centrifugo\BaksDevCentrifugoBundle;
 use BaksDev\Centrifugo\Server\Publish\CentrifugoPublishInterface;
+use BaksDev\Core\Messenger\MessageDispatchInterface;
 use BaksDev\DeliveryTransport\Type\OrderStatus\OrderStatusDelivery;
 use BaksDev\DeliveryTransport\Type\ProductStockStatus\ProductStockStatusDelivery;
 use BaksDev\Orders\Order\Entity\Event\OrderEvent;
 use BaksDev\Orders\Order\Entity\Order;
+use BaksDev\Orders\Order\Messenger\LockOrder\OrderUnlockMessage;
 use BaksDev\Orders\Order\Repository\CurrentOrderEvent\CurrentOrderEventInterface;
 use BaksDev\Orders\Order\UseCase\Admin\Status\OrderStatusDTO;
 use BaksDev\Orders\Order\UseCase\Admin\Status\OrderStatusHandler;
@@ -45,51 +49,74 @@ use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * Обновляет статус заказа на Delivery «Доставка» при изменении складской заявки
+ * Если статус заявки Delivery «Доставка» - Обновляет статус заказа на Delivery «Доставка (погружен в транспорт)»
+ *
+ * @note Снимает блокировку с заказа
  */
-// #[Autoconfigure(public: true)]
+#[Autoconfigure(shared: false)]
 #[AsMessageHandler(priority: 0)]
 final readonly class UpdateOrderStatusByDeliveryDispatcher
 {
     public function __construct(
         #[Target('deliveryTransportLogger')] private LoggerInterface $logger,
-        private CurrentProductStocksInterface $CurrentProductStocks,
-        private CurrentOrderEventInterface $CurrentOrderEvent,
+        private MessageDispatchInterface $messageDispatch,
+        private CurrentProductStocksInterface $CurrentProductStocksRepository,
+        private CurrentOrderEventInterface $CurrentOrderEventRepository,
+        private UserByUserProfileInterface $UserByUserProfileRepository,
         private OrderStatusHandler $OrderStatusHandler,
-        private UserByUserProfileInterface $UserByUserProfile,
-        private CentrifugoPublishInterface $CentrifugoPublish,
+        private ?CentrifugoPublishInterface $CentrifugoPublish = null,
     ) {}
-
 
     public function __invoke(ProductStockMessage $message): void
     {
-        $ProductStockEvent = $this->CurrentProductStocks
+        $ProductStockEvent = $this->CurrentProductStocksRepository
             ->getCurrentEvent($message->getId());
 
         if(false === ($ProductStockEvent instanceof ProductStockEvent))
         {
+            $this->logger->critical(
+                sprintf('delivery-transport: Событие складской заявки %s не было найдено', $message->getEvent()),
+                [self::class.':'.__LINE__, var_export($message, true)]
+            );
             return;
         }
 
+        /** Если статус заявки не является Delivery «Доставка» - завершаем обработчик */
         if(false === $ProductStockEvent->equalsProductStockStatus(ProductStockStatusDelivery::class))
         {
             return;
         }
 
+        if(false === $ProductStockEvent->isInvariable())
+        {
+            $this->logger->warning(
+                'Складская заявка не может определить ProductStocksInvariable',
+                [self::class.':'.__LINE__, var_export($message, true)],
+            );
+
+            return;
+        }
+
+        $UserProfileUid = $ProductStockEvent->getInvariable()->getProfile();
+
         /**
          * Получаем событие заказа.
          */
-        $OrderEvent = $this->CurrentOrderEvent
+        $OrderEvent = $this->CurrentOrderEventRepository
             ->forOrder($ProductStockEvent->getOrder())
             ->find();
 
         if(false === ($OrderEvent instanceof OrderEvent))
         {
+            $this->logger->critical(
+                message: 'products-stocks: Не найдено OrderEvent',
+                context: [self::class.':'.__LINE__, var_export($message, true)]
+            );
             return;
         }
 
         /**
-         * Обновляем статус заказа на "Доставка" (Delivery)
+         * Обновляем статус заказа на Delivery «Доставка (погружен в транспорт)»
          */
 
         $OrderStatusDTO = new OrderStatusDTO(
@@ -103,7 +130,7 @@ final readonly class UpdateOrderStatusByDeliveryDispatcher
          */
         if(true === ($ProductStockEvent->getFixed() instanceof UserProfileUid))
         {
-            $User = $this->UserByUserProfile
+            $User = $this->UserByUserProfileRepository
                 ->forProfile($ProductStockEvent->getFixed())
                 ->find();
 
@@ -135,15 +162,52 @@ final readonly class UpdateOrderStatusByDeliveryDispatcher
             return;
         }
 
-        // Отправляем сокет для скрытия заказа у других менеджеров
-        $this->CentrifugoPublish
-            ->addData(['order' => (string) $ProductStockEvent->getOrder()])
-            ->send('orders');
-
         $this->logger->info(
-            sprintf('%s: Обновили статус заказа на Delivery «Доставка»', $ProductStockEvent->getNumber()),
-            [self::class.':'.__LINE__],
+            message: sprintf('%s: Обновили статус заказа на %s',
+                $OrderEvent->getPostingNumber() ?? $OrderEvent->getOrderNumber(),
+                $OrderStatusDTO->getStatus()->getOrderStatusValue()
+            ),
+            context: [
+                self::class.':'.__LINE__,
+                'OrderUid' => (string) $ProductStockEvent->getOrder(),
+                'UserProfileUid' => (string) $UserProfileUid,
+            ],
         );
 
+        /** Синхронно снимаем блокировку с заказа */
+
+        $OrderUnlockMessage = new OrderUnlockMessage(
+            id: $ProductStockEvent->getOrder(),
+            context: self::class.':'.__LINE__
+        );
+
+        $this->messageDispatch->dispatch(
+            message: $OrderUnlockMessage,
+        );
+
+        if(true === class_exists(BaksDevCentrifugoBundle::class))
+        {
+            /** Отправляем сокет для скрытия заказа */
+            $socket = $this->CentrifugoPublish
+                ->addData([
+                    'order' => (string) $ProductStockEvent->getOrder(),
+                    'profile' => false,
+                    'context' => self::class.':'.__LINE__
+                ])
+                ->send('orders');
+
+            if($socket && $socket->isError())
+            {
+                $this->logger->critical(
+                    message: 'products-stocks: Ошибка при отправке информации о блокировке в Centrifugo',
+                    context: [
+                        $socket->getMessage(),
+                        'number' => $ProductStockEvent->getNumber(),
+                        'main' => $ProductStockEvent->getMain(),
+                        self::class.':'.__LINE__,
+                    ],
+                );
+            }
+        }
     }
 }
