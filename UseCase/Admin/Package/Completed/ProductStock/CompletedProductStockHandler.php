@@ -87,10 +87,10 @@ final class CompletedProductStockHandler extends AbstractHandler
             }
         }
 
-        /* Отправляем сообщение в шину */
+        /* Отправляем сообщение в шину c низким приоритетом */
         $this->messageDispatch->dispatch(
             message: new ProductStockMessage($this->main->getId(), $this->main->getEvent(), $command->getEvent()),
-            transport: 'products-stocks',
+            transport: 'products-stocks-low',
         );
 
         return $this->main;
