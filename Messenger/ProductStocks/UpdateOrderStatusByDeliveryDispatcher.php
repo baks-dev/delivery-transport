@@ -183,6 +183,7 @@ final readonly class UpdateOrderStatusByDeliveryDispatcher
 
         $this->messageDispatch->dispatch(
             message: $OrderUnlockMessage,
+            transport: 'orders-order',
         );
 
         if(true === class_exists(BaksDevCentrifugoBundle::class))
